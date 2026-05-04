@@ -1,0 +1,2 @@
+variable,weights,n,permutations,morans_I,expected_I,variance,z_score,p_value
+pm25_mean_2019,queen,44,999,0.23697862112441562,-0.023255813953488372,0.012132637256628978,2.385176110510343,0.009

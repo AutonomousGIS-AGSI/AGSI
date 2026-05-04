@@ -1,0 +1,4 @@
+[JOIN AUDIT] Left join county_ses_depression_with_index.csv + SC_Visitor_POI.csv on GEOID
+  left rows: 46
+  matched (non-null 'Full_Service_Restaurant'): 46/46 (100.0%)
+  unmatched (NaN in right side): 0
