@@ -1,0 +1,2 @@
+window.OFFLINE_CONVERSATION_ID = "124e6b8e-ad5a-49f9-802e-87cc5101dda4";
+window.OFFLINE_TASK_ID = "124e6b8e-ad5a-49f9-802e-87cc5101dda4";

@@ -1,0 +1,75 @@
+AGM — Offline Conversation Snapshot
+====================================
+
+This folder is a self-contained, read-only copy of an AGM conversation —
+chat, workflow cards, research plan, figures, manuscript, uploaded data,
+and all generated artifacts. No server, network, or API key required.
+
+------------------------------------------------------------------
+HOW TO OPEN IT
+------------------------------------------------------------------
+
+Most browsers block JavaScript from reading local files when you simply
+double-click index.html. Use ONE of the options below:
+
+
+Option 1 — Run a tiny local web server  (RECOMMENDED, works everywhere)
+-----------------------------------------------------------------------
+  Requires Python 3 (pre-installed on macOS and most Linux; on Windows
+  install from https://www.python.org/downloads/  — tick "Add to PATH").
+
+  1. Open a terminal / Command Prompt / PowerShell IN THIS FOLDER.
+       - Windows:  Shift + right-click inside the folder
+                   -> "Open PowerShell window here" (or "Open in Terminal")
+       - macOS:    right-click the folder -> Services -> "New Terminal at Folder"
+       - Linux:    cd /path/to/this/folder
+  2. Run:
+         python -m http.server 8000
+       (on some systems use `python3` instead of `python`)
+  3. Open your browser to:
+         http://localhost:8000
+  4. When done, press Ctrl + C in the terminal to stop the server.
+
+
+Option 2 — Firefox with a config tweak  (no Python needed)
+----------------------------------------------------------
+  This relaxes a security setting; turn it back on when you finish.
+
+  1. Open Firefox -> type   about:config   in the address bar -> Enter.
+  2. Click "Accept the Risk and Continue".
+  3. Search for:   privacy.file_unique_origin
+  4. Toggle it from `true` to `false`.
+  5. Restart Firefox.
+  6. File -> Open File... -> pick this folder's index.html.
+
+  When finished viewing, set `privacy.file_unique_origin` back to `true`.
+
+
+Option 3 — VS Code "Live Server" extension
+------------------------------------------
+  If the recipient already uses VS Code:
+    1. Open this folder in VS Code.
+    2. Install the "Live Server" extension (by Ritwick Dey).
+    3. Right-click index.html -> "Open with Live Server".
+
+
+------------------------------------------------------------------
+WHAT YOU CAN AND CANNOT DO
+------------------------------------------------------------------
+  YES  - Read the chat, expand workflow cards, view figures and tables,
+         scroll through the research plan, flowchart, and manuscript,
+         download artifacts, view uploaded data on the embedded map.
+  NO   - Send new messages, re-run steps, edit the plan, regenerate
+         results.  All interactive actions are intentionally disabled.
+
+------------------------------------------------------------------
+TROUBLESHOOTING
+------------------------------------------------------------------
+  - Blank page / spinning loader: you almost certainly opened it via
+    file:// instead of http://localhost. Use Option 1.
+  - "Address already in use" on port 8000: pick another port, e.g.
+        python -m http.server 8123
+    and visit http://localhost:8123
+  - Map iframe is empty: same root cause — use a local server.
+
+Questions? Contact the person who sent you this folder.
