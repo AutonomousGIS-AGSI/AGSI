@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Understanding the Mediation Role of Mobility Patterns in the Relationship between Socioeconomic Status and Depression in South Carolina Counties</title>
+<style>
+  body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: #f8f9fa; display: flex; flex-direction: column; height: 100vh; }
+  h1 { text-align: center; padding: 12px 0 4px 0; margin: 0; font-size: 18px; color: #2C3E50; }
+  .graph-panel { flex: 1; overflow: hidden; position: relative; cursor: grab; }
+  svg { display: block; width: 100%; height: 100%; }
+  .node-box { cursor: pointer; transition: filter 0.15s; }
+  .node-box:hover { filter: brightness(1.12); }
+  marker { overflow: visible; }
+
+  /* Zoom controls toolbar */
+  .zoom-toolbar {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    z-index: 50;
+    background: white;
+    border-radius: 8px;
+    padding: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    border: 1px solid #ddd;
+  }
+  .zoom-btn {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #444;
+    transition: all 0.15s;
+    padding: 0;
+  }
+  .zoom-btn:hover { background: #e9ecef; color: #111; }
+  .zoom-btn:active { background: #dee2e6; }
+  .zoom-level {
+    font-size: 10px;
+    text-align: center;
+    color: #888;
+    padding: 2px 0;
+    user-select: none;
+  }
+  .zoom-divider {
+    height: 1px;
+    background: #e0e0e0;
+    margin: 2px 0;
+  }
+
+  /* Popup overlay */
+  .popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.35);
+    z-index: 100;
+    justify-content: center;
+    align-items: center;
+  }
+  .popup-overlay.visible { display: flex; }
+
+  /* Popup box */
+  .popup-box {
+    background: white;
+    border-radius: 10px;
+    padding: 24px 28px;
+    max-width: 580px;
+    width: 92%;
+    max-height: 75vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+    position: relative;
+    animation: popIn 0.18s ease-out;
+  }
+  @keyframes popIn {
+    from { transform: scale(0.92); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .popup-box h3 { margin-top: 0; color: #2C3E50; border-bottom: 2px solid #4C72B0; padding-bottom: 8px; }
+  .popup-box p { line-height: 1.6; color: #333; font-size: 13px; }
+  .popup-box ul { padding-left: 18px; }
+  .popup-box li { margin-bottom: 6px; font-size: 13px; }
+  .popup-box svg { max-width: 100%; height: auto; }
+  .popup-close {
+    position: absolute;
+    top: 10px; right: 14px;
+    background: none; border: none;
+    font-size: 20px; color: #999;
+    cursor: pointer; line-height: 1;
+    padding: 4px 8px; border-radius: 4px;
+  }
+  .popup-close:hover { background: #f0f0f0; color: #333; }
+</style>
+</head>
+<body>
+<h1>Understanding the Mediation Role of Mobility Patterns in the Relationship between Socioeconomic Status and Depression in South Carolina Counties</h1>
+<div class="graph-panel" id="graphPanel">
+<!-- Zoom controls -->
+<div class="zoom-toolbar">
+  <button class="zoom-btn" onclick="zoomIn()" title="Zoom in">+</button>
+  <button class="zoom-btn" onclick="zoomOut()" title="Zoom out">&minus;</button>
+  <div class="zoom-divider"></div>
+  <span class="zoom-level" id="zoomLevel">100%</span>
+  <div class="zoom-divider"></div>
+  <button class="zoom-btn" onclick="zoomReset()" title="Reset view">&#8634;</button>
+  <button class="zoom-btn" onclick="zoomFit()" title="Fit to view">&#11036;</button>
+</div>
+<svg id="flowchartSvg" width="1000" height="1190" viewBox="0 0 1000 1190">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#666"/>
+    </marker>
+  </defs>
+  <g id="zoomGroup">
+    <line x1="500" y1="80" x2="220" y2="153" stroke="#555" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="220" y1="207" x2="220" y2="285" stroke="#4C72B0" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="220" y1="335" x2="220" y2="385" stroke="#4C72B0" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="220" y1="435" x2="220" y2="485" stroke="#4C72B0" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="220" y1="535" x2="220" y2="585" stroke="#4C72B0" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="220" y1="635" x2="220" y2="685" stroke="#4C72B0" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="500" y1="80" x2="500" y2="153" stroke="#555" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="500" y1="207" x2="500" y2="285" stroke="#DD8452" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="500" y1="335" x2="500" y2="385" stroke="#DD8452" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="500" y1="435" x2="500" y2="485" stroke="#DD8452" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="500" y1="535" x2="500" y2="585" stroke="#DD8452" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="500" y1="635" x2="500" y2="685" stroke="#DD8452" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="500" y1="80" x2="780" y2="153" stroke="#555" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="780" y1="207" x2="780" y2="285" stroke="#55A868" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="780" y1="335" x2="780" y2="385" stroke="#55A868" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="780" y1="435" x2="780" y2="485" stroke="#55A868" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="780" y1="535" x2="780" y2="585" stroke="#55A868" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="780" y1="635" x2="780" y2="685" stroke="#55A868" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="780" y1="735" x2="780" y2="785" stroke="#55A868" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="780" y1="835" x2="780" y2="885" stroke="#55A868" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="780" y1="935" x2="780" y2="985" stroke="#55A868" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <g class="node-box" onclick="showPopup('RQ')">
+      <rect x="200" y="20" width="600" height="60" rx="10" ry="10" fill="#2C3E50" stroke="#333" stroke-width="1.5"/>
+      <text x="500" y="47.2" text-anchor="middle" fill="white" font-size="13" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">How do spatial patterns of mobility (place visitation) mediate the relationship</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj_1')">
+      <rect x="100" y="153" width="240" height="55" rx="10" ry="10" fill="#4C72B0" stroke="#333" stroke-width="1.5"/>
+      <text x="220" y="170.4" text-anchor="middle" fill="white" font-size="11" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">Obj 1: Estimate the county-level</text>
+      <text x="220" y="184.4" text-anchor="middle" fill="white" font-size="11" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">association</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj1_s1')">
+      <polygon points="125,285 330,285 315,335 110,335" fill="#a3b7d7" stroke="#333" stroke-width="1.5"/>
+      <text x="220" y="307.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S1.1: Validate join keys and req</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj1_s2')">
+      <polygon points="125,385 330,385 315,435 110,435" fill="#a3b7d7" stroke="#333" stroke-width="1.5"/>
+      <text x="220" y="407.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S1.2: Left join on GEOID</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj1_s3')">
+      <polygon points="125,485 330,485 315,535 110,535" fill="#a3b7d7" stroke="#333" stroke-width="1.5"/>
+      <text x="220" y="507.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S1.3: Create composite SES index</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj1_s4')">
+      <polygon points="125,585 330,585 315,635 110,635" fill="#a3b7d7" stroke="#333" stroke-width="1.5"/>
+      <text x="220" y="607.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S1.4: Ordinary least squares (OL</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj1_s5')">
+      <polygon points="125,685 330,685 315,735 110,735" fill="#a3b7d7" stroke="#333" stroke-width="1.5"/>
+      <text x="220" y="707.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S1.5: Attribute join (tabular-to</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj_2')">
+      <rect x="380" y="153" width="240" height="55" rx="10" ry="10" fill="#DD8452" stroke="#333" stroke-width="1.5"/>
+      <text x="500" y="170.4" text-anchor="middle" fill="white" font-size="11" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">Obj 2: Quantify how county</text>
+      <text x="500" y="184.4" text-anchor="middle" fill="white" font-size="11" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">place-visitation c</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj2_s1')">
+      <polygon points="405,285 610,285 595,335 390,335" fill="#f1cfbc" stroke="#333" stroke-width="1.5"/>
+      <text x="500" y="307.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S2.1: Left join on GEOID</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj2_s2')">
+      <polygon points="405,385 610,385 595,435 390,435" fill="#f1cfbc" stroke="#333" stroke-width="1.5"/>
+      <text x="500" y="407.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S2.2: Compute total_visits and s</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj2_s3')">
+      <polygon points="405,485 610,485 595,535 390,535" fill="#f1cfbc" stroke="#333" stroke-width="1.5"/>
+      <text x="500" y="507.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S2.3: Shannon entropy (mobility</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj2_s4')">
+      <polygon points="405,585 610,585 595,635 390,635" fill="#f1cfbc" stroke="#333" stroke-width="1.5"/>
+      <text x="500" y="607.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S2.4: Principal component analys</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj2_s5')">
+      <polygon points="405,685 610,685 595,735 390,735" fill="#f1cfbc" stroke="#333" stroke-width="1.5"/>
+      <text x="500" y="707.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S2.5: Ordinary least squares (OL</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj_3')">
+      <rect x="660" y="153" width="240" height="55" rx="10" ry="10" fill="#55A868" stroke="#333" stroke-width="1.5"/>
+      <text x="780" y="170.4" text-anchor="middle" fill="white" font-size="11" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">Obj 3: Test whether county mobility</text>
+      <text x="780" y="184.4" text-anchor="middle" fill="white" font-size="11" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">compositi</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj3_s1')">
+      <polygon points="685,285 890,285 875,335 670,335" fill="#a9d3b2" stroke="#333" stroke-width="1.5"/>
+      <text x="780" y="307.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S3.1: Linear mediator model (OLS</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj3_s2')">
+      <polygon points="685,385 890,385 875,435 670,435" fill="#a9d3b2" stroke="#333" stroke-width="1.5"/>
+      <text x="780" y="407.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S3.2: Linear outcome model (OLS)</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj3_s3')">
+      <polygon points="685,485 890,485 875,535 670,535" fill="#a9d3b2" stroke="#333" stroke-width="1.5"/>
+      <text x="780" y="507.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S3.3: Nonparametric bootstrap me</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj3_s4')">
+      <polygon points="685,585 890,585 875,635 670,635" fill="#a9d3b2" stroke="#333" stroke-width="1.5"/>
+      <text x="780" y="607.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S3.4: Construct Queen contiguity</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj3_s5')">
+      <polygon points="685,685 890,685 875,735 670,735" fill="#a9d3b2" stroke="#333" stroke-width="1.5"/>
+      <text x="780" y="707.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S3.5: Align spatial weights to t</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj3_s6')">
+      <polygon points="685,785 890,785 875,835 670,835" fill="#a9d3b2" stroke="#333" stroke-width="1.5"/>
+      <text x="780" y="807.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S3.6: Moran's I on outcome-model</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj3_s7')">
+      <polygon points="685,885 890,885 875,935 670,935" fill="#a9d3b2" stroke="#333" stroke-width="1.5"/>
+      <text x="780" y="907.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S3.7: Spatial error model (SEM)</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj3_s8')">
+      <polygon points="685,985 890,985 875,1035 670,1035" fill="#a9d3b2" stroke="#333" stroke-width="1.5"/>
+      <text x="780" y="1007.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S3.8: Geographically weighted re</text>
+    </g>
+  </g>
+</svg>
+</div>
+
+<!-- Popup overlay -->
+<div class="popup-overlay" id="popupOverlay" onclick="closePopup(event)">
+  <div class="popup-box" id="popupBox" onclick="event.stopPropagation()">
+    <button class="popup-close" onclick="closePopup()">&times;</button>
+    <div id="popupContent"></div>
+  </div>
+</div>
+
+<script>
+const details = {"RQ": "<h3>Research Question</h3><p>How do spatial patterns of mobility (place visitation) mediate the relationship between neighborhood social economic status and depression prevalence across the counties of South Carolina?</p><p><b>Intent:</b> To investigate how the spatial patterns of place visitation influence the relationship between neighborhood socioeconomic status and depression prevalence across counties in South Carolina.</p>", "obj_1": "<h3>Objective 1</h3><p><b>Title:</b> Estimate the county-level association between socioeconomic status and depression prevalence across South Carolina</p><p><b>Hypothesis:</b> Counties with lower socioeconomic status (lower Med_income and percent_>=HighSch; higher percent_Poverty, percent_Unemployed, and percent_Uninsured) have higher Depression_prev.</p><p><b>Data Requirements:</b></p><ul><li><b>SC_ACS_data</b> (suitability: 9) \u2014 preprocessing: Validate GEOID as string in both tables; inner/left join on GEOID with post-join completeness checks.</li><li><b>SC_PLACES_depression</b> (suitability: 10) \u2014 preprocessing: Join on GEOID with validation that all counties are retained.</li><li><b>SC_counties</b> (suitability: 8) \u2014 preprocessing: Attribute join on GEOID after creating the merged analytical table.</li></ul>", "obj1_s1": "<h3>Step 1.1</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"580\" height=\"88\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#c7d3e7\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">SC_ACS_data</text>\n  <line x1=\"170\" y1=\"25.0\" x2=\"200\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"10\" y=\"48.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#c7d3e7\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"67.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">SC_PLACES_depression</text>\n  <line x1=\"170\" y1=\"63.0\" x2=\"200\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"200\" y=\"29.0\" width=\"180\" height=\"30\" rx=\"6\" fill=\"#809bc8\" stroke=\"#4C72B0\" stroke-width=\"2\"/>\n  <text x=\"290.0\" y=\"48.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">Validate join keys and r</text>\n  <line x1=\"380\" y1=\"44.0\" x2=\"410\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"410\" y=\"29.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"490.0\" y=\"48.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">acs_places_validated.c</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> Validate join keys and required fields</p><p><b>Type:</b> data_wrangling</p><p><b>Input:</b> SC_ACS_data, SC_PLACES_depression</p><p><b>Output Node:</b> acs_places_validated.csv</p><p><b>Description:</b> Coerce GEOID to string in SC_ACS_data and SC_PLACES_depression; retain only GEOID, Med_income, percent_Poverty, percent_Unemployed, percent_Uninsured, percent_>=HighSch, percent_Black, percent_Hispanic, percent_>=18, and Depression_prev; drop rows with missing GEOID and report counts of missing values in Depression_prev and each ACS field.</p>", "obj1_s2": "<h3>Step 1.2</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"546\" height=\"50\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#c7d3e7\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">acs_places_validated</text>\n  <line x1=\"170\" y1=\"25.0\" x2=\"200\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"200\" y=\"10.0\" width=\"146\" height=\"30\" rx=\"6\" fill=\"#809bc8\" stroke=\"#4C72B0\" stroke-width=\"2\"/>\n  <text x=\"273.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">Left join on GEOID</text>\n  <line x1=\"346\" y1=\"25.0\" x2=\"376\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"376\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"456.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">county_ses_depression.</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> Left join on GEOID</p><p><b>Type:</b> data_wrangling</p><p><b>Input:</b> acs_places_validated.csv</p><p><b>Output Node:</b> county_ses_depression.csv</p><p><b>Description:</b> Left-join Depression_prev from SC_PLACES_depression to SC_ACS_data on GEOID, keeping GEOID, Depression_prev, Med_income, percent_Poverty, percent_Unemployed, percent_Uninsured, percent_>=HighSch, percent_Black, percent_Hispanic, and percent_>=18.</p><p><b>Expected Output:</b> A county-level table keyed by GEOID containing Depression_prev and SES/covariate fields.</p>", "obj1_s3": "<h3>Step 1.3</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"580\" height=\"50\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#c7d3e7\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">county_ses_depressio</text>\n  <line x1=\"170\" y1=\"25.0\" x2=\"200\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"200\" y=\"10.0\" width=\"180\" height=\"30\" rx=\"6\" fill=\"#809bc8\" stroke=\"#4C72B0\" stroke-width=\"2\"/>\n  <text x=\"290.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">Create composite SES ind</text>\n  <line x1=\"380\" y1=\"25.0\" x2=\"410\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"410\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"490.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">county_ses_depression_</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> Create composite SES index via z-score standardization</p><p><b>Type:</b> data_wrangling</p><p><b>Input:</b> county_ses_depression.csv</p><p><b>Output Node:</b> county_ses_depression_with_index.csv</p><p><b>Description:</b> Compute SES_index as the mean of z-scored Med_income and percent_>=HighSch and the negated z-scores of percent_Poverty, percent_Unemployed, and percent_Uninsured; append SES_index to the table.</p><p><b>Expected Output:</b> A county table with SES_index (higher values indicate higher socioeconomic status).</p>", "obj1_s4": "<h3>Step 1.4</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"580\" height=\"50\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#c7d3e7\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">county_ses_depressio</text>\n  <line x1=\"170\" y1=\"25.0\" x2=\"200\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"200\" y=\"10.0\" width=\"180\" height=\"30\" rx=\"6\" fill=\"#809bc8\" stroke=\"#4C72B0\" stroke-width=\"2\"/>\n  <text x=\"290.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">Ordinary least squares (</text>\n  <line x1=\"380\" y1=\"25.0\" x2=\"410\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"410\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"490.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">ols_ses_to_depression_</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> Ordinary least squares (OLS) with heteroskedasticity-robust standard errors</p><p><b>Type:</b> statistical</p><p><b>Input:</b> county_ses_depression_with_index.csv</p><p><b>Output Node:</b> ols_ses_to_depression_results.csv</p><p><b>Description:</b> Fit OLS model Depression_prev ~ SES_index + percent_>=18 + percent_Black + percent_Hispanic and compute HC1 robust standard errors; save coefficient estimates, robust standard errors, t-statistics, p-values, R-squared, and residual diagnostics.</p><p><b>Expected Output:</b> A results table quantifying the county-level association between SES_index and Depression_prev with covariate adjustment.</p>", "obj1_s5": "<h3>Step 1.5</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"580\" height=\"88\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#c7d3e7\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">SC_counties</text>\n  <line x1=\"170\" y1=\"25.0\" x2=\"200\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"10\" y=\"48.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#c7d3e7\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"67.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">county_ses_depressio</text>\n  <line x1=\"170\" y1=\"63.0\" x2=\"200\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"200\" y=\"29.0\" width=\"180\" height=\"30\" rx=\"6\" fill=\"#809bc8\" stroke=\"#4C72B0\" stroke-width=\"2\"/>\n  <text x=\"290.0\" y=\"48.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">Attribute join (tabular-</text>\n  <line x1=\"380\" y1=\"44.0\" x2=\"410\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"410\" y=\"29.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"490.0\" y=\"48.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">counties_ses_depressio</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> Attribute join (tabular-to-geometry)</p><p><b>Type:</b> geoprocessing</p><p><b>Input:</b> SC_counties, county_ses_depression_with_index.csv</p><p><b>Output Node:</b> counties_ses_depression.gpkg</p><p><b>Description:</b> Join county_ses_depression_with_index.csv to SC_counties on GEOID to create a polygon layer with GEOID, Depression_prev, SES_index, Med_income, percent_Poverty, percent_Unemployed, percent_Uninsured, percent_>=HighSch, percent_Black, percent_Hispanic, and percent_>=18.</p><p><b>Expected Output:</b> A county polygon layer for choropleth mapping of Depression_prev and SES_index.</p>", "obj_2": "<h3>Objective 2</h3><p><b>Title:</b> Quantify how county place-visitation composition varies with socioeconomic status across South Carolina</p><p><b>Hypothesis:</b> Counties with lower Med_income and percent_>=HighSch and higher percent_Poverty, percent_Unemployed, and percent_Uninsured have systematically different visitation composition (category shares) and lower mobility_diversity (Shannon entropy) across POI categories.</p><p><b>Data Requirements:</b></p><ul><li><b>county_ses_depression_with_index.csv</b> (suitability: 9)</li><li><b>SC_Visitor_POI</b> (suitability: 8) \u2014 preprocessing: Left join on GEOID followed by derivation of total_visits and share_* variables; handle total_visits == 0.</li></ul>", "obj2_s1": "<h3>Step 2.1</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"546\" height=\"88\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#f8e6dc\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">county_ses_depressio</text>\n  <line x1=\"170\" y1=\"25.0\" x2=\"200\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"10\" y=\"48.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#f8e6dc\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"67.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">SC_Visitor_POI</text>\n  <line x1=\"170\" y1=\"63.0\" x2=\"200\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"200\" y=\"29.0\" width=\"146\" height=\"30\" rx=\"6\" fill=\"#e9b191\" stroke=\"#DD8452\" stroke-width=\"2\"/>\n  <text x=\"273.0\" y=\"48.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">Left join on GEOID</text>\n  <line x1=\"346\" y1=\"44.0\" x2=\"376\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"376\" y=\"29.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"456.0\" y=\"48.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">county_ses_depression_</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> Left join on GEOID</p><p><b>Type:</b> data_wrangling</p><p><b>Input:</b> county_ses_depression_with_index.csv, SC_Visitor_POI</p><p><b>Output Node:</b> county_ses_depression_visits.csv</p><p><b>Description:</b> Left-join SC_Visitor_POI to county_ses_depression_with_index.csv on GEOID, retaining GEOID, Depression_prev, Med_income, percent_Poverty, percent_Unemployed, percent_Uninsured, percent_>=HighSch, percent_>=18, percent_Black, percent_Hispanic, and visitation count columns Full_Service_Restaurant, Sport_facilities, Parks, Fastfood_Restaurant, Convenience, Supermarket, Warehouse, Fruit, TobaccoStore, and DrinkingPlaces.</p><p><b>Expected Output:</b> A county-level table combining socioeconomic/depression variables with POI visitation counts.</p>", "obj2_s2": "<h3>Step 2.2</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"580\" height=\"50\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#f8e6dc\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">county_ses_depressio</text>\n  <line x1=\"170\" y1=\"25.0\" x2=\"200\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"200\" y=\"10.0\" width=\"180\" height=\"30\" rx=\"6\" fill=\"#e9b191\" stroke=\"#DD8452\" stroke-width=\"2\"/>\n  <text x=\"290.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">Compute total_visits and</text>\n  <line x1=\"380\" y1=\"25.0\" x2=\"410\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"410\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"490.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">county_visitation_shar</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> Compute total_visits and share_* composition with zero-safe rules</p><p><b>Type:</b> data_wrangling</p><p><b>Input:</b> county_ses_depression_visits.csv</p><p><b>Output Node:</b> county_visitation_shares.csv</p><p><b>Description:</b> Compute total_visits as the row-wise sum of Full_Service_Restaurant + Sport_facilities + Parks + Fastfood_Restaurant + Convenience + Supermarket + Warehouse + Fruit + TobaccoStore + DrinkingPlaces; for counties where total_visits > 0 compute share_Full_Service_Restaurant, share_Sport_facilities, share_Parks, share_Fastfood_Restaurant, share_Convenience, share_Supermarket, share_Warehouse, share_Fruit, share_TobaccoStore, and share_DrinkingPlaces as category/total_visits; set all share_* to 0 where total_visits == 0.</p><p><b>Expected Output:</b> A county table with total_visits and normalized visitation composition (share_*) variables.</p>", "obj2_s3": "<h3>Step 2.3</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"580\" height=\"50\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#f8e6dc\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">county_visitation_sh</text>\n  <line x1=\"170\" y1=\"25.0\" x2=\"200\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"200\" y=\"10.0\" width=\"180\" height=\"30\" rx=\"6\" fill=\"#e9b191\" stroke=\"#DD8452\" stroke-width=\"2\"/>\n  <text x=\"290.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">Shannon entropy (mobilit</text>\n  <line x1=\"380\" y1=\"25.0\" x2=\"410\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"410\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"490.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">county_mobility_divers</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> Shannon entropy (mobility diversity)</p><p><b>Type:</b> statistical</p><p><b>Input:</b> county_visitation_shares.csv</p><p><b>Output Node:</b> county_mobility_diversity.csv</p><p><b>Description:</b> Compute mobility_diversity as Shannon entropy across the 10 share_* columns (share_Full_Service_Restaurant, share_Sport_facilities, share_Parks, share_Fastfood_Restaurant, share_Convenience, share_Supermarket, share_Warehouse, share_Fruit, share_TobaccoStore, share_DrinkingPlaces) using the convention 0 * log(0) = 0; append mobility_diversity.</p><p><b>Expected Output:</b> A county table with mobility_diversity summarizing evenness of visitation composition.</p>", "obj2_s4": "<h3>Step 2.4</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"580\" height=\"50\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#f8e6dc\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">county_mobility_dive</text>\n  <line x1=\"170\" y1=\"25.0\" x2=\"200\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"200\" y=\"10.0\" width=\"180\" height=\"30\" rx=\"6\" fill=\"#e9b191\" stroke=\"#DD8452\" stroke-width=\"2\"/>\n  <text x=\"290.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">Principal component anal</text>\n  <line x1=\"380\" y1=\"25.0\" x2=\"410\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"410\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"490.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">county_mobility_pca.cs</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> Principal component analysis (PCA) on visitation composition</p><p><b>Type:</b> statistical</p><p><b>Input:</b> county_mobility_diversity.csv</p><p><b>Output Node:</b> county_mobility_pca.csv</p><p><b>Description:</b> Standardize the 10 share_* variables to zero mean and unit variance and run PCA; append mobility_PC1 (first principal component score) and mobility_PC2 (second principal component score) to each county.</p><p><b>Expected Output:</b> A county table with mobility_PC1 and mobility_PC2 summarizing dominant gradients in visitation composition.</p>", "obj2_s5": "<h3>Step 2.5</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"580\" height=\"50\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#f8e6dc\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">county_mobility_pca.</text>\n  <line x1=\"170\" y1=\"25.0\" x2=\"200\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"200\" y=\"10.0\" width=\"180\" height=\"30\" rx=\"6\" fill=\"#e9b191\" stroke=\"#DD8452\" stroke-width=\"2\"/>\n  <text x=\"290.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">Ordinary least squares (</text>\n  <line x1=\"380\" y1=\"25.0\" x2=\"410\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"410\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"490.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">ols_ses_to_mobility_re</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> Ordinary least squares (OLS) with heteroskedasticity-robust standard errors</p><p><b>Type:</b> statistical</p><p><b>Input:</b> county_mobility_pca.csv</p><p><b>Output Node:</b> ols_ses_to_mobility_results.csv</p><p><b>Description:</b> Fit OLS models (with HC1 robust standard errors): mobility_PC1 ~ Med_income + percent_Poverty + percent_Unemployed + percent_Uninsured + percent_>=HighSch + percent_>=18 + percent_Black + percent_Hispanic and mobility_diversity ~ Med_income + percent_Poverty + percent_Unemployed + percent_Uninsured + percent_>=HighSch + percent_>=18 + percent_Black + percent_Hispanic; save coefficient estimates, robust standard errors, t-statistics, p-values, and R-squared for both models.</p><p><b>Expected Output:</b> Model results quantifying how Med_income, percent_Poverty, percent_Unemployed, percent_Uninsured, and percent_>=HighSch relate to mobility_PC1 and mobility_diversity.</p>", "obj_3": "<h3>Objective 3</h3><p><b>Title:</b> Test whether county mobility composition mediates the socioeconomic status\u2013depression association and evaluate spatial dependence</p><p><b>Hypothesis:</b> mobility_PC1 and/or mobility_diversity transmit indirect effects from Med_income, percent_Poverty, percent_Unemployed, percent_Uninsured, and/or percent_>=HighSch to Depression_prev, and accounting for spatial dependence changes inference on socioeconomic and mobility effects.</p><p><b>Data Requirements:</b></p><ul><li><b>county_mobility_pca.csv</b> (suitability: 9)</li><li><b>SC_counties</b> (suitability: 7) \u2014 preprocessing: Construct Queen contiguity weights from SC_counties and then subset/reorder the weights to match county_mobility_pca.csv GEOID ordering.</li></ul>", "obj3_s1": "<h3>Step 3.1</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"580\" height=\"50\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#cae4d0\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">county_mobility_pca.</text>\n  <line x1=\"170\" y1=\"25.0\" x2=\"200\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"200\" y=\"10.0\" width=\"180\" height=\"30\" rx=\"6\" fill=\"#87c294\" stroke=\"#55A868\" stroke-width=\"2\"/>\n  <text x=\"290.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">Linear mediator model (O</text>\n  <line x1=\"380\" y1=\"25.0\" x2=\"410\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"410\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"490.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">mediator_model_results</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> Linear mediator model (OLS) with heteroskedasticity-robust standard errors</p><p><b>Type:</b> statistical</p><p><b>Input:</b> county_mobility_pca.csv</p><p><b>Output Node:</b> mediator_model_results.csv</p><p><b>Description:</b> Fit the mediator model mobility_PC1 ~ Med_income + percent_Poverty + percent_Unemployed + percent_Uninsured + percent_>=HighSch + percent_>=18 + percent_Black + percent_Hispanic using OLS with HC1 robust standard errors; save coefficients and fitted values per GEOID.</p><p><b>Expected Output:</b> Mediator-model coefficients and fitted mobility_PC1 values per county.</p>", "obj3_s2": "<h3>Step 3.2</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"580\" height=\"50\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#cae4d0\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">county_mobility_pca.</text>\n  <line x1=\"170\" y1=\"25.0\" x2=\"200\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"200\" y=\"10.0\" width=\"180\" height=\"30\" rx=\"6\" fill=\"#87c294\" stroke=\"#55A868\" stroke-width=\"2\"/>\n  <text x=\"290.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">Linear outcome model (OL</text>\n  <line x1=\"380\" y1=\"25.0\" x2=\"410\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"410\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"490.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">outcome_model_results.</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> Linear outcome model (OLS) with heteroskedasticity-robust standard errors</p><p><b>Type:</b> statistical</p><p><b>Input:</b> county_mobility_pca.csv</p><p><b>Output Node:</b> outcome_model_results.csv</p><p><b>Description:</b> Fit the outcome model Depression_prev ~ Med_income + percent_Poverty + percent_Unemployed + percent_Uninsured + percent_>=HighSch + mobility_PC1 + percent_>=18 + percent_Black + percent_Hispanic using OLS with HC1 robust standard errors; save coefficients and residuals per GEOID.</p><p><b>Expected Output:</b> Outcome-model coefficients and county-level residuals for spatial diagnostics.</p>", "obj3_s3": "<h3>Step 3.3</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"580\" height=\"50\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#cae4d0\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">county_mobility_pca.</text>\n  <line x1=\"170\" y1=\"25.0\" x2=\"200\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"200\" y=\"10.0\" width=\"180\" height=\"30\" rx=\"6\" fill=\"#87c294\" stroke=\"#55A868\" stroke-width=\"2\"/>\n  <text x=\"290.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">Nonparametric bootstrap </text>\n  <line x1=\"380\" y1=\"25.0\" x2=\"410\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"410\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"490.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">mediation_effects_boot</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> Nonparametric bootstrap mediation (ACME/ADE/total effect)</p><p><b>Type:</b> statistical</p><p><b>Input:</b> county_mobility_pca.csv</p><p><b>Output Node:</b> mediation_effects_bootstrap.csv</p><p><b>Description:</b> Estimate mediation of each socioeconomic variable (Med_income, percent_Poverty, percent_Unemployed, percent_Uninsured, percent_>=HighSch) \u2192 Depression_prev through mobility_PC1 using nonparametric bootstrap resampling of counties: for each bootstrap sample, refit the mediator model mobility_PC1 ~ Med_income + percent_Poverty + percent_Unemployed + percent_Uninsured + percent_>=HighSch + percent_>=18 + percent_Black + percent_Hispanic and the outcome model Depression_prev ~ Med_income + percent_Poverty + percent_Unemployed + percent_Uninsured + percent_>=HighSch + mobility_PC1 + percent_>=18 + percent_Black + percent_Hispanic; compute ACME, ADE, and total effect for each socioeconomic variable (with the remaining socioeconomic variables included as covariates) with percentile bootstrap confidence intervals.</p><p><b>Expected Output:</b> Bootstrap mediation effects (ACME, ADE, total effect) with confidence intervals.</p>", "obj3_s4": "<h3>Step 3.4</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"517\" height=\"50\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"97\" height=\"30\" rx=\"6\" fill=\"#cae4d0\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"58.5\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">SC_counties</text>\n  <line x1=\"107\" y1=\"25.0\" x2=\"137\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"137\" y=\"10.0\" width=\"180\" height=\"30\" rx=\"6\" fill=\"#87c294\" stroke=\"#55A868\" stroke-width=\"2\"/>\n  <text x=\"227.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">Construct Queen contigui</text>\n  <line x1=\"317\" y1=\"25.0\" x2=\"347\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"347\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"427.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">sc_county_queen_weight</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> Construct Queen contiguity spatial weights</p><p><b>Type:</b> geoprocessing</p><p><b>Input:</b> SC_counties</p><p><b>Output Node:</b> sc_county_queen_weights.csv</p><p><b>Description:</b> Create a Queen contiguity adjacency/weights table from SC_counties polygons keyed by GEOID, storing each GEOID\u2013neighbor_GEOID pair and an associated weight (row-standardized).</p><p><b>Expected Output:</b> A Queen contiguity weights table keyed by GEOID for spatial autocorrelation tests and spatial regression.</p>", "obj3_s5": "<h3>Step 3.5</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"580\" height=\"88\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#cae4d0\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">sc_county_queen_weig</text>\n  <line x1=\"170\" y1=\"25.0\" x2=\"200\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"10\" y=\"48.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#cae4d0\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"67.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">outcome_model_result</text>\n  <line x1=\"170\" y1=\"63.0\" x2=\"200\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"200\" y=\"29.0\" width=\"180\" height=\"30\" rx=\"6\" fill=\"#87c294\" stroke=\"#55A868\" stroke-width=\"2\"/>\n  <text x=\"290.0\" y=\"48.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">Align spatial weights to</text>\n  <line x1=\"380\" y1=\"44.0\" x2=\"410\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"410\" y=\"29.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"490.0\" y=\"48.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">sc_county_queen_weight</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> Align spatial weights to the modeling GEOID index</p><p><b>Type:</b> data_wrangling</p><p><b>Input:</b> sc_county_queen_weights.csv, outcome_model_results.csv</p><p><b>Output Node:</b> sc_county_queen_weights_aligned.csv</p><p><b>Description:</b> Subset and reorder sc_county_queen_weights.csv to include only GEOIDs present in outcome_model_results.csv and to match the GEOID ordering used for the residual vector; output the aligned weights table.</p>", "obj3_s6": "<h3>Step 3.6</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"580\" height=\"88\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#cae4d0\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">outcome_model_result</text>\n  <line x1=\"170\" y1=\"25.0\" x2=\"200\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"10\" y=\"48.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#cae4d0\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"67.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">sc_county_queen_weig</text>\n  <line x1=\"170\" y1=\"63.0\" x2=\"200\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"200\" y=\"29.0\" width=\"180\" height=\"30\" rx=\"6\" fill=\"#87c294\" stroke=\"#55A868\" stroke-width=\"2\"/>\n  <text x=\"290.0\" y=\"48.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">Moran&#x27;s I on outcome-mod</text>\n  <line x1=\"380\" y1=\"44.0\" x2=\"410\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"410\" y=\"29.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"490.0\" y=\"48.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">morans_i_outcome_resid</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> Moran's I on outcome-model residuals</p><p><b>Type:</b> statistical</p><p><b>Input:</b> outcome_model_results.csv, sc_county_queen_weights_aligned.csv</p><p><b>Output Node:</b> morans_i_outcome_residuals.csv</p><p><b>Description:</b> Compute global Moran\u2019s I for the Depression_prev model residuals using the aligned Queen contiguity weights; report Moran\u2019s I, expectation, variance, z-score, and permutation p-value.</p><p><b>Expected Output:</b> A table containing Moran\u2019s I statistic and significance test for spatial autocorrelation in outcome-model residuals.</p>", "obj3_s7": "<h3>Step 3.7</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"580\" height=\"88\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#cae4d0\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">county_mobility_pca.</text>\n  <line x1=\"170\" y1=\"25.0\" x2=\"200\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"10\" y=\"48.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#cae4d0\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"67.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">sc_county_queen_weig</text>\n  <line x1=\"170\" y1=\"63.0\" x2=\"200\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"200\" y=\"29.0\" width=\"180\" height=\"30\" rx=\"6\" fill=\"#87c294\" stroke=\"#55A868\" stroke-width=\"2\"/>\n  <text x=\"290.0\" y=\"48.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">Spatial error model (SEM</text>\n  <line x1=\"380\" y1=\"44.0\" x2=\"410\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"410\" y=\"29.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"490.0\" y=\"48.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">spatial_error_model_re</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> Spatial error model (SEM)</p><p><b>Type:</b> statistical</p><p><b>Input:</b> county_mobility_pca.csv, sc_county_queen_weights_aligned.csv</p><p><b>Output Node:</b> spatial_error_model_results.csv</p><p><b>Description:</b> Fit a spatial error model for Depression_prev with predictors Med_income, percent_Poverty, percent_Unemployed, percent_Uninsured, percent_>=HighSch, mobility_PC1, percent_>=18, percent_Black, and percent_Hispanic using the aligned Queen contiguity weights; save regression coefficients, the spatial error parameter (lambda), standard errors, and model fit statistics.</p><p><b>Expected Output:</b> Spatial error model results to compare against OLS and assess sensitivity to spatial dependence.</p>", "obj3_s8": "<h3>Step 3.8</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"580\" height=\"88\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#cae4d0\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">county_mobility_pca.</text>\n  <line x1=\"170\" y1=\"25.0\" x2=\"200\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"10\" y=\"48.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#cae4d0\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"67.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">SC_counties</text>\n  <line x1=\"170\" y1=\"63.0\" x2=\"200\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"200\" y=\"29.0\" width=\"180\" height=\"30\" rx=\"6\" fill=\"#87c294\" stroke=\"#55A868\" stroke-width=\"2\"/>\n  <text x=\"290.0\" y=\"48.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">Geographically weighted </text>\n  <line x1=\"380\" y1=\"44.0\" x2=\"410\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"410\" y=\"29.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"490.0\" y=\"48.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">gwr_model_results.csv</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> Geographically weighted regression (GWR)</p><p><b>Type:</b> statistical</p><p><b>Input:</b> county_mobility_pca.csv, SC_counties</p><p><b>Output Node:</b> gwr_model_results.csv</p><p><b>Description:</b> Fit a geographically weighted regression (GWR) for Depression_prev with predictors Med_income, percent_Poverty, percent_Unemployed, percent_Uninsured, percent_>=HighSch, mobility_PC1, percent_>=18, percent_Black, and percent_Hispanic using county centroids derived from SC_counties (joined by GEOID); select bandwidth via cross-validation or AICc; save local coefficient estimates (including intercept) per GEOID, bandwidth choice, model fit diagnostics, and summaries of spatial variability in coefficients.</p><p><b>Expected Output:</b> GWR results characterizing spatial nonstationarity in socioeconomic and mobility associations with Depression_prev.</p>"};
+
+// ─── Zoom & Pan state ───
+let scale = 1;
+let panX = 0, panY = 0;
+let isPanning = false;
+let _wasDragged = false;
+let panStartX = 0, panStartY = 0;
+let _mdX = 0, _mdY = 0;
+const PAN_THRESHOLD = 4;
+const MIN_SCALE = 0.2;
+const MAX_SCALE = 5;
+const ZOOM_STEP = 0.15;
+const svg = document.getElementById('flowchartSvg');
+const zoomGroup = document.getElementById('zoomGroup');
+const graphPanel = document.getElementById('graphPanel');
+
+function applyTransform() {
+  zoomGroup.setAttribute('transform', `translate(${panX}, ${panY}) scale(${scale})`);
+  document.getElementById('zoomLevel').textContent = Math.round(scale * 100) + '%';
+}
+
+function zoomIn() {
+  scale = Math.min(MAX_SCALE, scale + ZOOM_STEP);
+  applyTransform();
+}
+
+function zoomOut() {
+  scale = Math.max(MIN_SCALE, scale - ZOOM_STEP);
+  applyTransform();
+}
+
+function zoomReset() {
+  scale = 1;
+  panX = 0;
+  panY = 0;
+  applyTransform();
+}
+
+function zoomFit() {
+  const bbox = zoomGroup.getBBox();
+  const vb = svg.viewBox.baseVal;
+  const pad = 30;
+  const scaleX = (vb.width - pad * 2) / bbox.width;
+  const scaleY = (vb.height - pad * 2) / bbox.height;
+  scale = Math.min(scaleX, scaleY, MAX_SCALE);
+  panX = (vb.width / scale - bbox.width) / 2 - bbox.x + pad / scale;
+  panY = (vb.height / scale - bbox.height) / 2 - bbox.y + pad / scale;
+  applyTransform();
+}
+
+// Mouse wheel zoom (centered on cursor)
+graphPanel.addEventListener('wheel', function(e) {
+  e.preventDefault();
+  const rect = svg.getBoundingClientRect();
+  const mouseX = e.clientX - rect.left;
+  const mouseY = e.clientY - rect.top;
+
+  const vb = svg.viewBox.baseVal;
+  const svgX = (mouseX / rect.width) * vb.width;
+  const svgY = (mouseY / rect.height) * vb.height;
+
+  const oldScale = scale;
+  if (e.deltaY < 0) {
+    scale = Math.min(MAX_SCALE, scale + ZOOM_STEP);
+  } else {
+    scale = Math.max(MIN_SCALE, scale - ZOOM_STEP);
+  }
+
+  // Adjust pan so zoom centers on cursor
+  panX = svgX / scale - svgX / oldScale + panX;
+  panY = svgY / scale - svgY / oldScale + panY;
+  applyTransform();
+}, { passive: false });
+
+// Pan with left-click drag (or middle mouse)
+graphPanel.addEventListener('mousedown', function(e) {
+  if (e.button === 0 || e.button === 1) {
+    e.preventDefault();
+    isPanning = true;
+    _wasDragged = false;
+    panStartX = e.clientX;
+    panStartY = e.clientY;
+    _mdX = e.clientX;
+    _mdY = e.clientY;
+    graphPanel.style.cursor = 'grabbing';
+  }
+});
+
+window.addEventListener('mousemove', function(e) {
+  if (!isPanning) return;
+  const dist = Math.abs(e.clientX - _mdX) + Math.abs(e.clientY - _mdY);
+  if (dist > PAN_THRESHOLD) _wasDragged = true;
+  const vb = svg.viewBox.baseVal;
+  const rect = svg.getBoundingClientRect();
+  const dx = (e.clientX - panStartX) * (vb.width / rect.width) / scale;
+  const dy = (e.clientY - panStartY) * (vb.height / rect.height) / scale;
+  panX += dx;
+  panY += dy;
+  panStartX = e.clientX;
+  panStartY = e.clientY;
+  applyTransform();
+});
+
+window.addEventListener('mouseup', function() {
+  if (isPanning) {
+    isPanning = false;
+    graphPanel.style.cursor = '';
+  }
+});
+
+// Suppress node clicks after a drag
+graphPanel.addEventListener('click', function(e) {
+  if (_wasDragged) {
+    e.stopPropagation();
+    _wasDragged = false;
+  }
+}, true);
+
+// ─── Node popup ───
+function showPopup(nodeId) {
+  const content = document.getElementById('popupContent');
+  const overlay = document.getElementById('popupOverlay');
+  if (details[nodeId]) {
+    content.innerHTML = details[nodeId];
+  } else {
+    content.innerHTML = '<p style="color:#999; font-style:italic;">No details available.</p>';
+  }
+  overlay.classList.add('visible');
+
+  // Highlight selected node
+  document.querySelectorAll('.node-box rect, .node-box polygon').forEach(el => {
+    el.setAttribute('stroke-width', '1.5');
+    el.setAttribute('stroke', '#333');
+  });
+  const clicked = event.currentTarget.querySelector('rect, polygon');
+  if (clicked) {
+    clicked.setAttribute('stroke-width', '3.5');
+    clicked.setAttribute('stroke', '#FFD700');
+  }
+}
+
+function closePopup(e) {
+  // If called from overlay click, only close if clicking the overlay itself
+  if (e && e.target !== document.getElementById('popupOverlay')) return;
+  document.getElementById('popupOverlay').classList.remove('visible');
+  // Reset highlights
+  document.querySelectorAll('.node-box rect, .node-box polygon').forEach(el => {
+    el.setAttribute('stroke-width', '1.5');
+    el.setAttribute('stroke', '#333');
+  });
+}
+
+// Close on Escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closePopup();
+});
+
+// Fit to view on initial load
+window.addEventListener('DOMContentLoaded', function() {
+  setTimeout(zoomFit, 100);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+[GEOID DROP SUMMARY]
+  ACS: dropped 0 rows with missing/blank GEOID (from 46 to 46)
+  Depression: dropped 0 rows with missing/blank GEOID (from 46 to 46)
+
+[MISSING VALUE COUNTS IN MERGED OUTPUT]
+  GEOID: 0 missing (0.00%)
+  Med_income: 0 missing (0.00%)
+  percent_Poverty: 0 missing (0.00%)
+  percent_Unemployed: 0 missing (0.00%)
+  percent_Uninsured: 0 missing (0.00%)
+  percent_>=HighSch: 0 missing (0.00%)
+  percent_Black: 0 missing (0.00%)
+  percent_Hispanic: 0 missing (0.00%)
+  percent_>=18: 0 missing (0.00%)
+  Depression_prev: 0 missing (0.00%)

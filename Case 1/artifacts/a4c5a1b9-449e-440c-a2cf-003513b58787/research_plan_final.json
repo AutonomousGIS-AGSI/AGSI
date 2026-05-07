@@ -1,0 +1,585 @@
+{
+  "title": "Spatial Inequalities in PM2.5 Exposure and Income Inequality in California Counties (2019)",
+  "research_question": "How do spatial inequalities in PM2.5 exposure across California counties vary with income inequality (Gini) in 2019, and does the spatial relationship vary by urban–rural classification?",
+  "research_intent": "To understand the relationship between spatial inequalities in PM2.5 exposure and income inequality across California counties and investigate how this relationship varies by urban-rural classification.",
+  "objectives": [
+    {
+      "number": 1,
+      "title": "Assess how PM2.5 exposure varies across California counties in 2019 and whether county-level PM2.5 is spatially clustered",
+      "hypothesis": "County-level annual PM2.5 exposure in 2019 is spatially clustered (positive global Moran’s I) rather than randomly distributed across California.",
+      "data_requirements": [
+        {
+          "source_id": "PM2.5_Annual_California_2019",
+          "description": "PM2.5 monitoring-site annual summaries to be aggregated to county-level PM2.5 exposure using `state_code`, `county_code`, `year`, `pollutant_standard`, and `arithmetic_mean`.",
+          "suitability_score": 7,
+          "scale_note": {
+            "data_scale": "monitoring site records; county identifiers present",
+            "question_scale": "county",
+            "mismatch": true,
+            "resolution": "aggregation"
+          },
+          "data_preprocessing": {
+            "required": true,
+            "rationale": "The PM2.5 data are at monitoring-site record level; the research question requires county-level 2019 exposure.",
+            "sources": [
+              "PM2.5_Annual_California_2019"
+            ],
+            "what_each_contributes": null,
+            "method": "Filter to `year == 2019` and `pollutant_standard == 'PM25 Annual 2006'`, derive county `GEOID` from `state_code` and `county_code`, then aggregate `arithmetic_mean` to county mean."
+          },
+          "data_gap": false
+        },
+        {
+          "source_id": "california_counties_2019",
+          "description": "California county boundaries and identifiers (`GEOID`, `NAME`, `geometry`) for mapping and contiguity weights.",
+          "suitability_score": 10,
+          "scale_note": {
+            "data_scale": "county polygons",
+            "question_scale": "county",
+            "mismatch": false,
+            "resolution": "none"
+          },
+          "data_preprocessing": {
+            "required": true,
+            "rationale": "County PM2.5 summaries must be joined to county geometry to compute contiguity weights and spatial autocorrelation.",
+            "sources": [
+              "PM2.5_Annual_California_2019",
+              "california_counties_2019"
+            ],
+            "what_each_contributes": {
+              "PM2.5_Annual_California_2019": "monitoring-site `arithmetic_mean` values to summarize into county exposure",
+              "california_counties_2019": "county `geometry` and canonical county identifier `GEOID`"
+            },
+            "method": "Left-join county PM2.5 summary to `california_counties_2019` on `GEOID`."
+          },
+          "data_gap": false
+        }
+      ],
+      "steps": [
+        {
+          "step_number": 1,
+          "operation_type": "data_wrangling",
+          "operation": "row_filter",
+          "input_nodes": [
+            "PM2.5_Annual_California_2019"
+          ],
+          "output_node": "pm25_2019_annual_records.csv",
+          "description": "Filter `PM2.5_Annual_California_2019` to rows where `year == 2019` and `pollutant_standard == 'PM25 Annual 2006'`, keeping only `state_code`, `county_code`, `site_number`, and `arithmetic_mean`.",
+          "expected_output": null,
+          "output_node_path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/pm25_2019_annual_records.csv",
+          "input_node_paths": {
+            "PM2.5_Annual_California_2019": "/bigdata/s0/tea5209/AGM/outputs/DataRetrieverOutput/PM2.5_Annual_California_2019.csv"
+          }
+        },
+        {
+          "step_number": 2,
+          "operation_type": "data_wrangling",
+          "operation": "derive_column",
+          "input_nodes": [
+            "pm25_2019_annual_records.csv"
+          ],
+          "output_node": "pm25_2019_with_geoid.csv",
+          "description": "Create county `GEOID` as a 5-character string by concatenating zero-padded `state_code` (2 digits) and zero-padded `county_code` (3 digits).",
+          "expected_output": null,
+          "output_node_path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/pm25_2019_with_geoid.csv",
+          "input_node_paths": {
+            "pm25_2019_annual_records.csv": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/pm25_2019_annual_records.csv"
+          }
+        },
+        {
+          "step_number": 3,
+          "operation_type": "aggregation",
+          "operation": "groupby_aggregate_mean_and_count",
+          "input_nodes": [
+            "pm25_2019_with_geoid.csv"
+          ],
+          "output_node": "pm25_county_2019.csv",
+          "description": "Group by `GEOID` and compute `pm25_mean_2019 = mean(arithmetic_mean)` and `pm25_site_count_2019 = count(site_number)`.",
+          "expected_output": "A county-level PM2.5 table with `GEOID`, `pm25_mean_2019`, and `pm25_site_count_2019`.",
+          "output_node_path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/pm25_county_2019.csv",
+          "input_node_paths": {
+            "pm25_2019_with_geoid.csv": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/pm25_2019_with_geoid.csv"
+          }
+        },
+        {
+          "step_number": 4,
+          "operation_type": "geoprocessing",
+          "operation": "attribute_join",
+          "input_nodes": [
+            "california_counties_2019",
+            "pm25_county_2019.csv"
+          ],
+          "output_node": "counties_pm25_2019.gpkg",
+          "description": "Left-join `pm25_county_2019.csv` to `california_counties_2019` on `GEOID` to attach `pm25_mean_2019` and `pm25_site_count_2019` to county polygons.",
+          "expected_output": "County polygons with `pm25_mean_2019` and `pm25_site_count_2019` attached.",
+          "output_node_path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_2019.gpkg",
+          "input_node_paths": {
+            "california_counties_2019": "/bigdata/s0/tea5209/AGM/outputs/DataRetrieverOutput/california_counties_2019.gpkg",
+            "pm25_county_2019.csv": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/pm25_county_2019.csv"
+          }
+        },
+        {
+          "step_number": 5,
+          "operation_type": "data_wrangling",
+          "operation": "derive_column",
+          "input_nodes": [
+            "counties_pm25_2019.gpkg"
+          ],
+          "output_node": "counties_pm25_2019_qc.gpkg",
+          "description": "Create `pm25_missing_2019` as a boolean indicator where `pm25_mean_2019` is null to identify counties with no monitor-derived PM2.5 summary in 2019.",
+          "expected_output": null,
+          "output_node_path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_2019_qc.gpkg",
+          "input_node_paths": {
+            "counties_pm25_2019.gpkg": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_2019.gpkg"
+          }
+        },
+        {
+          "step_number": 6,
+          "operation_type": "geoprocessing",
+          "operation": "spatial_weights_queen_contiguity",
+          "input_nodes": [
+            "counties_pm25_2019_qc.gpkg"
+          ],
+          "output_node": "ca_county_queen_weights_2019.gpkg",
+          "description": "Construct Queen contiguity spatial weights from county `geometry`, keyed by `GEOID`.",
+          "expected_output": null,
+          "output_node_path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/ca_county_queen_weights_2019.gpkg",
+          "input_node_paths": {
+            "counties_pm25_2019_qc.gpkg": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_2019_qc.gpkg"
+          }
+        },
+        {
+          "step_number": 7,
+          "operation_type": "statistical",
+          "operation": "global_morans_I",
+          "input_nodes": [
+            "counties_pm25_2019_qc.gpkg",
+            "ca_county_queen_weights_2019.gpkg"
+          ],
+          "output_node": "pm25_global_moransI_2019.csv",
+          "description": "Compute global Moran’s I for `pm25_mean_2019` using the Queen contiguity weights.",
+          "expected_output": "A table with Moran’s I, expected I, variance, z-score, and p-value for `pm25_mean_2019` in 2019.",
+          "output_node_path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/pm25_global_moransI_2019.csv",
+          "input_node_paths": {
+            "counties_pm25_2019_qc.gpkg": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_2019_qc.gpkg",
+            "ca_county_queen_weights_2019.gpkg": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/ca_county_queen_weights_2019.gpkg"
+          }
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "title": "Estimate the county-level association between PM2.5 exposure and income inequality (Gini) in 2019 and test whether residual spatial autocorrelation remains",
+      "hypothesis": "Higher county income inequality (`B19083_001E:Gini Index`) is associated with higher county mean PM2.5 (`pm25_mean_2019`) in 2019, and OLS residuals exhibit spatial autocorrelation indicating the need for a spatial regression specification.",
+      "data_requirements": [
+        {
+          "source_id": "California_Counties_Gini_2019",
+          "description": "County-level income inequality for 2019 using `state_fips`, `county_fips`, `year`, and `B19083_001E:Gini Index`.",
+          "suitability_score": 10,
+          "scale_note": {
+            "data_scale": "county",
+            "question_scale": "county",
+            "mismatch": false,
+            "resolution": "none"
+          },
+          "data_preprocessing": {
+            "required": true,
+            "rationale": "Gini must be filtered to 2019 and joined to the county PM2.5 layer by county `GEOID`.",
+            "sources": [
+              "California_Counties_Gini_2019",
+              "counties_pm25_2019_qc.gpkg"
+            ],
+            "what_each_contributes": {
+              "California_Counties_Gini_2019": "county income inequality via `B19083_001E:Gini Index`",
+              "counties_pm25_2019_qc.gpkg": "county `pm25_mean_2019` and geometry keyed by `GEOID`"
+            },
+            "method": "Filter Gini to `year == 2019`, derive `GEOID` from `state_fips` and `county_fips`, then left-join to the county PM2.5 layer on `GEOID`."
+          },
+          "data_gap": false
+        },
+        {
+          "source_id": "counties_pm25_2019_qc.gpkg",
+          "description": "Derived county PM2.5 layer from Objective 1, used as a fixed input for Objective 2.",
+          "suitability_score": 10,
+          "scale_note": {
+            "data_scale": "county",
+            "question_scale": "county",
+            "mismatch": false,
+            "resolution": "none"
+          },
+          "data_preprocessing": {
+            "required": false,
+            "rationale": "This is an upstream derived product.",
+            "sources": [
+              "counties_pm25_2019_qc.gpkg"
+            ],
+            "what_each_contributes": null,
+            "method": null
+          },
+          "data_gap": false
+        },
+        {
+          "source_id": "ca_county_queen_weights_2019.gpkg",
+          "description": "Derived Queen contiguity weights from Objective 1, keyed by `GEOID`.",
+          "suitability_score": 10,
+          "scale_note": {
+            "data_scale": "county neighbor graph",
+            "question_scale": "county",
+            "mismatch": false,
+            "resolution": "none"
+          },
+          "data_preprocessing": {
+            "required": false,
+            "rationale": "This is an upstream derived product.",
+            "sources": [
+              "ca_county_queen_weights_2019.gpkg"
+            ],
+            "what_each_contributes": null,
+            "method": null
+          },
+          "data_gap": false
+        },
+        {
+          "source_id": "ca_county_knn_weights_2019.gpkg",
+          "description": "Derived K-nearest-neighbors (KNN) spatial weights (k=5) for California counties in 2019, keyed by `GEOID`.",
+          "suitability_score": 10,
+          "scale_note": {
+            "data_scale": "county neighbor graph",
+            "question_scale": "county",
+            "mismatch": false,
+            "resolution": "none"
+          },
+          "data_preprocessing": {
+            "required": false,
+            "rationale": "This is a within-objective derived product to support the SEM specification using KNN weights.",
+            "sources": [
+              "counties_pm25_gini_2019.gpkg"
+            ],
+            "what_each_contributes": null,
+            "method": null
+          },
+          "data_gap": false
+        }
+      ],
+      "steps": [
+        {
+          "step_number": 1,
+          "operation_type": "data_wrangling",
+          "operation": "row_filter",
+          "input_nodes": [
+            "California_Counties_Gini_2019"
+          ],
+          "output_node": "gini_2019_filtered.csv",
+          "description": "Filter `California_Counties_Gini_2019` to rows where `year == 2019`, keeping only `state_fips`, `county_fips`, and `B19083_001E:Gini Index`.",
+          "expected_output": null,
+          "output_node_path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/gini_2019_filtered.csv",
+          "input_node_paths": {
+            "California_Counties_Gini_2019": "/bigdata/s0/tea5209/AGM/outputs/DataRetrieverOutput/California_Counties_Gini_2019.csv"
+          }
+        },
+        {
+          "step_number": 2,
+          "operation_type": "data_wrangling",
+          "operation": "derive_column",
+          "input_nodes": [
+            "gini_2019_filtered.csv"
+          ],
+          "output_node": "gini_2019_with_geoid.csv",
+          "description": "Create county `GEOID` as a 5-character string by concatenating zero-padded `state_fips` (2 digits) and zero-padded `county_fips` (3 digits), and retain `GEOID` and `B19083_001E:Gini Index`.",
+          "expected_output": null,
+          "output_node_path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/gini_2019_with_geoid.csv",
+          "input_node_paths": {
+            "gini_2019_filtered.csv": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/gini_2019_filtered.csv"
+          }
+        },
+        {
+          "step_number": 3,
+          "operation_type": "geoprocessing",
+          "operation": "attribute_join",
+          "input_nodes": [
+            "counties_pm25_2019_qc.gpkg",
+            "gini_2019_with_geoid.csv"
+          ],
+          "output_node": "counties_pm25_gini_2019.gpkg",
+          "description": "Left-join `gini_2019_with_geoid.csv` to `counties_pm25_2019_qc.gpkg` on `GEOID` to attach `B19083_001E:Gini Index` to each county.",
+          "expected_output": "County polygons with `pm25_mean_2019` and `B19083_001E:Gini Index` for 2019.",
+          "output_node_path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_2019.gpkg",
+          "input_node_paths": {
+            "counties_pm25_2019_qc.gpkg": null,
+            "gini_2019_with_geoid.csv": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/gini_2019_with_geoid.csv"
+          }
+        },
+        {
+          "step_number": 4,
+          "operation_type": "statistical",
+          "operation": "ordinary_least_squares_append_residuals",
+          "input_nodes": [
+            "counties_pm25_gini_2019.gpkg"
+          ],
+          "output_node": "counties_pm25_gini_2019_olsresid.gpkg",
+          "description": "Fit an OLS model with dependent variable `pm25_mean_2019` and predictor `B19083_001E:Gini Index`, and append model outputs to features as `ols_fitted_pm25` and `ols_residual_pm25` keyed by `GEOID`.",
+          "expected_output": "County layer with OLS fitted values (`ols_fitted_pm25`) and residuals (`ols_residual_pm25`) for `pm25_mean_2019`.",
+          "output_node_path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_2019_olsresid.gpkg",
+          "input_node_paths": {
+            "counties_pm25_gini_2019.gpkg": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_2019.gpkg"
+          }
+        },
+        {
+          "step_number": 5,
+          "operation_type": "statistical",
+          "operation": "global_morans_I",
+          "input_nodes": [
+            "counties_pm25_gini_2019_olsresid.gpkg",
+            "ca_county_queen_weights_2019.gpkg"
+          ],
+          "output_node": "ols_residuals_moransI_2019.csv",
+          "description": "Compute global Moran’s I for `ols_residual_pm25` using the Queen contiguity weights keyed by `GEOID`.",
+          "expected_output": "A table with Moran’s I, z-score, and p-value for spatial autocorrelation in OLS residuals.",
+          "output_node_path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/ols_residuals_moransI_2019.csv",
+          "input_node_paths": {
+            "counties_pm25_gini_2019_olsresid.gpkg": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_2019_olsresid.gpkg",
+            "ca_county_queen_weights_2019.gpkg": null
+          }
+        },
+        {
+          "step_number": 6,
+          "operation_type": "statistical",
+          "operation": "spatial_lag_model_maximum_likelihood",
+          "input_nodes": [
+            "counties_pm25_gini_2019.gpkg",
+            "ca_county_queen_weights_2019.gpkg"
+          ],
+          "output_node": "spatial_lag_pm25_on_gini_2019.csv",
+          "description": "Fit a maximum-likelihood spatial lag (SAR) model with dependent variable `pm25_mean_2019` and predictor `B19083_001E:Gini Index` using the Queen contiguity weights keyed by `GEOID`.",
+          "expected_output": "A table of spatial lag model estimates including the `B19083_001E:Gini Index` coefficient, the spatial autoregressive parameter, standard errors, and fit statistics.",
+          "output_node_path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/spatial_lag_pm25_on_gini_2019.csv",
+          "input_node_paths": {
+            "counties_pm25_gini_2019.gpkg": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_2019.gpkg",
+            "ca_county_queen_weights_2019.gpkg": null
+          }
+        },
+        {
+          "step_number": 7,
+          "operation_type": "geoprocessing",
+          "operation": "spatial_weights_knn",
+          "input_nodes": [
+            "counties_pm25_gini_2019.gpkg"
+          ],
+          "output_node": "ca_county_knn_weights_2019.gpkg",
+          "description": "Construct K-nearest-neighbors (KNN) spatial weights with k=5 from county `geometry` centroids, keyed by `GEOID`.",
+          "expected_output": null,
+          "output_node_path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/ca_county_knn_weights_2019.gpkg",
+          "input_node_paths": {
+            "counties_pm25_gini_2019.gpkg": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_2019.gpkg"
+          }
+        },
+        {
+          "step_number": 8,
+          "operation_type": "statistical",
+          "operation": "spatial_error_model_maximum_likelihood",
+          "input_nodes": [
+            "counties_pm25_gini_2019.gpkg",
+            "ca_county_knn_weights_2019.gpkg"
+          ],
+          "output_node": "spatial_error_pm25_on_gini_2019.csv",
+          "description": "Fit a maximum-likelihood spatial error (SEM) model with dependent variable `pm25_mean_2019` and predictor `B19083_001E:Gini Index` using KNN weights (k=5) keyed by `GEOID`.",
+          "expected_output": "A table of spatial error model estimates including the `B19083_001E:Gini Index` coefficient, the spatial error parameter, standard errors, and fit statistics.",
+          "output_node_path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/spatial_error_pm25_on_gini_2019.csv",
+          "input_node_paths": {
+            "counties_pm25_gini_2019.gpkg": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_2019.gpkg",
+            "ca_county_knn_weights_2019.gpkg": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/ca_county_knn_weights_2019.gpkg"
+          }
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "title": "Test whether the 2019 PM2.5–income inequality association differs by metro status at the county level",
+      "hypothesis": "The association between `B19083_001E:Gini Index` and `pm25_mean_2019` differs by `Metro2013` status (effect modification).",
+      "data_requirements": [
+        {
+          "source_id": "California_UrbanRural_Classification_2019",
+          "description": "County metro classification using `FIPSTXT` and `Metro2013` (with supporting fields `Nonmetro2013` and `RuralUrbanContinuumCode2013`).",
+          "suitability_score": 8,
+          "scale_note": {
+            "data_scale": "county; metro codes are labeled as 2013-based",
+            "question_scale": "county, 2019",
+            "mismatch": true,
+            "resolution": "limitation"
+          },
+          "data_preprocessing": {
+            "required": true,
+            "rationale": "Metro classification must be joined to the county PM2.5+Gini layer using a county identifier; the classification is labeled 2013-based and should be treated as time-invariant for 2019 with this limitation documented.",
+            "sources": [
+              "California_UrbanRural_Classification_2019",
+              "counties_pm25_gini_2019.gpkg"
+            ],
+            "what_each_contributes": {
+              "California_UrbanRural_Classification_2019": "metro/nonmetro classification via `FIPSTXT` and `Metro2013`",
+              "counties_pm25_gini_2019.gpkg": "county `pm25_mean_2019` and `B19083_001E:Gini Index` keyed by `GEOID`"
+            },
+            "method": "Format `FIPSTXT` as 5-character county `GEOID` and left-join to the county PM2.5+Gini layer on `GEOID`."
+          },
+          "data_gap": false
+        },
+        {
+          "source_id": "counties_pm25_gini_2019.gpkg",
+          "description": "Derived county PM2.5 + Gini layer from Objective 2, used as a fixed input for Objective 3.",
+          "suitability_score": 10,
+          "scale_note": {
+            "data_scale": "county",
+            "question_scale": "county",
+            "mismatch": false,
+            "resolution": "none"
+          },
+          "data_preprocessing": {
+            "required": false,
+            "rationale": "This is an upstream derived product.",
+            "sources": [
+              "counties_pm25_gini_2019.gpkg"
+            ],
+            "what_each_contributes": null,
+            "method": null
+          },
+          "data_gap": false
+        },
+        {
+          "source_id": "ca_county_queen_weights_2019.gpkg",
+          "description": "Derived Queen contiguity weights from Objective 1, keyed by `GEOID`.",
+          "suitability_score": 10,
+          "scale_note": {
+            "data_scale": "county neighbor graph",
+            "question_scale": "county",
+            "mismatch": false,
+            "resolution": "none"
+          },
+          "data_preprocessing": {
+            "required": false,
+            "rationale": "This is an upstream derived product.",
+            "sources": [
+              "ca_county_queen_weights_2019.gpkg"
+            ],
+            "what_each_contributes": null,
+            "method": null
+          },
+          "data_gap": false
+        }
+      ],
+      "steps": [
+        {
+          "step_number": 1,
+          "operation_type": "data_wrangling",
+          "operation": "derive_column",
+          "input_nodes": [
+            "California_UrbanRural_Classification_2019"
+          ],
+          "output_node": "urban_rural_with_geoid.csv",
+          "description": "Create county `GEOID` as a 5-character string from `FIPSTXT` using zero-padding, and keep `GEOID`, `Metro2013`, `Nonmetro2013`, and `RuralUrbanContinuumCode2013`.",
+          "expected_output": null,
+          "output_node_path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/urban_rural_with_geoid.csv",
+          "input_node_paths": {
+            "California_UrbanRural_Classification_2019": "/bigdata/s0/tea5209/AGM/outputs/DataRetrieverOutput/California_UrbanRural_Classification_2019.csv"
+          }
+        },
+        {
+          "step_number": 2,
+          "operation_type": "geoprocessing",
+          "operation": "attribute_join",
+          "input_nodes": [
+            "counties_pm25_gini_2019.gpkg",
+            "urban_rural_with_geoid.csv"
+          ],
+          "output_node": "counties_pm25_gini_urbanrural_2019.gpkg",
+          "description": "Left-join `urban_rural_with_geoid.csv` to `counties_pm25_gini_2019.gpkg` on `GEOID` to attach `Metro2013` to each county.",
+          "expected_output": "County polygons with `pm25_mean_2019`, `B19083_001E:Gini Index`, and `Metro2013`.",
+          "output_node_path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_urbanrural_2019.gpkg",
+          "input_node_paths": {
+            "counties_pm25_gini_2019.gpkg": null,
+            "urban_rural_with_geoid.csv": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/urban_rural_with_geoid.csv"
+          }
+        },
+        {
+          "step_number": 3,
+          "operation_type": "data_wrangling",
+          "operation": "derive_column",
+          "input_nodes": [
+            "counties_pm25_gini_urbanrural_2019.gpkg"
+          ],
+          "output_node": "counties_pm25_gini_urbanrural_interaction_2019.gpkg",
+          "description": "Create interaction term `gini_x_metro = (B19083_001E:Gini Index) * Metro2013`.",
+          "expected_output": null,
+          "output_node_path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_urbanrural_interaction_2019.gpkg",
+          "input_node_paths": {
+            "counties_pm25_gini_urbanrural_2019.gpkg": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_urbanrural_2019.gpkg"
+          }
+        },
+        {
+          "step_number": 4,
+          "operation_type": "statistical",
+          "operation": "ordinary_least_squares_with_interaction",
+          "input_nodes": [
+            "counties_pm25_gini_urbanrural_interaction_2019.gpkg"
+          ],
+          "output_node": "ols_pm25_gini_metro_interaction_2019.csv",
+          "description": "Fit an OLS model with dependent variable `pm25_mean_2019` and predictors `B19083_001E:Gini Index`, `Metro2013`, and `gini_x_metro`, and report coefficient estimates, standard errors, and p-values.",
+          "expected_output": "A coefficient table where the `gini_x_metro` term tests whether the `B19083_001E:Gini Index` slope differs by `Metro2013`.",
+          "output_node_path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/ols_pm25_gini_metro_interaction_2019.csv",
+          "input_node_paths": {
+            "counties_pm25_gini_urbanrural_interaction_2019.gpkg": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_urbanrural_interaction_2019.gpkg"
+          }
+        },
+        {
+          "step_number": 5,
+          "operation_type": "statistical",
+          "operation": "spatial_lag_model_maximum_likelihood_with_interaction",
+          "input_nodes": [
+            "counties_pm25_gini_urbanrural_interaction_2019.gpkg",
+            "ca_county_queen_weights_2019.gpkg"
+          ],
+          "output_node": "spatial_lag_pm25_gini_metro_interaction_2019.csv",
+          "description": "Fit a maximum-likelihood spatial lag (SAR) model with dependent variable `pm25_mean_2019` and predictors `B19083_001E:Gini Index`, `Metro2013`, and `gini_x_metro` using Queen contiguity weights keyed by `GEOID`.",
+          "expected_output": "A spatial lag model coefficient table where `gini_x_metro` quantifies metro effect modification under spatial dependence.",
+          "output_node_path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/spatial_lag_pm25_gini_metro_interaction_2019.csv",
+          "input_node_paths": {
+            "counties_pm25_gini_urbanrural_interaction_2019.gpkg": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_urbanrural_interaction_2019.gpkg",
+            "ca_county_queen_weights_2019.gpkg": null
+          }
+        },
+        {
+          "step_number": 6,
+          "operation_type": "statistical",
+          "operation": "groupwise_spearman_rank_correlation",
+          "input_nodes": [
+            "counties_pm25_gini_urbanrural_2019.gpkg"
+          ],
+          "output_node": "pm25_gini_spearman_by_metro_2019.csv",
+          "description": "Compute Spearman rank correlation between `pm25_mean_2019` and `B19083_001E:Gini Index` separately for counties where `Metro2013 == 1` and where `Metro2013 == 0`, reporting correlation and group sample size.",
+          "expected_output": "A two-row table of metro vs nonmetro Spearman correlations with sample sizes.",
+          "output_node_path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/pm25_gini_spearman_by_metro_2019.csv",
+          "input_node_paths": {
+            "counties_pm25_gini_urbanrural_2019.gpkg": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_urbanrural_2019.gpkg"
+          }
+        }
+      ]
+    }
+  ],
+  "review_summary": {
+    "issues_found": [
+      "Cross-objective step connectivity was broken because Objectives 2 and 3 referenced outputs from Objective 1 (e.g., `counties_pm25_2019.gpkg`, `ca_county_queen_weights_2019.gpkg`) without those being resolvable as source_id inputs within those objectives.",
+      "Objective 2 attempted Moran’s I on OLS residuals without an explicit step that produces residuals keyed by `GEOID` for alignment with spatial weights.",
+      "Objective 1 county aggregation did not retain monitoring-site sample size per county, limiting interpretability and QA of county means (counties with few/zero monitors).",
+      "Objective 3 used groupwise Pearson correlation, which is sensitive to non-normality and outliers in small group sizes; a rank-based correlation is more robust for this setting.",
+      "Several intermediate-step expected_output fields were overly verbose for purely intermediate tables."
+    ],
+    "changes_made": [
+      "Added derived-input data_requirements in Objectives 2 and 3 so that outputs from earlier objectives can be referenced as source_id values and pass step connectivity checks.",
+      "Revised Objective 2 to explicitly fit OLS while appending residuals back to county features (keyed by `GEOID`) before computing Moran’s I on residuals.",
+      "Enhanced Objective 1 county aggregation to compute both `pm25_mean_2019` and `pm25_site_count_2019`, and added a step to flag counties with missing PM2.5 due to no monitors.",
+      "Replaced Objective 3 groupwise Pearson correlation with groupwise Spearman rank correlation.",
+      "Tightened step descriptions to reference verified column names exactly and set expected_output to null for purely intermediate artifacts.",
+      "Added a maximum-likelihood spatial error (SEM) model in Objective 2 to complement the spatial lag specification."
+    ]
+  },
+  "timestamp": "2026-04-21 21:26:18",
+  "time_taken_seconds": 19
+}

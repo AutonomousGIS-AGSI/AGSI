@@ -1,0 +1,410 @@
+{
+  "review_summary": {
+    "issues_found": [
+      "Cross-objective dependency not declared as a data source: Objective 2 references county_ses_depression_with_index.csv but does not list it as a data_requirement, causing broken step connectivity.",
+      "Objective 3 has data_preprocessing.required=true for SC_counties with sources [SC_counties, county_mobility_pca.csv], but no explicit step aligns/links the derived weights to the modeling table by GEOID (tool flagged preprocessing unresolved).",
+      "Missing explicit preprocessing/validation steps before modeling (e.g., GEOID type/format checks, missingness handling, and zero-total visitation handling) even though preprocessing is required by data_requirements.",
+      "Some analytical steps lacked specificity about robust inference / constraints for proportions (Depression_prev) and compositional inputs (visitation shares)."
+    ],
+    "changes_made": [
+      "Added county_ses_depression_with_index.csv as an explicit data_requirement in Objective 2 so step connectivity resolves.",
+      "Inserted explicit preprocessing steps: GEOID harmonization + completeness checks (Objective 1) and safe handling of zero/NA visitation totals (Objective 2).",
+      "Added an explicit step in Objective 3 to align Queen contiguity weights to the modeling/residual GEOID order, resolving preprocessing requirements for spatial diagnostics.",
+      "Refined step descriptions to reference exact column names verified in the registry and to specify robust standard errors for OLS models; kept objectives at 4–7 steps each."
+    ]
+  },
+  "objectives": [
+    {
+      "number": 1,
+      "title": "Estimate the county-level association between socioeconomic status and depression prevalence across South Carolina",
+      "hypothesis": "Counties with lower socioeconomic status (lower Med_income and percent_>=HighSch; higher percent_Poverty, percent_Unemployed, and percent_Uninsured) have higher Depression_prev.",
+      "data_requirements": [
+        {
+          "source_id": "SC_ACS_data",
+          "description": "County socioeconomic and demographic indicators: Med_income, percent_Poverty, percent_Unemployed, percent_Uninsured, percent_>=HighSch, percent_Black, percent_Hispanic, percent_>=18, keyed by GEOID.",
+          "suitability_score": 9,
+          "scale_note": {
+            "data_scale": "county",
+            "question_scale": "county",
+            "mismatch": false,
+            "resolution": "none"
+          },
+          "data_preprocessing": {
+            "required": true,
+            "rationale": "Depression_prev is stored in a separate table; combining by GEOID and validating join completeness is required before modeling.",
+            "sources": [
+              "SC_ACS_data",
+              "SC_PLACES_depression"
+            ],
+            "what_each_contributes": {
+              "SC_ACS_data": "Predictors: Med_income, percent_Poverty, percent_Unemployed, percent_Uninsured, percent_>=HighSch; covariates: percent_Black, percent_Hispanic, percent_>=18",
+              "SC_PLACES_depression": "Outcome: Depression_prev"
+            },
+            "method": "Validate GEOID as string in both tables; inner/left join on GEOID with post-join completeness checks."
+          },
+          "data_gap": false
+        },
+        {
+          "source_id": "SC_PLACES_depression",
+          "description": "County depression prevalence (Depression_prev) keyed by GEOID.",
+          "suitability_score": 10,
+          "scale_note": {
+            "data_scale": "county",
+            "question_scale": "county",
+            "mismatch": false,
+            "resolution": "none"
+          },
+          "data_preprocessing": {
+            "required": true,
+            "rationale": "Must be merged with SC_ACS_data by GEOID to quantify SES–depression relationships.",
+            "sources": [
+              "SC_ACS_data",
+              "SC_PLACES_depression"
+            ],
+            "what_each_contributes": {
+              "SC_ACS_data": "SES predictors and covariates",
+              "SC_PLACES_depression": "Depression_prev"
+            },
+            "method": "Join on GEOID with validation that all counties are retained."
+          },
+          "data_gap": false
+        },
+        {
+          "source_id": "SC_counties",
+          "description": "County boundaries (geometry) keyed by GEOID for mapping outputs.",
+          "suitability_score": 8,
+          "scale_note": {
+            "data_scale": "county polygons",
+            "question_scale": "county",
+            "mismatch": false,
+            "resolution": "none"
+          },
+          "data_preprocessing": {
+            "required": true,
+            "rationale": "County geometry must be joined by GEOID to visualize Depression_prev and SES_index as choropleths.",
+            "sources": [
+              "SC_counties",
+              "SC_ACS_data",
+              "SC_PLACES_depression"
+            ],
+            "what_each_contributes": {
+              "SC_counties": "County polygon geometry keyed by GEOID",
+              "SC_ACS_data": "SES predictors and covariates",
+              "SC_PLACES_depression": "Depression_prev"
+            },
+            "method": "Attribute join on GEOID after creating the merged analytical table."
+          },
+          "data_gap": false
+        }
+      ],
+      "steps": [
+        {
+          "step_number": 1,
+          "operation_type": "data_wrangling",
+          "operation": "Validate join keys and required fields",
+          "input_nodes": [
+            "SC_ACS_data",
+            "SC_PLACES_depression"
+          ],
+          "output_node": "acs_places_validated.csv",
+          "description": "Coerce GEOID to string in SC_ACS_data and SC_PLACES_depression; retain only GEOID, Med_income, percent_Poverty, percent_Unemployed, percent_Uninsured, percent_>=HighSch, percent_Black, percent_Hispanic, percent_>=18, and Depression_prev; drop rows with missing GEOID and report counts of missing values in Depression_prev and each ACS field.",
+          "expected_output": null
+        },
+        {
+          "step_number": 2,
+          "operation_type": "data_wrangling",
+          "operation": "Left join on GEOID",
+          "input_nodes": [
+            "acs_places_validated.csv"
+          ],
+          "output_node": "county_ses_depression.csv",
+          "description": "Left-join Depression_prev from SC_PLACES_depression to SC_ACS_data on GEOID, keeping GEOID, Depression_prev, Med_income, percent_Poverty, percent_Unemployed, percent_Uninsured, percent_>=HighSch, percent_Black, percent_Hispanic, and percent_>=18.",
+          "expected_output": "A county-level table keyed by GEOID containing Depression_prev and SES/covariate fields."
+        },
+        {
+          "step_number": 3,
+          "operation_type": "data_wrangling",
+          "operation": "Create composite SES index via z-score standardization",
+          "input_nodes": [
+            "county_ses_depression.csv"
+          ],
+          "output_node": "county_ses_depression_with_index.csv",
+          "description": "Compute SES_index as the mean of z-scored Med_income and percent_>=HighSch and the negated z-scores of percent_Poverty, percent_Unemployed, and percent_Uninsured; append SES_index to the table.",
+          "expected_output": "A county table with SES_index (higher values indicate higher socioeconomic status)."
+        },
+        {
+          "step_number": 4,
+          "operation_type": "statistical",
+          "operation": "Ordinary least squares (OLS) with heteroskedasticity-robust standard errors",
+          "input_nodes": [
+            "county_ses_depression_with_index.csv"
+          ],
+          "output_node": "ols_ses_to_depression_results.csv",
+          "description": "Fit OLS model Depression_prev ~ SES_index + percent_>=18 + percent_Black + percent_Hispanic and compute HC1 robust standard errors; save coefficient estimates, robust standard errors, t-statistics, p-values, R-squared, and residual diagnostics.",
+          "expected_output": "A results table quantifying the county-level association between SES_index and Depression_prev with covariate adjustment."
+        },
+        {
+          "step_number": 5,
+          "operation_type": "geoprocessing",
+          "operation": "Attribute join (tabular-to-geometry)",
+          "input_nodes": [
+            "SC_counties",
+            "county_ses_depression_with_index.csv"
+          ],
+          "output_node": "counties_ses_depression.gpkg",
+          "description": "Join county_ses_depression_with_index.csv to SC_counties on GEOID to create a polygon layer with GEOID, Depression_prev, SES_index, Med_income, percent_Poverty, percent_Unemployed, percent_Uninsured, percent_>=HighSch, percent_Black, percent_Hispanic, and percent_>=18.",
+          "expected_output": "A county polygon layer for choropleth mapping of Depression_prev and SES_index."
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "title": "Quantify how county place-visitation composition varies with socioeconomic status across South Carolina",
+      "hypothesis": "Lower-SES counties have systematically different visitation composition (category shares) and lower mobility_diversity (Shannon entropy) across POI categories.",
+      "data_requirements": [
+        {
+          "source_id": "county_ses_depression_with_index.csv",
+          "description": "County analytical table produced in Objective 1 containing GEOID, Depression_prev, SES_index, percent_>=18, percent_Black, and percent_Hispanic.",
+          "suitability_score": 9,
+          "scale_note": {
+            "data_scale": "county",
+            "question_scale": "county",
+            "mismatch": false,
+            "resolution": "none"
+          },
+          "data_preprocessing": {
+            "required": false,
+            "rationale": "This dataset is an output from Objective 1 and is ready for joining to visitation counts by GEOID.",
+            "sources": [
+              "county_ses_depression_with_index.csv"
+            ],
+            "what_each_contributes": null,
+            "method": null
+          },
+          "data_gap": false
+        },
+        {
+          "source_id": "SC_Visitor_POI",
+          "description": "County-level visitation counts by POI category keyed by GEOID: Full_Service_Restaurant, Sport_facilities, Parks, Fastfood_Restaurant, Convenience, Supermarket, Warehouse, Fruit, TobaccoStore, DrinkingPlaces.",
+          "suitability_score": 8,
+          "scale_note": {
+            "data_scale": "county",
+            "question_scale": "county",
+            "mismatch": false,
+            "resolution": "none"
+          },
+          "data_preprocessing": {
+            "required": true,
+            "rationale": "Visitation variables must be joined to SES_index by GEOID and transformed to shares (composition) before entropy/PCA and association tests.",
+            "sources": [
+              "SC_Visitor_POI",
+              "county_ses_depression_with_index.csv"
+            ],
+            "what_each_contributes": {
+              "SC_Visitor_POI": "Visitation counts by category",
+              "county_ses_depression_with_index.csv": "SES_index, Depression_prev, and covariates"
+            },
+            "method": "Left join on GEOID followed by derivation of total_visits and share_* variables; handle total_visits == 0."
+          },
+          "data_gap": false
+        }
+      ],
+      "steps": [
+        {
+          "step_number": 1,
+          "operation_type": "data_wrangling",
+          "operation": "Left join on GEOID",
+          "input_nodes": [
+            "county_ses_depression_with_index.csv",
+            "SC_Visitor_POI"
+          ],
+          "output_node": "county_ses_depression_visits.csv",
+          "description": "Left-join SC_Visitor_POI to county_ses_depression_with_index.csv on GEOID, retaining GEOID, Depression_prev, SES_index, percent_>=18, percent_Black, percent_Hispanic, and visitation count columns Full_Service_Restaurant, Sport_facilities, Parks, Fastfood_Restaurant, Convenience, Supermarket, Warehouse, Fruit, TobaccoStore, and DrinkingPlaces.",
+          "expected_output": "A county-level table combining SES/depression variables with POI visitation counts."
+        },
+        {
+          "step_number": 2,
+          "operation_type": "data_wrangling",
+          "operation": "Compute total_visits and share_* composition with zero-safe rules",
+          "input_nodes": [
+            "county_ses_depression_visits.csv"
+          ],
+          "output_node": "county_visitation_shares.csv",
+          "description": "Compute total_visits as the row-wise sum of Full_Service_Restaurant + Sport_facilities + Parks + Fastfood_Restaurant + Convenience + Supermarket + Warehouse + Fruit + TobaccoStore + DrinkingPlaces; for counties where total_visits > 0 compute share_Full_Service_Restaurant, share_Sport_facilities, share_Parks, share_Fastfood_Restaurant, share_Convenience, share_Supermarket, share_Warehouse, share_Fruit, share_TobaccoStore, and share_DrinkingPlaces as category/total_visits; set all share_* to 0 where total_visits == 0.",
+          "expected_output": "A county table with total_visits and normalized visitation composition (share_*) variables."
+        },
+        {
+          "step_number": 3,
+          "operation_type": "statistical",
+          "operation": "Shannon entropy (mobility diversity)",
+          "input_nodes": [
+            "county_visitation_shares.csv"
+          ],
+          "output_node": "county_mobility_diversity.csv",
+          "description": "Compute mobility_diversity as Shannon entropy across the 10 share_* columns (share_Full_Service_Restaurant, share_Sport_facilities, share_Parks, share_Fastfood_Restaurant, share_Convenience, share_Supermarket, share_Warehouse, share_Fruit, share_TobaccoStore, share_DrinkingPlaces) using the convention 0 * log(0) = 0; append mobility_diversity.",
+          "expected_output": "A county table with mobility_diversity summarizing evenness of visitation composition."
+        },
+        {
+          "step_number": 4,
+          "operation_type": "statistical",
+          "operation": "Principal component analysis (PCA) on visitation composition",
+          "input_nodes": [
+            "county_mobility_diversity.csv"
+          ],
+          "output_node": "county_mobility_pca.csv",
+          "description": "Standardize the 10 share_* variables to zero mean and unit variance and run PCA; append mobility_PC1 (first principal component score) and mobility_PC2 (second principal component score) to each county.",
+          "expected_output": "A county table with mobility_PC1 and mobility_PC2 summarizing dominant gradients in visitation composition."
+        },
+        {
+          "step_number": 5,
+          "operation_type": "statistical",
+          "operation": "Ordinary least squares (OLS) with heteroskedasticity-robust standard errors",
+          "input_nodes": [
+            "county_mobility_pca.csv"
+          ],
+          "output_node": "ols_ses_to_mobility_results.csv",
+          "description": "Fit OLS models (with HC1 robust standard errors): mobility_PC1 ~ SES_index + percent_>=18 + percent_Black + percent_Hispanic and mobility_diversity ~ SES_index + percent_>=18 + percent_Black + percent_Hispanic; save coefficient estimates, robust standard errors, t-statistics, p-values, and R-squared for both models.",
+          "expected_output": "Model results quantifying how SES_index relates to mobility_PC1 and mobility_diversity."
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "title": "Test whether county mobility composition mediates the socioeconomic status–depression association and evaluate spatial dependence",
+      "hypothesis": "mobility_PC1 and/or mobility_diversity transmit an indirect effect from SES_index to Depression_prev, and accounting for spatial dependence changes inference on SES and mobility effects.",
+      "data_requirements": [
+        {
+          "source_id": "county_mobility_pca.csv",
+          "description": "County analytical dataset from Objective 2 containing GEOID, Depression_prev, SES_index, percent_>=18, percent_Black, percent_Hispanic, mobility_PC1, mobility_PC2, and mobility_diversity.",
+          "suitability_score": 9,
+          "scale_note": {
+            "data_scale": "county",
+            "question_scale": "county",
+            "mismatch": false,
+            "resolution": "none"
+          },
+          "data_preprocessing": {
+            "required": false,
+            "rationale": "Objective 3 uses the already-merged and feature-engineered county table produced in Objective 2.",
+            "sources": [
+              "county_mobility_pca.csv"
+            ],
+            "what_each_contributes": null,
+            "method": null
+          },
+          "data_gap": false
+        },
+        {
+          "source_id": "SC_counties",
+          "description": "County polygons keyed by GEOID for contiguity-based spatial weights used in Moran’s I and spatial regression.",
+          "suitability_score": 7,
+          "scale_note": {
+            "data_scale": "county polygons",
+            "question_scale": "county",
+            "mismatch": false,
+            "resolution": "none"
+          },
+          "data_preprocessing": {
+            "required": true,
+            "rationale": "Spatial diagnostics require contiguity weights derived from county geometry and aligned to the GEOID order in the modeling/residuals table.",
+            "sources": [
+              "SC_counties",
+              "county_mobility_pca.csv"
+            ],
+            "what_each_contributes": {
+              "SC_counties": "Geometry for Queen contiguity neighbors",
+              "county_mobility_pca.csv": "GEOID index and regression residuals for spatial diagnostics"
+            },
+            "method": "Construct Queen contiguity weights from SC_counties and then subset/reorder the weights to match county_mobility_pca.csv GEOID ordering."
+          },
+          "data_gap": false
+        }
+      ],
+      "steps": [
+        {
+          "step_number": 1,
+          "operation_type": "statistical",
+          "operation": "Linear mediator model (OLS) with heteroskedasticity-robust standard errors",
+          "input_nodes": [
+            "county_mobility_pca.csv"
+          ],
+          "output_node": "mediator_model_results.csv",
+          "description": "Fit the mediator model mobility_PC1 ~ SES_index + percent_>=18 + percent_Black + percent_Hispanic using OLS with HC1 robust standard errors; save coefficients and fitted values per GEOID.",
+          "expected_output": "Mediator-model coefficients and fitted mobility_PC1 values per county."
+        },
+        {
+          "step_number": 2,
+          "operation_type": "statistical",
+          "operation": "Linear outcome model (OLS) with heteroskedasticity-robust standard errors",
+          "input_nodes": [
+            "county_mobility_pca.csv"
+          ],
+          "output_node": "outcome_model_results.csv",
+          "description": "Fit the outcome model Depression_prev ~ SES_index + mobility_PC1 + percent_>=18 + percent_Black + percent_Hispanic using OLS with HC1 robust standard errors; save coefficients and residuals per GEOID.",
+          "expected_output": "Outcome-model coefficients and county-level residuals for spatial diagnostics."
+        },
+        {
+          "step_number": 3,
+          "operation_type": "statistical",
+          "operation": "Nonparametric bootstrap mediation (ACME/ADE/total effect)",
+          "input_nodes": [
+            "county_mobility_pca.csv"
+          ],
+          "output_node": "mediation_effects_bootstrap.csv",
+          "description": "Estimate mediation of SES_index → Depression_prev through mobility_PC1 using nonparametric bootstrap resampling of counties: refit the mediator model mobility_PC1 ~ SES_index + percent_>=18 + percent_Black + percent_Hispanic and the outcome model Depression_prev ~ SES_index + mobility_PC1 + percent_>=18 + percent_Black + percent_Hispanic for each bootstrap sample; compute ACME, ADE, and total effect with percentile bootstrap confidence intervals.",
+          "expected_output": "Bootstrap mediation effects (ACME, ADE, total effect) with confidence intervals."
+        },
+        {
+          "step_number": 4,
+          "operation_type": "geoprocessing",
+          "operation": "Construct Queen contiguity spatial weights",
+          "input_nodes": [
+            "SC_counties"
+          ],
+          "output_node": "sc_county_queen_weights.csv",
+          "description": "Create a Queen contiguity adjacency/weights table from SC_counties polygons keyed by GEOID, storing each GEOID–neighbor_GEOID pair and an associated weight (row-standardized).",
+          "expected_output": "A Queen contiguity weights table keyed by GEOID for spatial autocorrelation tests and spatial regression."
+        },
+        {
+          "step_number": 5,
+          "operation_type": "data_wrangling",
+          "operation": "Align spatial weights to the modeling GEOID index",
+          "input_nodes": [
+            "sc_county_queen_weights.csv",
+            "outcome_model_results.csv"
+          ],
+          "output_node": "sc_county_queen_weights_aligned.csv",
+          "description": "Subset and reorder sc_county_queen_weights.csv to include only GEOIDs present in outcome_model_results.csv and to match the GEOID ordering used for the residual vector; output the aligned weights table.",
+          "expected_output": null
+        },
+        {
+          "step_number": 6,
+          "operation_type": "statistical",
+          "operation": "Moran's I on outcome-model residuals",
+          "input_nodes": [
+            "outcome_model_results.csv",
+            "sc_county_queen_weights_aligned.csv"
+          ],
+          "output_node": "morans_i_outcome_residuals.csv",
+          "description": "Compute global Moran’s I for the Depression_prev model residuals using the aligned Queen contiguity weights; report Moran’s I, expectation, variance, z-score, and permutation p-value.",
+          "expected_output": "A table containing Moran’s I statistic and significance test for spatial autocorrelation in outcome-model residuals."
+        },
+        {
+          "step_number": 7,
+          "operation_type": "statistical",
+          "operation": "Spatial error model (SEM)",
+          "input_nodes": [
+            "county_mobility_pca.csv",
+            "sc_county_queen_weights_aligned.csv"
+          ],
+          "output_node": "spatial_error_model_results.csv",
+          "description": "Fit a spatial error model for Depression_prev with predictors SES_index, mobility_PC1, percent_>=18, percent_Black, and percent_Hispanic using the aligned Queen contiguity weights; save regression coefficients, the spatial error parameter (lambda), standard errors, and model fit statistics.",
+          "expected_output": "Spatial error model results to compare against OLS and assess sensitivity to spatial dependence."
+        }
+      ]
+    }
+  ],
+  "timestamp": "2026-04-22 00:24:32",
+  "time_taken_seconds": 80.74,
+  "time_taken_formatted": "1m 20s"
+}

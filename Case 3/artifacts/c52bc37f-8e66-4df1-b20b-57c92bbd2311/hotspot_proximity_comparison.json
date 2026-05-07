@@ -1,0 +1,32 @@
+{
+  "hotspot_definition": {
+    "GiP": "< 0.05",
+    "GiZ": "> 0"
+  },
+  "overall_counts": {
+    "n_total_valid_geom": 2169,
+    "n_total_with_GiP_GiZ": 2169,
+    "n_hotspot": 337,
+    "n_nonhotspot": 1832
+  },
+  "tests": {
+    "nearest_hw_dist_m": {
+      "n_hotspot": 337,
+      "n_nonhotspot": 1832,
+      "median_hotspot": 1552.328989947779,
+      "median_nonhotspot": 2277.289371444118,
+      "u_statistic": 269627.0,
+      "p_value": 0.00021804616731691171,
+      "alternative": "two-sided"
+    },
+    "hw_count_5km": {
+      "n_hotspot": 337,
+      "n_nonhotspot": 1832,
+      "median_hotspot": 7.0,
+      "median_nonhotspot": 4.0,
+      "u_statistic": 352349.5,
+      "p_value": 3.0099260988670163e-05,
+      "alternative": "two-sided"
+    }
+  }
+}
