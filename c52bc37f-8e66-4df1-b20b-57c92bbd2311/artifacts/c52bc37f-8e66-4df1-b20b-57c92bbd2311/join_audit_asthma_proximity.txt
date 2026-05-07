@@ -1,4 +1,0 @@
-[JOIN AUDIT] Left-join tract_proximity_metrics to NC_PLACES on GEOID
-  output rows: 2169
-  matched (non-null 'nearest_hw_dist_m'): 2169/2169 (100.0%)
-  unmatched: 0

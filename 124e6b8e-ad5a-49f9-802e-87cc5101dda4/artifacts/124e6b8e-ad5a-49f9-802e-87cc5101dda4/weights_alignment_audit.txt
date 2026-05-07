@@ -1,6 +1,0 @@
-[ALIGNMENT AUDIT] inferred GEOID width: 14
-  outcome GEOIDs (unique, ordered): 46
-  original weights edges: 226
-  aligned weights edges (both endpoints kept): 226
-  outcome GEOIDs missing as origin in weights: 0
-  outcome GEOIDs with zero retained neighbors: 0

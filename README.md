@@ -53,23 +53,9 @@ install from <https://www.python.org/downloads/> — tick *"Add to PATH"*).
 3. Open your browser to <http://localhost:8000>.
 4. When done, press <kbd>Ctrl</kbd>+<kbd>C</kbd> in the terminal to stop.
 
-### Option 2 — Firefox with a config tweak  *(no Python needed)*
 
-This relaxes a security setting; turn it back on when you finish.
 
-1. Open Firefox → type `about:config` in the address bar → press <kbd>Enter</kbd>.
-2. Click *"Accept the Risk and Continue"*.
-3. Search for: `privacy.file_unique_origin`
-4. Toggle it from `true` to **`false`**.
-5. Restart Firefox.
-6. *File → Open File…* → pick the snapshot folder's `index.html`.
-
-When finished, set `privacy.file_unique_origin` back to `true`.
-
-> **Heads-up:** with this off, any local HTML file you open can read sibling
-> files in its directory tree. Flip it back when you're done viewing.
-
-### Option 3 — VS Code "Live Server" extension
+### Option 2 — VS Code "Live Server" extension
 
 If you already use VS Code:
 

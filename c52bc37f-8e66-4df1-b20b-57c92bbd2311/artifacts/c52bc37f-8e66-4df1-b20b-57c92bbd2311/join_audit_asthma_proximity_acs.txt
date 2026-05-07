@@ -1,4 +1,0 @@
-[JOIN AUDIT] asthma_proximity (left) + NC_ACS_data (right) on GEOID
-  left rows: 2169
-  matched rows (non-null 'ratio_poverty' after join): 2169/2169 (100.0%)
-  unmatched left rows (null 'ratio_poverty'): 0

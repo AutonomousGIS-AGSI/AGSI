@@ -14,6 +14,9 @@
     function rewrite(rawPath) {
         var p = stripQ(pathOf(rawPath));
 
+        if (p === '/api/conversations' && window.__OFFLINE_CONVERSATIONS__) return { stub: window.__OFFLINE_CONVERSATIONS__ };
+        if (p === '/api/conversations/' + CONV && window.__OFFLINE_CONVERSATION__) return { stub: window.__OFFLINE_CONVERSATION__ };
+        if (p === '/api/workflow/steps/' + TASK && window.__OFFLINE_WORKFLOW_STEPS__) return { stub: window.__OFFLINE_WORKFLOW_STEPS__ };
         if (p === '/api/conversations') return { file: 'data/conversations.json' };
         if (p === '/api/conversations/' + CONV) return { file: 'data/conversation.json' };
         if (p === '/api/workflow/steps/' + TASK) return { file: 'data/workflow_steps.json' };

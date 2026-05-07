@@ -1,8 +1,0 @@
-[JOIN AUDIT] Left join pm25_county_2019 to california_counties_2019 on GEOID
-  left rows (counties): 58
-  matched (non-null pm25_mean_2019): 44/58 (75.9%)
-  unmatched (null pm25_mean_2019): 14
-  WARNING: match rate below 90% — inspect GEOID formatting/coverage.
-    left GEOID sample: ['06001', '06061', '06037', '06095', '06093']
-    right GEOID sample: ['06001', '06009', '06011', '06013', '06019']
-    example unmatched left GEOIDs: ['06115', '06007', '06003', '06105', '06043', '06113', '06005', '06015', '06017', '06091']

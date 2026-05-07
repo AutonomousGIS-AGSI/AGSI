@@ -1,2 +1,0 @@
-n,y,predictors,kernel,fixed,spherical,bandwidth,bandwidth_criterion,aicc,aic,bic,R2,adj_R2,sigma2,scale
-46,Depression_prev,"Med_income, percent_Poverty, percent_Unemployed, percent_Uninsured, percent_>=HighSch, mobility_PC1, percent_>=18, percent_Black, percent_Hispanic",bisquare,False,False,43,AICc,115.59633120160221,81.64938521296159,118.35883236059959,0.8556773619043523,0.7494909831784846,0.24656527538785133,0.24656527538785133

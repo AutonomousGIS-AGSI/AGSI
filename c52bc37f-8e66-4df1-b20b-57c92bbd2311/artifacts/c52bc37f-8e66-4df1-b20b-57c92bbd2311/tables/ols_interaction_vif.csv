@@ -1,9 +1,0 @@
-variable,vif
-ln_nearest_hw_dist_m,1.2046808468615269
-z_ratio_poverty,58.942623944217424
-z_ratio_uninsured,2.1648712473133322
-z_med_income,2.110208876226943
-z_ratio_black,65.75256217186107
-z_ratio_hispanic,1.5977669488137607
-ln_nearest_hw_dist_m_x_z_ratio_poverty,58.615872511779514
-ln_nearest_hw_dist_m_x_z_ratio_black,63.98382778874596

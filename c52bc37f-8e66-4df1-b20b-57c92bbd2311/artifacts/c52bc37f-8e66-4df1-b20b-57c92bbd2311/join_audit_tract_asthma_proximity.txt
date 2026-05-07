@@ -1,4 +1,0 @@
-[JOIN AUDIT] Tract polygons enriched with asthma/proximity attributes
-  left rows (tracts): 2192
-  matched rows (non-null Asthma_prev): 2169/2192 (99.0%)
-  unmatched rows: 23
