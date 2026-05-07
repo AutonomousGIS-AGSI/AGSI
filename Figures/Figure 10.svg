@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -60 5225 1110" font-family="Segoe UI, Arial, sans-serif">
+  <text x="2612.5" y="-25" text-anchor="middle" font-size="24" font-weight="bold" fill="#2C3E50">Understanding the Mediation Role of Mobility Patterns in the Relationship between Socioeconomic Status and Depression in South Carolina Counties</text>
+  <!-- Legend -->
+  <g transform="translate(20,-50)">
+    <rect x="0" y="0" width="900" height="40" rx="6" fill="#fff" stroke="#bbb"/>
+    <ellipse cx="25" cy="20" rx="14" ry="9" fill="#6BA3D6" stroke="#2F74B5"/>
+    <text x="48" y="24" font-size="14" fill="#333">Input data</text>
+    <rect x="160" y="11" width="28" height="18" rx="3" fill="#F5D576" stroke="#C4A030"/>
+    <text x="195" y="24" font-size="14" fill="#333">Operation / tool</text>
+    <ellipse cx="345" cy="20" rx="14" ry="9" fill="#6BB56A" stroke="#3D8B3D"/>
+    <text x="368" y="24" font-size="14" fill="#333">Output data</text>
+    <line x1="500" y1="20" x2="540" y2="20" stroke="#3D8B3D" stroke-width="2" stroke-dasharray="6,3"/>
+    <text x="548" y="24" font-size="14" fill="#333">Reused (within objective)</text>
+    <line x1="740" y1="20" x2="780" y2="20" stroke="#E67E22" stroke-width="2" stroke-dasharray="8,4"/>
+    <text x="788" y="24" font-size="14" fill="#333">Reused (cross objective)</text>
+  </g>
+    <defs>
+      <marker id="mb_arrow" markerWidth="14" markerHeight="12" refX="13" refY="6" orient="auto" markerUnits="userSpaceOnUse">
+        <polygon points="0 0,14 6,0 12" fill="#555"/>
+      </marker>
+      <marker id="mb_arrow_green" markerWidth="14" markerHeight="12" refX="13" refY="6" orient="auto" markerUnits="userSpaceOnUse">
+        <polygon points="0 0,14 6,0 12" fill="#3D8B3D"/>
+      </marker>
+      <marker id="mb_arrow_orange" markerWidth="14" markerHeight="12" refX="13" refY="6" orient="auto" markerUnits="userSpaceOnUse">
+        <polygon points="0 0,14 6,0 12" fill="#E67E22"/>
+      </marker>
+    </defs>
+    <g id="zoomGroup">
+    <rect x="0" y="55" width="5225" height="344" fill="#edf2f9" rx="6"/>
+    <g>
+      <rect x="220.0" y="206.0" width="120" height="42" rx="6" fill="#34495E" stroke="#2C3E50" stroke-width="2"/>
+      <text x="280.0" y="231.0" text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white">Obj 1</text>
+    </g>
+    <rect x="0" y="439" width="5225" height="188" fill="#fdf5e8" rx="6"/>
+    <g>
+      <rect x="220.0" y="512.0" width="120" height="42" rx="6" fill="#34495E" stroke="#2C3E50" stroke-width="2"/>
+      <text x="280.0" y="537.0" text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white">Obj 2</text>
+    </g>
+    <rect x="0" y="667" width="5225" height="308" fill="#edf9ed" rx="6"/>
+    <g>
+      <rect x="220.0" y="800.0" width="120" height="42" rx="6" fill="#34495E" stroke="#2C3E50" stroke-width="2"/>
+      <text x="280.0" y="825.0" text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white">Obj 3</text>
+    </g>
+    <g>
+      <rect x="10.0" y="496.0" width="130" height="56" rx="8" fill="#2C3E50" stroke="#1A252F" stroke-width="2"/>
+      <text x="75.0" y="528.0" text-anchor="middle" font-size="15" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white">Research Question</text>
+    </g>
+    <path d="M140.0,524.0 C180.0,524.0 180.0,227.0 220.0,227.0" fill="none" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <path d="M140.0,524.0 C180.0,524.0 180.0,533.0 220.0,533.0" fill="none" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <path d="M140.0,524.0 C180.0,524.0 180.0,821.0 220.0,821.0" fill="none" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <path d="M340.0,227.0 C360.0,227.0 360.0,188.0 380,188.0" fill="none" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <path d="M340.0,227.0 C360.0,227.0 360.0,266.0 380,266.0" fill="none" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="340.0" y1="533.0" x2="380" y2="533.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="340.0" y1="821.0" x2="380.0" y2="821.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <path d="M550,188.0 C580.0,188.0 580.0,227.0 610.0,227.0" fill="none" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <path d="M550,266.0 C580.0,266.0 580.0,227.0 610.0,227.0" fill="none" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="790.0" y1="227.0" x2="850.0" y2="227.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="1020.0" y1="227.0" x2="1080.0" y2="227.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="1260.0" y1="227.0" x2="1320.0" y2="227.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="1490.0" y1="227.0" x2="1550.0" y2="227.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="1730.0" y1="227.0" x2="1790.0" y2="227.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="1960.0" y1="227.0" x2="2020.0" y2="227.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="2200.0" y1="227.0" x2="2260.0" y2="227.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="2660.0" y1="227.0" x2="2720.0" y2="227.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="2430.0" y1="227.0" x2="2720.0" y2="227.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <path d="M1875.0,195.0 Q2342.5,-38.75 2810.0,196.0" fill="none" stroke="#3D8B3D" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#mb_arrow_green)"/>
+    <line x1="2900.0" y1="227.0" x2="2960.0" y2="227.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="550" y1="533.0" x2="610.0" y2="533.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="790.0" y1="533.0" x2="850.0" y2="533.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="1020.0" y1="533.0" x2="1080.0" y2="533.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="1260.0" y1="533.0" x2="1320.0" y2="533.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="1490.0" y1="533.0" x2="1550.0" y2="533.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="1730.0" y1="533.0" x2="1790.0" y2="533.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="1960.0" y1="533.0" x2="2020.0" y2="533.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="2200.0" y1="533.0" x2="2260.0" y2="533.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="2430.0" y1="533.0" x2="2490.0" y2="533.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="2670.0" y1="533.0" x2="2730.0" y2="533.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="560.0" y1="821.0" x2="620.0" y2="821.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="790.0" y1="821.0" x2="850.0" y2="821.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="1030.0" y1="821.0" x2="1090.0" y2="821.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="1260.0" y1="821.0" x2="1320.0" y2="821.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="1500.0" y1="821.0" x2="1560.0" y2="821.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="1730.0" y1="821.0" x2="1790.0" y2="821.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="1970.0" y1="821.0" x2="2030.0" y2="821.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="2200.0" y1="821.0" x2="2260.0" y2="821.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <path d="M1175.0,789.0 Q1762.5,495.25 2350.0,790.0" fill="none" stroke="#3D8B3D" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#mb_arrow_green)"/>
+    <line x1="2440.0" y1="821.0" x2="2500.0" y2="821.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="2670.0" y1="821.0" x2="2730.0" y2="821.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <path d="M1175.0,789.0 Q1997.5,377.75 2820.0,790.0" fill="none" stroke="#3D8B3D" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#mb_arrow_green)"/>
+    <line x1="2910.0" y1="821.0" x2="2970.0" y2="821.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="3140.0" y1="821.0" x2="3200.0" y2="821.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <path d="M2585.0,789.0 Q2937.5,612.75 3290.0,790.0" fill="none" stroke="#3D8B3D" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#mb_arrow_green)"/>
+    <line x1="3380.0" y1="821.0" x2="3440.0" y2="821.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="3610.0" y1="821.0" x2="3670.0" y2="821.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="3850.0" y1="821.0" x2="3910.0" y2="821.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <g>
+      <ellipse cx="465" cy="188.0" rx="85" ry="32" fill="#6BA3D6" stroke="#2F74B5" stroke-width="1.5"/>
+      <text x="465" y="192.0" text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white">SC_ACS_data</text>
+    </g>
+    <g>
+      <ellipse cx="465" cy="266.0" rx="85" ry="32" fill="#6BA3D6" stroke="#2F74B5" stroke-width="1.5"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="465" y="259.6">SC_PLACES_</tspan><tspan x="465" y="276.4">depression</tspan></text>
+    </g>
+    <g>
+      <rect x="610.0" y="196.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333"><tspan x="700.0" y="220.6">Validate join keys</tspan><tspan x="700.0" y="237.4">and required field</tspan></text>
+    </g>
+    <g>
+      <ellipse cx="935.0" cy="227.0" rx="85" ry="32" fill="#6BB56A" stroke="#3D8B3D" stroke-width="1.5"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="935.0" y="220.6">acs_places_v</tspan><tspan x="935.0" y="237.4">alidated.csv</tspan></text>
+    </g>
+    <g>
+      <rect x="1080.0" y="196.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2"/>
+      <text x="1170.0" y="231.0" text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333">Left join on GEOID</text>
+    </g>
+    <g>
+      <ellipse cx="1405.0" cy="227.0" rx="85" ry="32" fill="#6BB56A" stroke="#3D8B3D" stroke-width="1.5"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="1405.0" y="220.6">county_ses_d</tspan><tspan x="1405.0" y="237.4">epression.csv</tspan></text>
+    </g>
+    <g>
+      <rect x="1550.0" y="196.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333"><tspan x="1640.0" y="220.6">Create composite S</tspan><tspan x="1640.0" y="237.4">via z-score standa</tspan></text>
+    </g>
+    <g>
+      <ellipse cx="1875.0" cy="227.0" rx="85" ry="32" fill="#6BB56A" stroke="#3D8B3D" stroke-width="1.5"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="1875.0" y="220.6">county_ses_depre</tspan><tspan x="1875.0" y="237.4">ion_with_index.c</tspan></text>
+    </g>
+    <g>
+      <rect x="2020.0" y="196.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333"><tspan x="2110.0" y="220.6">Ordinary least squ</tspan><tspan x="2110.0" y="237.4">heteroskedasticity</tspan></text>
+    </g>
+    <g>
+      <ellipse cx="2345.0" cy="227.0" rx="85" ry="32" fill="#6BB56A" stroke="#3D8B3D" stroke-width="1.5"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="2345.0" y="220.6">ols_ses_to_depre</tspan><tspan x="2345.0" y="237.4">ssion_results.cs</tspan></text>
+    </g>
+    <g>
+      <ellipse cx="2575.0" cy="227.0" rx="85" ry="32" fill="#6BA3D6" stroke="#2F74B5" stroke-width="1.5"/>
+      <text x="2575.0" y="231.0" text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white">SC_counties</text>
+    </g>
+    <g>
+      <rect x="2720.0" y="196.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333"><tspan x="2810.0" y="220.6">Attribute join</tspan><tspan x="2810.0" y="237.4">(tabular-to-geomet</tspan></text>
+    </g>
+    <g>
+      <ellipse cx="3045.0" cy="227.0" rx="90" ry="35" fill="#6BB56A" stroke="#3D8B3D" stroke-width="2.5"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="3045.0" y="220.6">counties_ses_d</tspan><tspan x="3045.0" y="237.4">epression.gpkg</tspan></text>
+    </g>
+    <g>
+      <ellipse cx="465" cy="533.0" rx="85" ry="32" fill="#6BA3D6" stroke="#2F74B5" stroke-width="1.5"/>
+      <text x="465" y="537.0" text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white">SC_Visitor_POI</text>
+    </g>
+    <g>
+      <rect x="610.0" y="502.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2"/>
+      <text x="700.0" y="537.0" text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333">Left join on GEOID</text>
+    </g>
+    <g>
+      <ellipse cx="935.0" cy="533.0" rx="85" ry="32" fill="#6BB56A" stroke="#3D8B3D" stroke-width="1.5"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="935.0" y="526.6">county_ses_depre</tspan><tspan x="935.0" y="543.4">ssion_visits.csv</tspan></text>
+    </g>
+    <g>
+      <rect x="1080.0" y="502.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333"><tspan x="1170.0" y="526.6">Compute total_visi</tspan><tspan x="1170.0" y="543.4">composition with z</tspan></text>
+    </g>
+    <g>
+      <ellipse cx="1405.0" cy="533.0" rx="85" ry="32" fill="#6BB56A" stroke="#3D8B3D" stroke-width="1.5"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="1405.0" y="526.6">county_visitat</tspan><tspan x="1405.0" y="543.4">ion_shares.csv</tspan></text>
+    </g>
+    <g>
+      <rect x="1550.0" y="502.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333"><tspan x="1640.0" y="526.6">Shannon entropy</tspan><tspan x="1640.0" y="543.4">(mobility diversit</tspan></text>
+    </g>
+    <g>
+      <ellipse cx="1875.0" cy="533.0" rx="85" ry="32" fill="#6BB56A" stroke="#3D8B3D" stroke-width="1.5"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="1875.0" y="526.6">county_mobilit</tspan><tspan x="1875.0" y="543.4">y_diversity.csv</tspan></text>
+    </g>
+    <g>
+      <rect x="2020.0" y="502.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333"><tspan x="2110.0" y="526.6">Principal componen</tspan><tspan x="2110.0" y="543.4">(PCA) on visitatio</tspan></text>
+    </g>
+    <g>
+      <ellipse cx="2345.0" cy="533.0" rx="85" ry="32" fill="#6BB56A" stroke="#3D8B3D" stroke-width="1.5"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="2345.0" y="526.6">county_mobi</tspan><tspan x="2345.0" y="543.4">lity_pca.csv</tspan></text>
+    </g>
+    <g>
+      <rect x="2490.0" y="502.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333"><tspan x="2580.0" y="526.6">Ordinary least squ</tspan><tspan x="2580.0" y="543.4">heteroskedasticity</tspan></text>
+    </g>
+    <g>
+      <ellipse cx="2815.0" cy="533.0" rx="90" ry="35" fill="#6BB56A" stroke="#3D8B3D" stroke-width="2.5"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="2815.0" y="526.6">ols_ses_to_mobi</tspan><tspan x="2815.0" y="543.4">lity_results.csv</tspan></text>
+    </g>
+    <g>
+      <rect x="380.0" y="790.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333"><tspan x="470.0" y="814.6">Linear mediator mo</tspan><tspan x="470.0" y="831.4">heteroskedasticity</tspan></text>
+    </g>
+    <g>
+      <ellipse cx="705.0" cy="821.0" rx="85" ry="32" fill="#6BB56A" stroke="#3D8B3D" stroke-width="1.5"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="705.0" y="814.6">mediator_mode</tspan><tspan x="705.0" y="831.4">l_results.csv</tspan></text>
+    </g>
+    <g>
+      <rect x="850.0" y="790.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333"><tspan x="940.0" y="814.6">Linear outcome mod</tspan><tspan x="940.0" y="831.4">heteroskedasticity</tspan></text>
+    </g>
+    <g>
+      <ellipse cx="1175.0" cy="821.0" rx="85" ry="32" fill="#6BB56A" stroke="#3D8B3D" stroke-width="1.5"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="1175.0" y="814.6">outcome_mode</tspan><tspan x="1175.0" y="831.4">l_results.csv</tspan></text>
+    </g>
+    <g>
+      <rect x="1320.0" y="790.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333"><tspan x="1410.0" y="814.6">Nonparametric boot</tspan><tspan x="1410.0" y="831.4">mediation (ACME/AD</tspan></text>
+    </g>
+    <g>
+      <ellipse cx="1645.0" cy="821.0" rx="85" ry="32" fill="#6BB56A" stroke="#3D8B3D" stroke-width="1.5"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="1645.0" y="814.6">mediation_effec</tspan><tspan x="1645.0" y="831.4">ts_bootstrap.csv</tspan></text>
+    </g>
+    <g>
+      <rect x="1790.0" y="790.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333"><tspan x="1880.0" y="814.6">Construct Queen co</tspan><tspan x="1880.0" y="831.4">spatial weights</tspan></text>
+    </g>
+    <g>
+      <ellipse cx="2115.0" cy="821.0" rx="85" ry="32" fill="#6BB56A" stroke="#3D8B3D" stroke-width="1.5"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="2115.0" y="814.6">sc_county_que</tspan><tspan x="2115.0" y="831.4">en_weights.csv</tspan></text>
+    </g>
+    <g>
+      <rect x="2260.0" y="790.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333"><tspan x="2350.0" y="814.6">Align spatial weig</tspan><tspan x="2350.0" y="831.4">the modeling GEOID</tspan></text>
+    </g>
+    <g>
+      <ellipse cx="2585.0" cy="821.0" rx="85" ry="32" fill="#6BB56A" stroke="#3D8B3D" stroke-width="1.5"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="2585.0" y="814.6">sc_county_queen_</tspan><tspan x="2585.0" y="831.4">eights_aligned.c</tspan></text>
+    </g>
+    <g>
+      <rect x="2730.0" y="790.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333"><tspan x="2820.0" y="814.6">Moran&#x27;s I on</tspan><tspan x="2820.0" y="831.4">outcome-model resi</tspan></text>
+    </g>
+    <g>
+      <ellipse cx="3055.0" cy="821.0" rx="85" ry="32" fill="#6BB56A" stroke="#3D8B3D" stroke-width="1.5"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="3055.0" y="814.6">morans_i_outcom</tspan><tspan x="3055.0" y="831.4">e_residuals.csv</tspan></text>
+    </g>
+    <g>
+      <rect x="3200.0" y="790.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333"><tspan x="3290.0" y="814.6">Spatial error</tspan><tspan x="3290.0" y="831.4">model (SEM)</tspan></text>
+    </g>
+    <g>
+      <ellipse cx="3525.0" cy="821.0" rx="85" ry="32" fill="#6BB56A" stroke="#3D8B3D" stroke-width="1.5"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="3525.0" y="814.6">spatial_error_m</tspan><tspan x="3525.0" y="831.4">odel_results.csv</tspan></text>
+    </g>
+    <g>
+      <rect x="3670.0" y="790.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333"><tspan x="3760.0" y="814.6">Geographically wei</tspan><tspan x="3760.0" y="831.4">regression (GWR)</tspan></text>
+    </g>
+    <g>
+      <ellipse cx="3995.0" cy="821.0" rx="90" ry="35" fill="#6BB56A" stroke="#3D8B3D" stroke-width="2.5"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="3995.0" y="814.6">gwr_model_</tspan><tspan x="3995.0" y="831.4">results.csv</tspan></text>
+    </g>
+    <path d="M1875.0,259.0 C1875.0,380.5 700.0,462.0 700.0,502.0" fill="none" stroke="#E67E22" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#mb_arrow_orange)"/>
+    <path d="M2345.0,565.0 C2345.0,677.5 470.0,750.0 470.0,790.0" fill="none" stroke="#E67E22" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#mb_arrow_orange)"/>
+    <path d="M2345.0,565.0 C2345.0,677.5 940.0,750.0 940.0,790.0" fill="none" stroke="#E67E22" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#mb_arrow_orange)"/>
+    <path d="M2345.0,565.0 C2345.0,677.5 1410.0,750.0 1410.0,790.0" fill="none" stroke="#E67E22" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#mb_arrow_orange)"/>
+    <path d="M2575.0,259.0 C2575.0,524.5 1880.0,750.0 1880.0,790.0" fill="none" stroke="#E67E22" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#mb_arrow_orange)"/>
+    <path d="M2345.0,565.0 C2345.0,677.5 3290.0,750.0 3290.0,790.0" fill="none" stroke="#E67E22" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#mb_arrow_orange)"/>
+    <path d="M2345.0,565.0 C2345.0,677.5 3730.0,750.0 3730.0,790.0" fill="none" stroke="#E67E22" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#mb_arrow_orange)"/>
+    <path d="M2575.0,259.0 C2575.0,524.5 3790.0,750.0 3790.0,790.0" fill="none" stroke="#E67E22" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#mb_arrow_orange)"/>
+    <line x1="4385.0" y1="524.0" x2="4440.0" y2="524.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line x1="4630.0" y1="524.0" x2="4690.0" y2="524.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    
+    <path d="M3130.0,227.0 C3662.5,227.0 3662.5,524.0 4195.0,524.0" fill="none" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <path d="M2900.0,533.0 C3547.5,533.0 3547.5,524.0 4195.0,524.0" fill="none" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <path d="M4080.0,821.0 C4137.5,821.0 4137.5,524.0 4195.0,524.0" fill="none" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <g>
+      <rect x="4195.0" y="494.0" width="190" height="60" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2"/>
+      <text x="4290.0" y="528.0" text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333">Result Collation</text>
+    </g>
+    <g>
+      <rect x="4440.0" y="494.0" width="190" height="60" rx="5" fill="#8E44AD" stroke="#6C3483" stroke-width="2"/>
+      <text x="4535.0" y="528.0" text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white">Results Analysis</text>
+    </g>
+    
+    <g>
+      <ellipse cx="4780.0" cy="524.0" rx="90" ry="32" fill="#C0392B" stroke="#922B21" stroke-width="2.5"/>
+      <text x="4780.0" y="528.0" text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white">Manuscript</text>
+    </g>
+    </g>
+  </svg>
