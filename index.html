@@ -6,24 +6,61 @@
 <title>AGSI — Offline Conversation Snapshots</title>
 <style>
   :root {
-    --bg: #0f1115;
-    --panel: #171a21;
-    --border: #262b36;
-    --text: #e6e8ec;
-    --muted: #9aa3af;
-    --accent: #6ea8fe;
+    --bg: #000;
+    --panel: #0c0c0e;
+    --panel-hover: #14141a;
+    --border: #1f1f24;
+    --border-strong: #2c2c33;
+    --text: #ececec;
+    --muted: #8b8b94;
+    --accent: #c8a96a;
   }
   * { box-sizing: border-box; }
+  html, body { background: var(--bg); }
   body {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    background: var(--bg);
     color: var(--text);
-    line-height: 1.55;
+    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
   }
-  .wrap { max-width: 880px; margin: 0 auto; padding: 56px 24px 80px; }
-  header h1 { font-size: 1.9rem; margin: 0 0 8px; letter-spacing: -0.01em; }
-  header p { color: var(--muted); margin: 0 0 32px; }
+  a { color: var(--accent); }
+  a:hover { color: #e3c587; }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 80px 28px 96px; }
+
+  header { margin-bottom: 56px; }
+  .eyebrow {
+    font-size: .78rem;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 14px;
+  }
+  h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 400;
+    font-size: 2.4rem;
+    line-height: 1.15;
+    margin: 0 0 18px;
+    letter-spacing: -0.01em;
+  }
+  .lede {
+    color: #c5c5cc;
+    font-size: 1.04rem;
+    max-width: 64ch;
+    margin: 0;
+  }
+
+  section { margin-top: 64px; }
+  .section-title {
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 400;
+    font-size: 1.4rem;
+    margin: 0 0 20px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 10px;
+  }
+
   .cases { display: grid; gap: 16px; grid-template-columns: 1fr; }
   @media (min-width: 720px) { .cases { grid-template-columns: repeat(3, 1fr); } }
   .case {
@@ -32,57 +69,187 @@
     color: inherit;
     background: var(--panel);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 18px 18px 16px;
-    transition: border-color .15s, transform .15s;
+    border-radius: 8px;
+    padding: 22px 20px 18px;
+    transition: background .15s, border-color .15s, transform .15s;
   }
-  .case:hover { border-color: var(--accent); transform: translateY(-1px); }
-  .case .num { font-size: .8rem; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
-  .case h3 { margin: 4px 0 8px; font-size: 1.05rem; }
+  .case:hover { background: var(--panel-hover); border-color: var(--border-strong); transform: translateY(-1px); }
+  .case .num { font-size: .72rem; letter-spacing: .2em; color: var(--muted); text-transform: uppercase; }
+  .case h3 {
+    margin: 8px 0 8px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 400;
+    font-size: 1.1rem;
+    color: var(--text);
+  }
   .case p { margin: 0; color: var(--muted); font-size: .92rem; }
-  .extras { margin-top: 40px; display: flex; flex-wrap: wrap; gap: 14px; font-size: .92rem; }
-  .extras a { color: var(--accent); text-decoration: none; }
-  .extras a:hover { text-decoration: underline; }
-  footer { color: var(--muted); font-size: .85rem; margin-top: 48px; }
-  code { background: #0a0c10; padding: 1px 6px; border-radius: 4px; border: 1px solid var(--border); }
+  .case .open { display: inline-block; margin-top: 14px; font-size: .85rem; color: var(--accent); }
+
+  .videos { display: grid; gap: 24px; grid-template-columns: 1fr; }
+  @media (min-width: 860px) { .videos { grid-template-columns: repeat(3, 1fr); } }
+  .video figcaption {
+    font-size: .85rem;
+    color: var(--muted);
+    margin-top: 8px;
+    letter-spacing: .04em;
+  }
+  .video-frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    background: #050505;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .video-frame iframe {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    border: 0;
+  }
+
+  .resources { display: grid; gap: 14px; grid-template-columns: 1fr; }
+  @media (min-width: 720px) { .resources { grid-template-columns: repeat(2, 1fr); } }
+  .resource {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    padding: 14px 18px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--panel);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color .15s, background .15s;
+  }
+  .resource:hover { border-color: var(--border-strong); background: var(--panel-hover); }
+  .resource .label { font-size: 1rem; }
+  .resource .meta { color: var(--muted); font-size: .85rem; }
+
+  footer {
+    margin-top: 80px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: .85rem;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  footer a { color: var(--muted); text-decoration: underline; text-underline-offset: 3px; }
+  footer a:hover { color: var(--text); }
 </style>
 </head>
 <body>
 <div class="wrap">
+
   <header>
-    <h1>AGSI — Offline Conversation Snapshots</h1>
-    <p>Self-contained, read-only bundles produced by the Autonomous Geographic Modeling (AGM) WebUI. Each case includes the chat transcript, workflow cards, research plan, figures, and manuscript — no server required.</p>
+    <div class="eyebrow">AGSI</div>
+    <h1>Offline conversation snapshots from the AGM WebUI.</h1>
+    <p class="lede">
+      Each case below is a self-contained, read-only bundle &mdash; chat transcript,
+      workflow cards, research plan, figures, and the resulting manuscript &mdash;
+      captured from the Autonomous Geographic Modeling pipeline. No server,
+      no API keys, nothing to install.
+    </p>
   </header>
 
-  <section class="cases">
-    <a class="case" href="Case%201/index.html">
-      <div class="num">Case 1</div>
-      <h3>Open snapshot &rarr;</h3>
-      <p>PM2.5 exposure &amp; income inequality across California counties (2019).</p>
-    </a>
-    <a class="case" href="Case%202/index.html">
-      <div class="num">Case 2</div>
-      <h3>Open snapshot &rarr;</h3>
-      <p>Socioeconomic factors &amp; depression in South Carolina.</p>
-    </a>
-    <a class="case" href="Case%203/index.html">
-      <div class="num">Case 3</div>
-      <h3>Open snapshot &rarr;</h3>
-      <p>Third AGM workflow snapshot.</p>
-    </a>
+  <section>
+    <h2 class="section-title">Cases</h2>
+    <div class="cases">
+      <a class="case" href="Case%201/index.html">
+        <div class="num">Case 01</div>
+        <h3>PM2.5 exposure &amp; income inequality</h3>
+        <p>Spatial inequalities in PM2.5 across California counties (2019), and how the relationship varies by urban&ndash;rural classification.</p>
+        <span class="open">Open snapshot &rarr;</span>
+      </a>
+      <a class="case" href="Case%202/index.html">
+        <div class="num">Case 02</div>
+        <h3>Place visitation &amp; depression</h3>
+        <p>Socioeconomic factors, mobility patterns, and depression prevalence across counties in South Carolina.</p>
+        <span class="open">Open snapshot &rarr;</span>
+      </a>
+      <a class="case" href="Case%203/index.html">
+        <div class="num">Case 03</div>
+        <h3>Third AGM workflow</h3>
+        <p>Replace this short description with the case&rsquo;s topic.</p>
+        <span class="open">Open snapshot &rarr;</span>
+      </a>
+    </div>
   </section>
 
-  <div class="extras">
-    <a href="README.md">README</a>
-    <a href="Manuscript/">Manuscript</a>
-    <a href="Figures/">Figures</a>
-    <a href="Sessions/">Sessions</a>
-    <a href="https://github.com/AutonomousGIS-AGSI/AGSI">GitHub repo</a>
-  </div>
+  <section>
+    <h2 class="section-title">Video demos</h2>
+    <div class="videos">
+      <!--
+        To embed: replace YOUR_VIDEO_ID with the YouTube video ID
+        (the part after "v=" in the URL, e.g. dQw4w9WgXcQ).
+      -->
+      <figure class="video">
+        <div class="video-frame">
+          <iframe
+            src="https://www.youtube-nocookie.com/embed/YOUR_VIDEO_ID_1"
+            title="Case 1 demo"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+            loading="lazy"></iframe>
+        </div>
+        <figcaption>Case 1 &mdash; walkthrough</figcaption>
+      </figure>
+      <figure class="video">
+        <div class="video-frame">
+          <iframe
+            src="https://www.youtube-nocookie.com/embed/YOUR_VIDEO_ID_2"
+            title="Case 2 demo"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+            loading="lazy"></iframe>
+        </div>
+        <figcaption>Case 2 &mdash; walkthrough</figcaption>
+      </figure>
+      <figure class="video">
+        <div class="video-frame">
+          <iframe
+            src="https://www.youtube-nocookie.com/embed/YOUR_VIDEO_ID_3"
+            title="Case 3 demo"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+            loading="lazy"></iframe>
+        </div>
+        <figcaption>Case 3 &mdash; walkthrough</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-title">Materials</h2>
+    <div class="resources">
+      <a class="resource" href="Manuscript/index.html">
+        <span class="label">Manuscripts</span>
+        <span class="meta">PDFs &rarr;</span>
+      </a>
+      <a class="resource" href="Figures/index.html">
+        <span class="label">Figures</span>
+        <span class="meta">Gallery &rarr;</span>
+      </a>
+      <a class="resource" href="Sessions/index.html">
+        <span class="label">Session bundles</span>
+        <span class="meta">Downloads &rarr;</span>
+      </a>
+      <a class="resource" href="README.md">
+        <span class="label">README</span>
+        <span class="meta">Project notes &rarr;</span>
+      </a>
+    </div>
+  </section>
 
   <footer>
-    Tip: case folders contain spaces in their names — bookmark the encoded URLs (e.g. <code>Case%201/</code>).
+    <span>AGSI &middot; Autonomous Geographic Modeling</span>
+    <span><a href="https://github.com/AutonomousGIS-AGSI/AGSI">View on GitHub</a></span>
   </footer>
+
 </div>
 </body>
 </html>

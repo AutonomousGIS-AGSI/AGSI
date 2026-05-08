@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Figures &middot; AGSI</title>
+<style>
+  :root {
+    --bg: #000;
+    --panel: #0c0c0e;
+    --panel-hover: #14141a;
+    --border: #1f1f24;
+    --border-strong: #2c2c33;
+    --text: #ececec;
+    --muted: #8b8b94;
+    --accent: #c8a96a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { color: #e3c587; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 64px 28px 96px; }
+  .crumb { font-size: .82rem; color: var(--muted); margin-bottom: 18px; letter-spacing: .04em; }
+  .crumb a { color: var(--muted); }
+  .crumb a:hover { color: var(--text); }
+  h1 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 400;
+    font-size: 2rem;
+    margin: 0 0 12px;
+  }
+  .lede { color: #c5c5cc; margin: 0 0 40px; max-width: 60ch; }
+
+  .grid {
+    display: grid;
+    gap: 18px;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+  figure {
+    margin: 0;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    transition: border-color .15s, background .15s;
+  }
+  figure:hover { background: var(--panel-hover); border-color: var(--border-strong); }
+  figure a {
+    display: block;
+    background: #fafafa;
+    border-radius: 5px;
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  figure img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  figcaption {
+    margin-top: 10px;
+    font-size: .85rem;
+    color: var(--muted);
+    letter-spacing: .04em;
+  }
+  .group-title {
+    grid-column: 1 / -1;
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 400;
+    font-size: 1.1rem;
+    margin: 8px 0 -4px;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    padding-top: 18px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="crumb"><a href="../index.html">&larr; AGSI</a></div>
+  <h1>Figures</h1>
+  <p class="lede">Maps, charts, and diagrams referenced across the manuscripts. Click any thumbnail to open the full-resolution file.</p>
+
+  <div class="grid">
+    <figure><a href="Figure%201.png"><img src="Figure%201.png" alt="Figure 1"></a><figcaption>Figure 1</figcaption></figure>
+    <figure><a href="Figure%202.png"><img src="Figure%202.png" alt="Figure 2"></a><figcaption>Figure 2</figcaption></figure>
+    <figure><a href="Figure%203.png"><img src="Figure%203.png" alt="Figure 3"></a><figcaption>Figure 3</figcaption></figure>
+    <figure><a href="Figure%204.png"><img src="Figure%204.png" alt="Figure 4"></a><figcaption>Figure 4</figcaption></figure>
+
+    <div class="group-title">Figure 5</div>
+    <figure><a href="Figure%205/Figure%205a.png"><img src="Figure%205/Figure%205a.png" alt="Figure 5a"></a><figcaption>Figure 5a</figcaption></figure>
+    <figure><a href="Figure%205/Figure%205b.png"><img src="Figure%205/Figure%205b.png" alt="Figure 5b"></a><figcaption>Figure 5b</figcaption></figure>
+    <figure><a href="Figure%205/Figure%205c.png"><img src="Figure%205/Figure%205c.png" alt="Figure 5c"></a><figcaption>Figure 5c</figcaption></figure>
+    <figure><a href="Figure%205/Figure%205d.png"><img src="Figure%205/Figure%205d.png" alt="Figure 5d"></a><figcaption>Figure 5d</figcaption></figure>
+
+    <div class="group-title">Continued</div>
+    <figure><a href="Figure%206.png"><img src="Figure%206.png" alt="Figure 6"></a><figcaption>Figure 6</figcaption></figure>
+    <figure><a href="Figure%207.svg"><img src="Figure%207.svg" alt="Figure 7"></a><figcaption>Figure 7</figcaption></figure>
+    <figure><a href="Figure%208.png"><img src="Figure%208.png" alt="Figure 8"></a><figcaption>Figure 8</figcaption></figure>
+    <figure><a href="Figure%209.png"><img src="Figure%209.png" alt="Figure 9"></a><figcaption>Figure 9</figcaption></figure>
+    <figure><a href="Figure%2010.png"><img src="Figure%2010.png" alt="Figure 10"></a><figcaption>Figure 10</figcaption></figure>
+    <figure><a href="Figure%2011.svg"><img src="Figure%2011.svg" alt="Figure 11"></a><figcaption>Figure 11</figcaption></figure>
+    <figure><a href="Figure%2012.png"><img src="Figure%2012.png" alt="Figure 12"></a><figcaption>Figure 12</figcaption></figure>
+    <figure><a href="Figure%2013.svg"><img src="Figure%2013.svg" alt="Figure 13"></a><figcaption>Figure 13</figcaption></figure>
+  </div>
+</div>
+</body>
+</html>
