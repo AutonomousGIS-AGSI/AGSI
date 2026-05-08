@@ -4091,15 +4091,21 @@ function displayRqBreakdownSummary(rqData, options = {}) {
     const intentMode = intentModeEl ? intentModeEl.value
                                     : (localStorage.getItem('agm_intent_mode') || '');
     const isDataRetrieverMode = intentMode === 'data_retriever';
-    const showDataRequests = autoDataOn || isDataRetrieverMode;
+    const hasDataRequests = Array.isArray(rqData.data_requests) && rqData.data_requests.length;
+    // Fallback: if data_available is empty but data_requests exists (e.g. an
+    // offline snapshot where localStorage toggles aren't set), still render
+    // the requests so the card isn't empty.
+    const showDataRequests = autoDataOn || isDataRetrieverMode
+        || (!dataAvailItems && hasDataRequests);
 
-    const dataReqRequestItems = showDataRequests
-        && Array.isArray(rqData.data_requests) && rqData.data_requests.length
+    const dataReqRequestItems = showDataRequests && hasDataRequests
         ? rqData.data_requests.map(it => `<li class="rq-data-request">${esc(stringifyRqItem(it))}</li>`).join('')
         : '';
 
+    const showSufficiency = sufficiency && !isSufficient && (autoDataOn || !dataAvailItems);
+
     summary.innerHTML = `
-        ${autoDataOn && sufficiency && !isSufficient ? `<div class="rq-sufficiency-detail">${esc(sufficiency)}</div>` : ''}
+        ${showSufficiency ? `<div class="rq-sufficiency-detail">${esc(sufficiency)}</div>` : ''}
         ${dataAvailItems ? `<ul class="rq-list rq-list-available">${dataAvailItems}</ul>` : ''}
         ${dataReqRequestItems ? `
             <div class="rq-subsection-header">Datasets to Retrieve</div>
