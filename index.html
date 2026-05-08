@@ -95,18 +95,37 @@
   }
   .video-frame {
     position: relative;
+    display: block;
     width: 100%;
     aspect-ratio: 16 / 9;
     background: #050505;
     border: 1px solid var(--border);
     border-radius: 8px;
     overflow: hidden;
+    text-decoration: none;
+    transition: border-color .15s, transform .15s;
   }
-  .video-frame iframe {
+  .video-frame:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+  .video-frame img {
     position: absolute; inset: 0;
     width: 100%; height: 100%;
-    border: 0;
+    object-fit: cover;
+    display: block;
   }
+  .video-frame .play {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,.55) 100%);
+    transition: background .15s;
+  }
+  .video-frame:hover .play { background: linear-gradient(180deg, rgba(0,0,0,.1) 0%, rgba(0,0,0,.65) 100%); }
+  .video-frame .play svg {
+    width: 64px; height: 64px;
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,.5));
+    opacity: .92;
+    transition: transform .15s, opacity .15s;
+  }
+  .video-frame:hover .play svg { transform: scale(1.06); opacity: 1; }
 
   .resources { display: grid; gap: 14px; grid-template-columns: 1fr; }
   @media (min-width: 720px) { .resources { grid-template-columns: repeat(2, 1fr); } }
@@ -159,19 +178,19 @@
   <section>
     <h2 class="section-title">Cases</h2>
     <div class="cases">
-      <a class="case" href="Case%201/index.html">
+      <a class="case" href="Case1/index.html">
         <div class="num">Case 01</div>
         <h3>PM2.5 exposure &amp; income inequality</h3>
         <p>Spatial inequalities in PM2.5 across California counties (2019), and how the relationship varies by urban&ndash;rural classification.</p>
         <span class="open">Open snapshot &rarr;</span>
       </a>
-      <a class="case" href="Case%202/index.html">
+      <a class="case" href="Case2/index.html">
         <div class="num">Case 02</div>
         <h3>Place visitation &amp; depression</h3>
         <p>Socioeconomic factors, mobility patterns, and depression prevalence across counties in South Carolina.</p>
         <span class="open">Open snapshot &rarr;</span>
       </a>
-      <a class="case" href="Case%203/index.html">
+      <a class="case" href="Case3/index.html">
         <div class="num">Case 03</div>
         <h3>Third AGM workflow</h3>
         <p>Replace this short description with the case&rsquo;s topic.</p>
@@ -184,40 +203,43 @@
     <h2 class="section-title">Video demos</h2>
     <div class="videos">
       <!--
-        To embed: replace YOUR_VIDEO_ID with the YouTube video ID
-        (the part after "v=" in the URL, e.g. dQw4w9WgXcQ).
+        Each tile opens the video on YouTube in a new tab.
+        Thumbnail comes from img.youtube.com/vi/<ID>/hqdefault.jpg.
       -->
       <figure class="video">
-        <div class="video-frame">
-          <iframe
-            src="https://www.youtube.com/embed/u0HePpi4IZE"
-            title="Case 1 demo"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-            loading="lazy"></iframe>
-        </div>
+        <a class="video-frame" href="https://www.youtube.com/watch?v=u0HePpi4IZE" target="_blank" rel="noopener" aria-label="Watch Case 1 demo on YouTube">
+          <img src="https://img.youtube.com/vi/u0HePpi4IZE/hqdefault.jpg" alt="Case 1 demo thumbnail" loading="lazy">
+          <div class="play">
+            <svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55C3.97 2.33 2.27 4.81 1.48 7.74 0 13.05 0 24 0 24s0 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C68 34.95 68 24 68 24s0-10.95-1.48-16.26z" fill="#f00"/>
+              <path d="M45 24 27 14v20" fill="#fff"/>
+            </svg>
+          </div>
+        </a>
         <figcaption>Case 1 &mdash; walkthrough</figcaption>
       </figure>
       <figure class="video">
-        <div class="video-frame">
-          <iframe
-            src="https://www.youtube.com/embed/3ewtgUbmo1w"
-            title="Case 2 demo"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-            loading="lazy"></iframe>
-        </div>
+        <a class="video-frame" href="https://www.youtube.com/watch?v=3ewtgUbmo1w" target="_blank" rel="noopener" aria-label="Watch Case 2 demo on YouTube">
+          <img src="https://img.youtube.com/vi/3ewtgUbmo1w/hqdefault.jpg" alt="Case 2 demo thumbnail" loading="lazy">
+          <div class="play">
+            <svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55C3.97 2.33 2.27 4.81 1.48 7.74 0 13.05 0 24 0 24s0 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C68 34.95 68 24 68 24s0-10.95-1.48-16.26z" fill="#f00"/>
+              <path d="M45 24 27 14v20" fill="#fff"/>
+            </svg>
+          </div>
+        </a>
         <figcaption>Case 2 &mdash; walkthrough</figcaption>
       </figure>
       <figure class="video">
-        <div class="video-frame">
-          <iframe
-            src="https://www.youtube.com/embed/vOeFTgkdw4I"
-            title="Case 3 demo"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-            loading="lazy"></iframe>
-        </div>
+        <a class="video-frame" href="https://www.youtube.com/watch?v=vOeFTgkdw4I" target="_blank" rel="noopener" aria-label="Watch Case 3 demo on YouTube">
+          <img src="https://img.youtube.com/vi/vOeFTgkdw4I/hqdefault.jpg" alt="Case 3 demo thumbnail" loading="lazy">
+          <div class="play">
+            <svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55C3.97 2.33 2.27 4.81 1.48 7.74 0 13.05 0 24 0 24s0 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C68 34.95 68 24 68 24s0-10.95-1.48-16.26z" fill="#f00"/>
+              <path d="M45 24 27 14v20" fill="#fff"/>
+            </svg>
+          </div>
+        </a>
         <figcaption>Case 3 &mdash; walkthrough</figcaption>
       </figure>
     </div>
