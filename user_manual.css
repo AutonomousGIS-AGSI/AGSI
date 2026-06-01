@@ -85,7 +85,7 @@
     nav.toc a.sub{padding-left:24px;font-size:13.3px}
     nav.toc a.active{color:var(--brand);border-left-color:var(--brand);background:#eef3f6;font-weight:600}
 
-    main{flex:1 1 auto;min-width:0;padding:30px 0 90px}
+    main{flex:1 1 auto;min-width:0;max-width:1500px;padding:30px 0 90px}
     section{margin-bottom:46px;scroll-margin-top:calc(var(--hero-h) + 12px)}
     section>h2{font-size:25px;color:var(--brand-dark);margin:0 0 4px;padding-bottom:10px;border-bottom:2px solid var(--line)}
     section>lead{color:var(--muted);margin:6px 0 18px;font-size:16px}
