@@ -13,8 +13,7 @@
         --warn-ink:#7a5b00;
         --code-bg:#f4f6f8;
         --radius:10px;
-        --sidebar-w:244px;
-        --otp-w:240px;
+        --sidebar-w:280px;
         --hero-h:50px;
     }
     *{box-sizing:border-box}
@@ -33,12 +32,16 @@
         background:var(--brand-grad);color:#fff;padding:8px 30px;
         position:sticky;top:0;z-index:20;
     }
-    .hero-inner{max-width:1300px;margin:0;display:flex;align-items:center;gap:22px;flex-wrap:wrap}
+    .hero-inner{max-width:none;margin:0;display:flex;align-items:center;gap:22px;flex-wrap:wrap}
     .hero img{height:40px;width:auto}
     .hero h1{margin:0;font-size:25px;font-weight:700;letter-spacing:.2px}
     .hero p{margin:6px 0 0;color:#d7e6ef;font-size:15px;max-width:760px}
     .hero .badge{display:inline-block;margin-top:14px;background:rgba(255,255,255,.14);
         border:1px solid rgba(255,255,255,.28);padding:5px 12px;border-radius:30px;font-size:12.5px;color:#eaf3f8}
+
+    .hero-gibd{display:flex;align-items:center;flex:0 0 auto}
+    .hero-gibd img{height:40px;width:auto;display:block;transition:opacity .15s}
+    .hero-gibd:hover img{opacity:.85}
 
     .hero-search{margin-left:auto;position:relative}
     .hero-search input{
@@ -75,7 +78,7 @@
     @keyframes searchflash{0%{background:#fff3b0}100%{background:transparent}}
 
     /* ── Layout ───────────────────────────────────── */
-    .layout{max-width:2000px;margin:0;display:flex;gap:34px;padding:0 30px}
+    .layout{max-width:1500px;margin:0;display:flex;gap:34px;padding:0 30px}
     nav.toc{
         position:sticky;top:var(--hero-h);align-self:flex-start;width:var(--sidebar-w);flex:0 0 var(--sidebar-w);
         height:calc(100vh - var(--hero-h));overflow-y:auto;padding:26px 6px 60px 0;
@@ -83,24 +86,19 @@
     nav.toc h2{font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin:18px 0 8px}
     nav.toc a{display:block;color:var(--muted);padding:5px 12px;border-left:2px solid transparent;font-size:14px;border-radius:0 4px 4px 0}
     nav.toc a:hover{color:var(--brand);background:#eef3f6;text-decoration:none}
-    nav.toc a.sub{padding-left:24px;font-size:13.3px}
     nav.toc a.active{color:var(--brand);border-left-color:var(--brand);background:#eef3f6;font-weight:600}
     /* Left rail: top-level page groups */
     nav.toc a.grp{font-size:15.5px;font-weight:500;padding:8px 12px;color:var(--ink)}
     nav.toc a.grp:hover{color:var(--brand)}
     nav.toc a.grp.active{color:var(--brand);border-left-color:var(--brand);background:#eef3f6;font-weight:600}
 
-    /* Right rail: "On this page" for the current group */
-    aside.onthispage{
-        position:sticky;top:var(--hero-h);align-self:flex-start;width:var(--otp-w);flex:0 0 var(--otp-w);
-        height:calc(100vh - var(--hero-h));overflow-y:auto;padding:30px 0 60px 0;
-    }
-    aside.onthispage h2{font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);
-        margin:0 0 10px;padding-left:14px}
-    aside.onthispage a{display:block;color:var(--muted);padding:5px 14px;font-size:13.5px;line-height:1.4;
+    /* Nested page children (the former "On this page" items) */
+    .subnav{display:none;margin:2px 0 8px}
+    .subnav.open{display:block}
+    nav.toc a.sub{padding:4px 12px 4px 26px;font-size:13.3px;line-height:1.4;color:var(--muted);
         border-left:2px solid var(--line)}
-    aside.onthispage a:hover{color:var(--brand);text-decoration:none;border-left-color:var(--brand)}
-    aside.onthispage a.active{color:var(--brand);border-left-color:var(--brand);font-weight:600}
+    nav.toc a.sub:hover{border-left-color:var(--brand)}
+    nav.toc a.sub.active{color:var(--brand);border-left-color:var(--brand);background:#eef3f6;font-weight:600}
 
     main{flex:1 1 auto;min-width:0;max-width:1500px;padding:30px 0 90px}
     section{margin-bottom:46px;scroll-margin-top:calc(var(--hero-h) + 12px)}
@@ -181,10 +179,6 @@
 
     .footer{max-width:1400px;margin:0 auto;padding:26px 24px 50px;color:var(--muted);font-size:13.5px;border-top:1px solid var(--line)}
     .toc-toggle{display:none}
-    /* Drop the right "On this page" rail first when space gets tight. */
-    @media (max-width:1080px){
-        aside.onthispage{display:none}
-    }
     @media (max-width:900px){
         nav.toc{display:none}
         .layout{flex-direction:column;gap:0}

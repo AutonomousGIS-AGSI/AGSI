@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>GIS Co-Scientist </title>
+<title>GIS Co-Scientist User Manual</title>
 <link rel="stylesheet" href="user_manual.css">
 </head>
 <body>
@@ -20,21 +20,18 @@
                    autocomplete="off" aria-label="Search the manual">
             <div id="searchResults" class="search-results" hidden></div>
         </div>
+        <a class="hero-gibd" href="https://giscience.psu.edu/" target="_blank" rel="noopener"
+           title="Penn State GIScience">
+            <img src="doc/gibd_logo.png" alt="Penn State GIScience (GIBD)" onerror="this.style.display='none'">
+        </a>
     </div>
 </header>
 
 <div class="layout">
     <!-- ── Left rail: page groups (built/active-managed by JS) ───────── -->
+    <!-- Pages + their children are built by JS from the PAGES config below. -->
     <nav class="toc" id="toc" aria-label="Sections">
         <h2>Pages</h2>
-        <a class="grp" data-group="0" href="#intro">Getting Started</a>
-        <a class="grp" data-group="1" href="#layout">The Interface</a>
-        <a class="grp" data-group="2" href="#data-mode">Data Retriever</a>
-        <a class="grp" data-group="3" href="#spatial-mode">Spatial Analysis</a>
-        <a class="grp" data-group="4" href="#research-mode">Research</a>
-        <a class="grp" data-group="5" href="#chat-mode">Chat</a>
-        <a class="grp" data-group="6" href="#geoprocessing">Geoprocessing Workflow</a>
-        <a class="grp" data-group="7" href="#results">Reference</a>
     </nav>
 
     <main>
@@ -720,8 +717,6 @@
 
     </main>
 
-    <!-- ── Right rail: "On this page" for the current group (built by JS) ── -->
-    <aside class="onthispage" id="onThisPage" aria-label="On this page"></aside>
 </div>
 
 <!-- <footer class="footer">
@@ -730,13 +725,13 @@
 </footer> -->
 
 <script>
-    // Two-level navigation: the left rail lists the page groups; the right
-    // "On this page" rail lists the sections of whichever group is in view.
-    // Both update as you scroll (scroll-spy on the section headings).
+    // Expandable left-rail navigation: each page lists its children indented
+    // beneath it. The page in view auto-expands (others collapse) and the active
+    // child is highlighted, all driven by scroll-spy on the section headings.
     (function(){
         // Single source of truth. Each page owns one or more `sections` (used to
-        // decide which page is in view) and a list of `items` shown in the right
-        // "On this page" rail. For multi-section pages the items are the sections;
+        // decide which page is in view) and a list of `items` shown as its children
+        // in the left rail. For multi-section pages the items are the sections;
         // for a single mode page the items are that section's sub-headings.
         const PAGES = [
             { label:'Getting Started',
@@ -797,9 +792,23 @@
               ]},
         ];
 
-        const grpLinks = Array.from(document.querySelectorAll('nav.toc a.grp'));
-        const otp = document.getElementById('onThisPage');
-        if(!otp) return;
+        const nav = document.getElementById('toc');
+        if(!nav) return;
+
+        // Build the left rail: each page link followed by a nested subnav of its
+        // children (the items that used to live in the right "On this page" rail).
+        nav.insertAdjacentHTML('beforeend', PAGES.map((p, pi) => {
+            const top = p.sections[0];
+            const kids = p.items.map(it =>
+                '<a class="sub" data-id="' + it.id + '" href="#' + it.id + '">' + it.label + '</a>'
+            ).join('');
+            return '<a class="grp" data-group="' + pi + '" href="#' + top + '">' + p.label + '</a>'
+                 + '<div class="subnav" data-group="' + pi + '">' + kids + '</div>';
+        }).join(''));
+
+        const grpLinks = Array.from(nav.querySelectorAll('a.grp'));
+        const subnavs  = Array.from(nav.querySelectorAll('.subnav'));
+        const subLinks = Array.from(nav.querySelectorAll('a.sub'));
 
         // Ordered list of sections (for page detection) and resolved item els.
         const sectionOrder = [];
@@ -816,20 +825,12 @@
         const heroH = parseInt(getComputedStyle(document.documentElement)
                         .getPropertyValue('--hero-h'), 10) || 50;
 
-        let renderedPage = -1;    // which page's TOC is currently in the right rail
         let lastKey = '';         // "pageIndex:itemId" of the last applied state
 
-        function renderPage(pi){
-            otp.innerHTML = '<h2>On this page</h2>' + PAGES[pi].items.map(it =>
-                '<a href="#' + it.id + '" data-id="' + it.id + '">' + it.label + '</a>'
-            ).join('');
-            renderedPage = pi;
-        }
-
-        function markActive(pi, id){
+        function apply(pi, id){
             grpLinks.forEach(l => l.classList.toggle('active', +l.dataset.group === pi));
-            otp.querySelectorAll('a').forEach(a =>
-                a.classList.toggle('active', a.dataset.id === id));
+            subnavs.forEach(s => s.classList.toggle('open', +s.dataset.group === pi));
+            subLinks.forEach(a => a.classList.toggle('active', a.dataset.id === id));
         }
 
         const atBottom = () =>
@@ -860,8 +861,7 @@
             const key = pi + ':' + id;
             if(key === lastKey) return;       // nothing changed since last frame
             lastKey = key;
-            if(pi !== renderedPage) renderPage(pi);
-            markActive(pi, id);
+            apply(pi, id);
         }
 
         // rAF-throttled scroll handler.
@@ -872,7 +872,6 @@
             requestAnimationFrame(() => { update(); ticking = false; });
         }, { passive:true });
         window.addEventListener('resize', update);
-        renderPage(0);
         update();
     })();
 
