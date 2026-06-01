@@ -24,35 +24,17 @@
 </header>
 
 <div class="layout">
-    <!-- ── Table of contents ───────────────────────── -->
-    <nav class="toc" id="toc">
-        <h2>Getting Started</h2>
-        <a href="#intro">1. What is GIS Co-Scientist?</a>
-        <a href="#quickstart">2. Quick Start</a>
-        <a href="#apikey">3. GIBD Key</a>
-
-        <h2>The Interface</h2>
-        <a href="#layout">4. UI Layout Overview</a>
-        <a href="#layout" class="sub">Header &amp; menus</a>
-        <a href="#layout" class="sub">Left sidebar</a>
-        <a href="#layout" class="sub">Center &amp; right panels</a>
-        <a href="#settings">5. Settings</a>
-        <a href="#datalayers">6. Data Layers &amp; Menus</a>
-        <a href="#conversations">7. Conversations &amp; Sharing</a>
-        <a href="#modes-models">8. Modes, Models &amp; Autonomous</a>
-        <a href="#modes-models" class="sub">Geoprocessing workflow</a>
-
-        <h2>Working Modes</h2>
-        <a href="#data-mode">9. Data Retriever Mode</a>
-        <a href="#data-mode" class="sub">Data sources</a>
-        <a href="#data-mode" class="sub">Approvals &amp; feedback</a>
-        <a href="#spatial-mode">10. Spatial Analysis Mode</a>
-        <a href="#research-mode">11. Research Mode</a>
-        <a href="#chat-mode">12. Chat Mode</a>
-
-        <h2>Reference</h2>
-        <a href="#results">13. Results, Map &amp; Artifacts</a>
-        <a href="#tips">14. Tips &amp; Troubleshooting</a>
+    <!-- ── Left rail: page groups (built/active-managed by JS) ───────── -->
+    <nav class="toc" id="toc" aria-label="Sections">
+        <h2>Pages</h2>
+        <a class="grp" data-group="0" href="#intro">Getting Started</a>
+        <a class="grp" data-group="1" href="#layout">The Interface</a>
+        <a class="grp" data-group="2" href="#data-mode">Data Retriever</a>
+        <a class="grp" data-group="3" href="#spatial-mode">Spatial Analysis</a>
+        <a class="grp" data-group="4" href="#research-mode">Research</a>
+        <a class="grp" data-group="5" href="#chat-mode">Chat</a>
+        <a class="grp" data-group="6" href="#geoprocessing">Geoprocessing Workflow</a>
+        <a class="grp" data-group="7" href="#results">Reference</a>
     </nav>
 
     <main>
@@ -61,11 +43,17 @@
     <section id="intro">
         <h2>What is GIS Co-Scientist?</h2>
         <p><strong>GIS Co-Scientist</strong> is a multi-agent framework for autonomous geospatial scientific inquiry,
-            retrieving geospatial data, running spatial analyses, and producing full research manuscripts through 
+            retrieving geospatial data, running spatial analyses, and producing full research manuscripts through
             a single conversational interface.</p>
 
-        <p>It does this through four <strong>working modes</strong> that you switch between depending on how much of the pipeline you
-        want the system to run:</p>
+        <p><strong>GIS Co-Scientist is designed for human-AI collaboration.</strong> A team of specialized agents works together
+        to understand the research question, retrieve geospatial data, design the analysis workflow, execute geoprocessing tasks,
+        interpret results, and draft the manuscript. At each major stage, GIS Co-Scientist presents its proposed plan, data
+        sources, workflow, and code for human review and approval before proceeding. 
+        </p>
+
+
+        <p>GIS Co-Scientist has four <strong>working modes</strong> that you switch between depending on the type of task you want the system to run:</p>
 
         <div class="mode-grid">
             <div class="card"><h4><span class="pill data">Data Retriever</span></h4>
@@ -82,7 +70,7 @@
         analysis without writing all the code themselves. No programming is required, though every piece of generated code is shown
         to you and can be reviewed, edited, and re-run.</div> -->
 
-        <p>Behind the interface is a <strong>specialized multi-agent system</strong> with a
+        <!-- <p>Behind the interface is a <strong>specialized multi-agent system</strong> with a
         <strong>human-in-the-loop</strong> at its center: dedicated agents understand the question, retrieve geospatial data,
         plan a workflow, write and run code, interpret results, and draft the report - while you stay in control, reviewing and
         approving (or revising) at each major checkpoint. A reproducibility layer logs every workflow, dataset, and line of
@@ -92,16 +80,16 @@
             <img src="doc/architecture.jpg" alt="GIS Co-Scientist multi-agent architecture with a human-in-the-loop and a reproducibility layer" />
             <figcaption>System architecture - a human-in-the-loop guides a layer of specialized agents, backed by a
                 reproducibility layer (workflow logging, data lineage, executable code, execution tracking, and saved artifacts).</figcaption>
-        </figure>
+        </figure> -->
 
-        <div class="feature">
+        <!-- <div class="feature">
             <span class="tag">What makes it geospatial</span>
             <h4>The geoprocessing workflow</h4>
             <p>Unlike general-purpose AI assistants, GIS Co-Scientist plans an explicit <strong>geoprocessing workflow</strong> -
             a directed graph of spatial input data, geoprocessing operations/tools, and output data - before any code is written.
             This workflow is the geospatial backbone shared across the three working modes (Data Retriever, Spatial Analysis, and
             Research), and it is shown to you for review. See <a href="#modes-models">Section 8</a>.</p>
-        </div>
+        </div> -->
     </section>
 
     <!-- ═══════════════════ 2. QUICK START ═══════════════════ -->
@@ -110,8 +98,9 @@
         
 
         <div class="step"><div class="num">1</div><div class="body">
-            <strong>Add your GIBD Key:</strong> Click <span class="ui">Settings</span> (top-right), paste your key
-            (it starts with <code>gibd-</code>) into <em>GIBD Key</em>, and click <span class="ui">Save Key</span>.
+            <strong>Add your API key:</strong> Click <span class="ui">Settings</span> (top-right), paste your
+            <strong>GIBD</strong> key (<code>gibd-</code>) or <strong>OpenAI</strong> key (<code>sk-</code>) into the
+            <em>API Key</em> field, and click <span class="ui">Save Key</span>.
             See <a href="#apikey">Section 3</a> for how to get one.</div></div>
 
         <div class="step"><div class="num">2</div><div class="body">
@@ -137,30 +126,34 @@
             Outputs appear in the <it>Map Viewer</it> and <it>Results &amp; Artifacts</it> panels on the right.</div></div>
 
         <div class="tip"><strong>NOTE:</strong>&nbsp; Turn on <em><strong>Autonomous</em></strong> mode (in the mode dropdown) if you want the
-        system to auto-approve its own plans and run end-to-end with minimal interruption.</div>
+        system to auto-approve its own plans and run end-to-end with minimal interruption (see <a href="#modes-models">Section 8</a>).</div>
     </section>
 
     <!-- ═══════════════════ 3. API KEY ═══════════════════ -->
     <section id="apikey">
-        <h2>3. GIBD Key</h2>
-        
-        <p>GIS Co-Scientist routes its language-model calls through the <strong>GIBD</strong> service <em>your</em> chats and uploads.</p>
+        <h2>3. API Key</h2>
 
-        <h3>How to get a GIBD Key</h3>
-        <div class="step"><div class="num">1</div><div class="body">Go to the GIBD portal at <a href="https://www.gibd.online" target="_blank" rel="noopener">https://www.gibd.online</a>.</div></div>
-        <div class="step"><div class="num">2</div><div class="body">Create an account / sign in, and request an API key.</div></div>
-        <div class="step"><div class="num">3</div><div class="body">Copy the key (<code>gibd-xxxxxxxxxxxxxxxx</code>).</div></div>
+        <p>GIS Co-Scientist needs an API key to run its language-model calls. You can use <strong>either</strong> a
+        <strong>GIBD key</strong> or an <strong>OpenAI API key</strong> - there is a single <em>API Key</em> field in Settings,
+        and the app automatically detects which type you entered.</p>
 
-        <h3>How to input a GIBD Key in the GIS Co-Scientist UI</h3>
+        <h3>Getting a key</h3>
+        <table>
+            <tr><th>Key type</th><th>Where to get it</th></tr>
+            <tr><td><strong>GIBD key</strong></td>
+                <td>At <a href="https://www.gibd.online" target="_blank" rel="noopener">gibd.online</a> - create an account or sign in, then request a key.</td></tr>
+            <tr><td><strong>OpenAI key</strong></td>
+                <td>At <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">platform.openai.com/api-keys</a> - sign in, then create a secret key.</td></tr>
+        </table>
+
+        <h3>Entering your key</h3>
         <div class="step"><div class="num">1</div><div class="body">Click <span class="ui">Settings</span> in the top-right header.</div></div>
-        <div class="step"><div class="num">2</div><div class="body">Paste the key into the <strong>GIBD Key</strong> field.
-        </div></div>
+        <div class="step"><div class="num">2</div><div class="body">Paste your GIBD or OpenAI key into the <strong>API Key</strong> field.</div></div>
         <div class="step"><div class="num">3</div><div class="body">Click <span class="ui">Save Key</span>. A status message confirms it was stored.
             Use <span class="ui">Clear Key</span> to remove it.</div></div>
 
-        <div class="note"><strong>NOTE:</strong>&nbsp; The key is saved locally in your browser only. The key should be kept private and secure.</div>
-
-        
+        <div class="note">API key is <strong>stored locally on your browser</strong> and is never sent to or stored on our server. Keep it private, and use
+        <span class="ui">Clear Key</span> to remove it whenever you like.</div>
 
     </section>
 
@@ -207,8 +200,8 @@
         <h2>5. Settings</h2>
         <p class="lead">Opened from the <span class="ui">Settings</span> button.</p>
 
-        <h3>GIBD Key</h3>
-        <p>Enter, show/hide, save, or clear your GIBD key - covered in <a href="#apikey">Section 3</a>.</p>
+        <h3>API Key</h3>
+        <p>Enter, show/hide, save, or clear your API key (a GIBD or OpenAI key) - covered in <a href="#apikey">Section 3</a>.</p>
 
         <h3>Data Source Keys</h3>
         <p>Some data sources (e.g. the U.S. Census, EPA AQS) require their own API keys. This section lets you store those keys
@@ -270,12 +263,12 @@
     <!-- ═══════════════════ 7. CONVERSATIONS ═══════════════════ -->
     <section id="conversations">
         <h2>7. Conversation History &amp; Sharing</h2>
-        <p class="lead">Each conversation is saved automatically and scoped to GIBD key.</p>
+        <p class="lead">Each conversation is saved automatically and scoped to your API key.</p>
 
         <h3>History</h3>
         <ul>
             <li><span class="ui">New chat</span> starts a fresh conversation with its own data layers and workspace.</li>
-            <li>Conversations are listed in the left sidebar and saved against your GIBD key - sign in with the same key on any
+            <li>Conversations are listed in the left sidebar and saved against your API key - sign in with the same key on any
                 machine to get them back.</li>
             <li>Uploaded files and generated artifacts are stored with the conversation, so reopening it restores its state.</li>
         </ul>
@@ -295,37 +288,12 @@
                 <td><strong>Fork-on-write:</strong> their first change can create an independent copy they own, leaving your original
                     untouched. (Forking is blocked while a run is still in progress.)</td></tr>
         </table>
-        <div class="note"><strong>Note:</strong>&nbsp; Only the owner can rename or delete the original. Collaborators see and
-        contribute to the live conversation but cannot remove it.</div>
+        
     </section>
 
     <!-- ═══════════════════ 8. MODES / MODELS ═══════════════════ -->
     <section id="modes-models">
-        <h2>8. Modes, Models &amp; Autonomous</h2>
-
-        <h3>The geoprocessing workflow - the geospatial core</h3>
-        <p>Before writing any code, GIS Co-Scientist constructs an explicit <strong>geoprocessing workflow</strong>: a directed graph
-        that connects <strong>spatial input data</strong> &rarr; <strong>geoprocessing operations / tools</strong> &rarr;
-        <strong>output data</strong>, organized by analytical objective. This is what distinguishes the system from general-purpose
-        AI assistants - the reasoning is grounded in concrete spatial operations (joins, spatial weights, Moran's I, spatial
-        regression, hotspot detection, and so on) rather than free-form code, which makes every run transparent, reviewable, and
-        reproducible.</p>
-
-        <figure>
-            <img src="doc/geoprocessing-workflow.jpg" alt="A geoprocessing workflow graph linking input datasets, geoprocessing operations, and output data across three research objectives" />
-            <figcaption>A generated geoprocessing workflow. Blue nodes are input data, yellow nodes are geoprocessing
-                operations/tools, and green nodes are outputs; rows group the workflow by objective, and dashed links show data
-                reused within and across objectives.</figcaption>
-        </figure>
-
-        <div class="feature">
-            <span class="tag">Shared across modes</span>
-            <h4>One workflow concept, three modes</h4>
-            <p>The geoprocessing workflow underpins all three working modes: <strong>Data Retriever</strong> builds the
-            data-acquisition portion, <strong>Spatial Analysis</strong> plans and runs an analysis workflow on your data, and
-            <strong>Research</strong> chains multiple objective-level workflows into a full study. In every case the workflow is
-            generated first and presented for your review, so you approve <em>what</em> will run before <em>any</em> code executes.</p>
-        </div>
+        <h2>8. Modes, Models &amp; Autonomous mode</h2>
 
         <h3>Choosing a mode</h3>
         <p>Open the <em><strong>mode dropdown</strong></em> (bottom-right of the input box, labeled with the current mode) and select one:</p>
@@ -420,12 +388,10 @@
         <p class="lead"><em>Data Retriever: </em>Find and download geospatial datasets from public data
         sources, without running any analysis.</p>
 
-        <h3>How to use the Data Retriever mode</h3>
+        <h3 id="dr-use">How to use the Data Retriever mode</h3>
         <div class="step"><div class="num">1</div><div class="body">Switch the mode to <strong>Data Retriever</strong>.</div></div>
-        <div class="step"><div class="num">2</div><div class="body">Describe what you need in natural language. Be as specific as you can about the variables, geography, and time frame. For example:<br>
-            <em>"Download 2019 county-level PM2.5 from EPA AQS for California."</em><br>
-            <em>"Get census-tract median household income for Pennsylvania."</em><br>
-            <em>"Fetch a 30 m DEM for the area around State College, PA."</em></div></div>
+        <div class="step"><div class="num">2</div><div class="body">Describe what you need in natural language. Be as specific as you can about the variables, geography, and time frame (See examples).
+        </div></div>
         <div class="step"><div class="num">3</div><div class="body">The system identifies the best matching <strong>data
             source</strong>, fetches the data, and adds it as a new <strong>data layer</strong> you can map and download.</div></div>
 
@@ -435,7 +401,7 @@
         <strong>off</strong>, it pauses for human confirmation before downloading. This toggle is also respected by <em>Spatial Analysis
         </em> and <em>Research</em> modes when they need extra data.</p>
 
-        <h3>Available data sources</h3>
+        <h3 id="dr-sources">Available data sources</h3>
         <p>These public sources are built in. The system picks the right one from your request, but you can name a source explicitly.</p>
         <table>
             <tr><th>Source</th><th>What it provides</th><th>Coverage</th><th>API key?</th></tr>
@@ -463,12 +429,18 @@
         </table>
         <p>Enter these once under <strong>Settings → Data Source Keys</strong> (or when prompted), and they're reused thereafter.</p>
 
-        <h3>Downloading multiple datasets</h3>
+         <figure>
+            <img src="doc/Data_retriever_Data Source API key.jpg" alt="Inline data-source confirmation cards showing the LLM-suggested source, the finalized source, a confidence score, and Proceed / Always Proceed / Retry / Abort buttons" />
+            <figcaption>Data source key prompted inline when needed.</figcaption>
+        </figure>
+
+
+        <h3 id="dr-multi">Downloading multiple datasets</h3>
         <p>You can ask for several datasets in one request (e.g. <em>"download 2019 county boundaries and county-level obesity rates
         for California"</em>). The system retrieves each one and adds them as separate data layers. Each is independently mappable
         and downloadable, and ready to be merged later in Spatial Analysis or Research mode.</p>
 
-        <h3>Feedback &amp; approval prompts</h3>
+        <h3 id="dr-feedback">Feedback &amp; approval prompts</h3>
         <p>Data retrieval is interactive. Human may be asked to provide input at two points:</p>
         <ul>
             <li><strong>Source confirmation</strong> - if the system isn't fully sure which source to use, it asks you to
@@ -487,6 +459,44 @@
 
         <div class="tip"><strong>Best practice:</strong>&nbsp; Be specific about year, geography level (county vs. tract), and
         variable name. Vague requests lead to more clarification prompts.</div>
+
+        <h3 id="dr-examples">Examples</h3>
+
+        <h4>Example 1 - County boundaries and obesity data for New York</h4>
+        <p><strong>Request:</strong> <em>"Download boundaries of the counties in New York state and obesity data for New York."</em></p>
+        <figure>
+            <img src="doc/Data_retriever_Example1.jpg" alt="A Data Retriever session that downloads New York county boundaries and county-level obesity data, each added as a separate data layer" />
+            <figcaption>Example 1 - the Data Retriever identifies the right sources, fetches New York county boundaries and
+                obesity data, and adds each as a separate data layer. The full session is available
+                <a href="https://www.gis-coscientist.online/?conversation=d6b3371c-6013-4700-850b-08135830463c" target="_blank" rel="noopener">here</a>.</figcaption>
+        </figure>
+
+        <h4>Example 2 - PM2.5 and county boundaries for California</h4>
+        <p><strong>Request:</strong> <em>"Download 2019 county-level PM2.5 data for California and the corresponding county boundary."</em></p>
+        <figure>
+            <img src="doc/Data_retriever_Example2.jpg" alt="A Data Retriever session downloading 2019 county-level PM2.5 data for California" /><br>
+            
+            <figcaption>Example 2 - the Data Retriever fetches 2019 county-level PM2.5 for California together with the matching
+                county boundaries, adding each as a separate data layer ready to map and analyze. The full session is available
+                <a href="https://www.gis-coscientist.online/?conversation=1e67d323-39cf-447c-ba2d-a65ac1ea911d" target="_blank" rel="noopener">here</a>.</figcaption>
+        </figure>
+
+        <h4>Example 3 - 30 m DEM around State College, PA</h4>
+        <p><strong>Request:</strong> <em>"Fetch a 30 m DEM for the area around State College, PA."</em></p>
+        <figure>
+            <img src="doc/Data_retriever_Example3.jpg" alt="A Data Retriever session downloading a 30 m digital elevation model for the area around State College, Pennsylvania" />
+            <figcaption>Example 3 - the Data Retriever downloads a 30 m digital elevation model (DEM) for the State College, PA
+                area and adds it as a raster layer. The full session is available
+                <a href="https://www.gis-coscientist.online/?conversation=62e370d7-8b4e-46aa-b71e-517001901004" target="_blank" rel="noopener">here</a>.</figcaption>
+        </figure>
+
+
+        
+
+        
+
+
+
     </section>
 
     <!-- ═══════════════════ 10. SPATIAL ANALYSIS ═══════════════════ -->
@@ -495,14 +505,14 @@
         <p class="lead"><em>Spatial Analysis:</em> Run a specific spatial analysis - the system
         plans the geoprocessing workflow, writes the code, and executes it.</p>
 
-        <h3>How to use it</h3>
+        <h3 id="sa-use">How to use it</h3>
         <div class="step"><div class="num">1</div><div class="body">Switch the mode to <strong>Spatial Analysis</strong>.</div></div>
         <div class="step"><div class="num">2</div><div class="body">Upload (or retrieve) the dataset(s) you want to analyze. The <span class="ui">Auto Data</span> mode can be on to automatically retrieve relevant data needed for the any spatial analysis.</div></div>
         <div class="step"><div class="num">3</div><div class="body">State the analysis you want - for example:<br>
             <em>"Test whether county obesity rates in California are spatially clustered."</em><br>
             <em>"Run a GWR of PM2.5 on income and rural classification."</em></div></div>
         <div class="step"><div class="num">4</div><div class="body">Review the proposed <strong>geoprocessing workflow</strong>
-            (the spatial input &rarr; operation &rarr; output graph described in <a href="#modes-models">Section 8</a>).
+            (the spatial input &rarr; operation &rarr; output graph described in <a href="#geoprocessing">Section 13</a>).
             You can <strong>approve</strong> it, or send feedback to <strong>revise</strong> it before anything runs.</div></div>
         <div class="step"><div class="num">5</div><div class="body">The system generates the <strong>code</strong>, executes it, and
             returns maps, tables, statistics, and figures in the <em>Results</em> panel.</div></div>
@@ -514,14 +524,42 @@
                 <em>Re-execute</em> a single step - so nothing is a black box.</figcaption>
         </figure>
 
-        <h3>Reviewing &amp; re-running</h3>
+        <h3 id="sa-review">Reviewing &amp; re-running</h3>
         <ul>
             <li><strong>Inspect</strong> - every step shows the exact geoprocessing operation and the code that implements it.</li>
             <li><strong>Revise</strong> - give feedback in plain language and the workflow or code is regenerated.</li>
             <li><strong>Re-run steps</strong> - individual steps can be re-executed without restarting the whole analysis.</li>
         </ul>
 
+        <h3 id="sa-examples">Examples</h3>
+
+        <h4>Example 1 - Distribution of restaurants by county in Ohio</h4>
+        <p><strong>Request:</strong> <em>"Create a visual representation that displays the distribution of restaurants across each county in Ohio."</em></p>
+        <figure>
+            <img src="doc/Spatial_Analysis_Example1.png" alt="A choropleth map showing the number of restaurants in each county of Ohio" />
+            <figcaption>Example 1 - result map of restaurant counts by Ohio county. The full session is available
+                <a href="https://www.gis-coscientist.online/?conversation=7a180efd-ed01-4cb6-bdd0-70347fe825c4" target="_blank" rel="noopener">here</a>.</figcaption>
+        </figure>
+        <figure>
+            <img src="doc/Spatial Analysis_Workflow_1.jpg" alt="The geoprocessing workflow generated for the Ohio restaurant analysis, linking input data, operations, and outputs" />
+            <figcaption>The geoprocessing workflow GIS Co-Scientist built and ran for Example 1.</figcaption>
+        </figure>
+
+        <h4>Example 2 - Cancer prevalence in South Carolina</h4>
+        <p><strong>Request:</strong> <em>"Create a thematic map showing the distribution of the cancer prevalence in South Carolina."</em></p>
+        <figure>
+            <img src="doc/Spatial_Analysis_Example2.png" alt="A thematic map showing cancer prevalence across South Carolina counties" />
+            <figcaption>Example 2 - thematic map of cancer prevalence across South Carolina. The full session is available
+                <a href="https://www.gis-coscientist.online/?conversation=c3ed9e1b-810f-4963-baed-d6496a2a0d33" target="_blank" rel="noopener">here</a>.</figcaption>
+        </figure>
+        <figure>
+            <img src="doc/Spatial Analysis_Workflow_2.jpg" alt="The geoprocessing workflow generated for the South Carolina cancer-prevalence analysis, linking input data, operations, and outputs" />
+            <figcaption>The geoprocessing workflow GIS Co-Scientist built and ran for Example 2. </figcaption>
+        </figure>
+
     </section>
+
+    
 
     <!-- ═══════════════════ 11. RESEARCH ═══════════════════ -->
     <section id="research-mode">
@@ -532,7 +570,7 @@
         <p>Research mode is the most comprehensive mode. Give it a research question and (optionally) data, and it works through the
         entire scientific process, pausing for human approval at each major checkpoint (unless Autonomous is on).</p>
 
-        <h3>The workflow stages</h3>
+        <h3 id="rs-stages">The workflow stages</h3>
 
         
         <div class="step"><div class="num">1</div><div class="body"><strong>Question understanding &amp; breakdown</strong> - the
@@ -540,7 +578,7 @@
             ask it to revise or proceed.</div></div>
         <div class="step"><div class="num">2</div><div class="body"><strong>Research plan</strong> - a step-by-step plan
             (data, methods, analyses) is drafted, organized by objective, and shown alongside its
-            <strong>geoprocessing workflow</strong> (see <a href="#modes-models">Section 8</a>). Approve or revise it.</div></div>
+            <strong>geoprocessing workflow</strong> (see <a href="#geoprocessing">Section 13</a>). Approve or revise it.</div></div>
         <div class="step"><div class="num">3</div><div class="body"><strong>Data acquisition</strong> - required datasets are
             retrieved (subject to the Auto Data setting) or taken from data layer uploads.</div></div>
         <div class="step"><div class="num">4</div><div class="body"><strong>Code generation &amp; execution</strong> - each analysis
@@ -564,7 +602,7 @@
                 reproducibility from question to manuscript.</figcaption>
         </figure>
 
-        <h3>The manuscript deliverable</h3>
+        <h3 id="rs-manuscript">The manuscript deliverable</h3>
         <p>The reporting pipeline produces a structured research paper with standard academic sections:</p>
         <ul>
             <li><strong>Title &amp; Abstract</strong> - including structured Background / Methods / Results / Conclusions and keywords.</li>
@@ -576,7 +614,7 @@
         <p>The finished Manuscript can be downloaded. Individual stages - analysis, manuscript, specific steps - can be re-run or refined without
         starting over.</p>
 
-        <h3>Demo</h3>
+        <h3 id="rs-demo">Demo</h3>
         Video demonstration of a selected cases are available <a href="https://www.youtube.com/watch?v=vOeFTgkdw4I&list=PL6ON3gdLloDE_aLyFjj4X7EYKDDdAfJi2" target="_blank" rel="noopener">here</a>.
 
 
@@ -597,9 +635,39 @@
         <p>Chat mode answers directly without generating or running code.</p>
     </section>
 
-    <!-- ═══════════════════ 13. RESULTS / MAP ═══════════════════ -->
+    <!-- ═══════════════════ 13. GEOPROCESSING WORKFLOW ═══════════════════ -->
+    <section id="geoprocessing">
+        <h2>13. Geoprocessing Workflow</h2>
+        <p class="lead"><em>The geospatial core that sets GIS Co-Scientist apart from general-purpose AI assistants.</em></p>
+
+        <h3 id="gw-what">What it is</h3>
+        <p>Before writing any code, GIS Co-Scientist constructs an explicit <strong>geoprocessing workflow</strong>: a directed graph
+        that connects <strong>spatial input data</strong> &rarr; <strong>geoprocessing operations / tools</strong> &rarr;
+        <strong>output data</strong>, organized by analytical objective. This is what distinguishes the system from general-purpose
+        AI assistants - the reasoning is grounded in concrete spatial operations (joins, spatial weights, Moran's I, spatial
+        regression, hotspot detection, and so on) rather than free-form code, which makes every run transparent, reviewable, and
+        reproducible.</p>
+
+        <figure>
+            <img src="doc/geoprocessing-workflow.jpg" alt="A geoprocessing workflow graph linking input datasets, geoprocessing operations, and output data across three research objectives" />
+            <figcaption>A generated geoprocessing workflow. Blue nodes are input data, yellow nodes are geoprocessing
+                operations/tools, and green nodes are outputs; rows group the workflow by objective, and dashed links show data
+                reused within and across objectives.</figcaption>
+        </figure>
+
+        <h3 id="gw-modes">One workflow, every mode</h3>
+        <div class="feature">
+            <span class="tag">Shared across modes</span>
+            <p>The geoprocessing workflow underpins the working modes: <strong>Data Retriever</strong> builds the
+            data-acquisition portion, <strong>Spatial Analysis</strong> plans and runs an analysis workflow on your data, and
+            <strong>Research</strong> chains multiple objective-level workflows into a full study. In every case the workflow is
+            generated first and presented for your review, so you approve <em>what</em> will run before <em>any</em> code executes.</p>
+        </div>
+    </section>
+
+    <!-- ═══════════════════ 14. RESULTS / MAP ═══════════════════ -->
     <section id="results">
-        <h2>13. Results, Map &amp; Artifacts</h2>
+        <h2>14. Results, Map &amp; Artifacts</h2>
 
         <figure>
             <img src="doc/results-map.jpg" alt="The interface during a run: generated code and step outputs in the center, an interactive Map Viewer on the upper right, and a choropleth result map in the Results and Artifacts panel below" />
@@ -627,19 +695,19 @@
 
     <!-- ═══════════════════ 14. TIPS ═══════════════════ -->
     <section id="tips">
-        <h2>14. Tips &amp; Troubleshooting</h2>
+        <h2>15. Tips &amp; Troubleshooting</h2>
 
         <table>
             <tr><th>Symptom</th><th>What to check</th></tr>
-            <tr><td>Nothing runs / "API key required"</td><td>Add a valid GIBD key (starts with <code>gibd-</code>) in
-                <span class="ui">Settings</span> and click <span class="ui">Save Key</span>.</td></tr>
+            <tr><td>Nothing runs / "API key required"</td><td>Add a valid API key - a GIBD key (<code>gibd-</code>) or an
+                OpenAI key (<code>sk-</code>) - in <span class="ui">Settings</span> and click <span class="ui">Save Key</span>.</td></tr>
             <tr><td>A data download is rejected for "missing key"</td><td>The source needs a free API key - add it under
                 <strong>Settings → Data Source Keys</strong>, or enter it when prompted. See <a href="#data-mode">§9</a>.</td></tr>
             <tr><td>Wrong dataset retrieved</td><td>Be explicit about <em>year, geography level, and variable</em>; or name the source
                 directly. Use the source-confirmation prompt to retry.</td></tr>
             <tr><td>Shapefile won't load</td><td>Include all components (<code>.shp .shx .dbf .prj</code>) or upload them as a single
                 <code>.zip</code>.</td></tr>
-            <tr><td>My conversations disappeared</td><td>They're tied to your GIBD key - make sure the same key is entered.</td></tr>
+            <tr><td>My conversations disappeared</td><td>They're tied to your API key - make sure the same key is entered.</td></tr>
             <tr><td>Can't delete a shared conversation</td><td>Only the owner can delete/rename; collaborators have shared access only.</td></tr>
             
         </table>
@@ -651,6 +719,9 @@
     </section>
 
     </main>
+
+    <!-- ── Right rail: "On this page" for the current group (built by JS) ── -->
+    <aside class="onthispage" id="onThisPage" aria-label="On this page"></aside>
 </div>
 
 <!-- <footer class="footer">
@@ -659,21 +730,150 @@
 </footer> -->
 
 <script>
-    // Highlight the active section in the table of contents while scrolling.
+    // Two-level navigation: the left rail lists the page groups; the right
+    // "On this page" rail lists the sections of whichever group is in view.
+    // Both update as you scroll (scroll-spy on the section headings).
     (function(){
-        const links = Array.from(document.querySelectorAll('nav.toc a'));
-        const map = {};
-        links.forEach(l=>{ const id=l.getAttribute('href').slice(1); (map[id]=map[id]||[]).push(l); });
-        const sections = Array.from(document.querySelectorAll('main section'));
-        const obs = new IntersectionObserver((entries)=>{
-            entries.forEach(e=>{
-                if(e.isIntersecting){
-                    links.forEach(l=>l.classList.remove('active'));
-                    (map[e.target.id]||[]).forEach(l=>l.classList.add('active'));
-                }
+        // Single source of truth. Each page owns one or more `sections` (used to
+        // decide which page is in view) and a list of `items` shown in the right
+        // "On this page" rail. For multi-section pages the items are the sections;
+        // for a single mode page the items are that section's sub-headings.
+        const PAGES = [
+            { label:'Getting Started',
+              sections:['intro','quickstart','apikey'],
+              items:[
+                { id:'intro',         label:'1. What is GIS Co-Scientist?' },
+                { id:'quickstart',    label:'2. Quick Start' },
+                { id:'apikey',        label:'3. API Key' },
+              ]},
+            { label:'The Interface',
+              sections:['layout','settings','datalayers','conversations','modes-models'],
+              items:[
+                { id:'layout',        label:'4. UI Layout Overview' },
+                { id:'settings',      label:'5. Settings' },
+                { id:'datalayers',    label:'6. Data Layers' },
+                { id:'conversations', label:'7. Conversations & Sharing' },
+                { id:'modes-models',  label:'8. Modes, Models & Autonomous' },
+              ]},
+            { label:'Data Retriever',
+              sections:['data-mode'],
+              items:[
+                { id:'dr-use',        label:'How to use it' },
+                { id:'dr-sources',    label:'Available data sources' },
+                { id:'dr-multi',      label:'Downloading multiple datasets' },
+                { id:'dr-feedback',   label:'Feedback & approval' },
+                { id:'dr-examples',   label:'Examples' },
+              ]},
+            { label:'Spatial Analysis',
+              sections:['spatial-mode'],
+              items:[
+                { id:'sa-use',        label:'How to use it' },
+                { id:'sa-review',     label:'Reviewing & re-running' },
+                { id:'sa-examples',   label:'Examples' },
+              ]},
+            { label:'Research',
+              sections:['research-mode'],
+              items:[
+                { id:'rs-stages',     label:'The workflow stages' },
+                { id:'rs-manuscript', label:'The manuscript deliverable' },
+                { id:'rs-demo',       label:'Demo' },
+              ]},
+            { label:'Chat',
+              sections:['chat-mode'],
+              items:[
+                { id:'chat-mode',     label:'Overview' },
+              ]},
+            { label:'Geoprocessing Workflow',
+              sections:['geoprocessing'],
+              items:[
+                { id:'gw-what',       label:'What it is' },
+                { id:'gw-modes',      label:'One workflow, every mode' },
+              ]},
+            { label:'Reference',
+              sections:['results','tips'],
+              items:[
+                { id:'results',       label:'14. Results, Map & Artifacts' },
+                { id:'tips',          label:'15. Tips & Troubleshooting' },
+              ]},
+        ];
+
+        const grpLinks = Array.from(document.querySelectorAll('nav.toc a.grp'));
+        const otp = document.getElementById('onThisPage');
+        if(!otp) return;
+
+        // Ordered list of sections (for page detection) and resolved item els.
+        const sectionOrder = [];
+        const itemEls = PAGES.map((p, pi) => {
+            p.sections.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) sectionOrder.push({ pi, el });
             });
-        },{rootMargin:'-10% 0px -75% 0px',threshold:0});
-        sections.forEach(s=>obs.observe(s));
+            return p.items.map(it => ({ ...it, el: document.getElementById(it.id) }))
+                          .filter(it => it.el);
+        });
+
+        // Height of the sticky header, used to offset scroll-spy + jumps.
+        const heroH = parseInt(getComputedStyle(document.documentElement)
+                        .getPropertyValue('--hero-h'), 10) || 50;
+
+        let renderedPage = -1;    // which page's TOC is currently in the right rail
+        let lastKey = '';         // "pageIndex:itemId" of the last applied state
+
+        function renderPage(pi){
+            otp.innerHTML = '<h2>On this page</h2>' + PAGES[pi].items.map(it =>
+                '<a href="#' + it.id + '" data-id="' + it.id + '">' + it.label + '</a>'
+            ).join('');
+            renderedPage = pi;
+        }
+
+        function markActive(pi, id){
+            grpLinks.forEach(l => l.classList.toggle('active', +l.dataset.group === pi));
+            otp.querySelectorAll('a').forEach(a =>
+                a.classList.toggle('active', a.dataset.id === id));
+        }
+
+        const atBottom = () =>
+            window.innerHeight + window.scrollY >= document.body.scrollHeight - 2;
+
+        function currentPage(){
+            if(atBottom()) return sectionOrder[sectionOrder.length - 1].pi;
+            const y = window.scrollY + heroH + 48;
+            let pi = sectionOrder[0].pi;
+            for(const s of sectionOrder){ if(s.el.offsetTop <= y) pi = s.pi; }
+            return pi;
+        }
+
+        function currentItemId(pi){
+            const items = itemEls[pi];
+            if(!items.length) return '';
+            if(atBottom() && pi === sectionOrder[sectionOrder.length - 1].pi)
+                return items[items.length - 1].id;
+            const y = window.scrollY + heroH + 48;
+            let id = items[0].id;
+            for(const it of items){ if(it.el.offsetTop <= y) id = it.id; }
+            return id;
+        }
+
+        function update(){
+            const pi = currentPage();
+            const id = currentItemId(pi);
+            const key = pi + ':' + id;
+            if(key === lastKey) return;       // nothing changed since last frame
+            lastKey = key;
+            if(pi !== renderedPage) renderPage(pi);
+            markActive(pi, id);
+        }
+
+        // rAF-throttled scroll handler.
+        let ticking = false;
+        window.addEventListener('scroll', () => {
+            if(ticking) return;
+            ticking = true;
+            requestAnimationFrame(() => { update(); ticking = false; });
+        }, { passive:true });
+        window.addEventListener('resize', update);
+        renderPage(0);
+        update();
     })();
 
     // Doc search: build an index of the manual's content blocks, then show a
