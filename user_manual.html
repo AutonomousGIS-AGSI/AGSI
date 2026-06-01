@@ -40,6 +40,7 @@
         <a href="#datalayers">6. Data Layers &amp; Menus</a>
         <a href="#conversations">7. Conversations &amp; Sharing</a>
         <a href="#modes-models">8. Modes, Models &amp; Autonomous</a>
+        <a href="#modes-models" class="sub">Geoprocessing workflow</a>
 
         <h2>Working Modes</h2>
         <a href="#data-mode">9. Data Retriever Mode</a>
@@ -80,6 +81,27 @@
         <!-- <div class="note"><strong>Who is this for?</strong>&nbsp; Researchers, students, and analysts who want to do spatial
         analysis without writing all the code themselves. No programming is required, though every piece of generated code is shown
         to you and can be reviewed, edited, and re-run.</div> -->
+
+        <p>Behind the interface is a <strong>specialized multi-agent system</strong> with a
+        <strong>human-in-the-loop</strong> at its center: dedicated agents understand the question, retrieve geospatial data,
+        plan a workflow, write and run code, interpret results, and draft the report - while you stay in control, reviewing and
+        approving (or revising) at each major checkpoint. A reproducibility layer logs every workflow, dataset, and line of
+        executable code so any result can be traced and reproduced.</p>
+
+        <figure>
+            <img src="doc/architecture.jpg" alt="GIS Co-Scientist multi-agent architecture with a human-in-the-loop and a reproducibility layer" />
+            <figcaption>System architecture - a human-in-the-loop guides a layer of specialized agents, backed by a
+                reproducibility layer (workflow logging, data lineage, executable code, execution tracking, and saved artifacts).</figcaption>
+        </figure>
+
+        <div class="feature">
+            <span class="tag">What makes it geospatial</span>
+            <h4>The geoprocessing workflow</h4>
+            <p>Unlike general-purpose AI assistants, GIS Co-Scientist plans an explicit <strong>geoprocessing workflow</strong> -
+            a directed graph of spatial input data, geoprocessing operations/tools, and output data - before any code is written.
+            This workflow is the geospatial backbone shared across the three working modes (Data Retriever, Spatial Analysis, and
+            Research), and it is shown to you for review. See <a href="#modes-models">Section 8</a>.</p>
+        </div>
     </section>
 
     <!-- ═══════════════════ 2. QUICK START ═══════════════════ -->
@@ -281,6 +303,30 @@
     <section id="modes-models">
         <h2>8. Modes, Models &amp; Autonomous</h2>
 
+        <h3>The geoprocessing workflow - the geospatial core</h3>
+        <p>Before writing any code, GIS Co-Scientist constructs an explicit <strong>geoprocessing workflow</strong>: a directed graph
+        that connects <strong>spatial input data</strong> &rarr; <strong>geoprocessing operations / tools</strong> &rarr;
+        <strong>output data</strong>, organized by analytical objective. This is what distinguishes the system from general-purpose
+        AI assistants - the reasoning is grounded in concrete spatial operations (joins, spatial weights, Moran's I, spatial
+        regression, hotspot detection, and so on) rather than free-form code, which makes every run transparent, reviewable, and
+        reproducible.</p>
+
+        <figure>
+            <img src="doc/geoprocessing-workflow.jpg" alt="A geoprocessing workflow graph linking input datasets, geoprocessing operations, and output data across three research objectives" />
+            <figcaption>A generated geoprocessing workflow. Blue nodes are input data, yellow nodes are geoprocessing
+                operations/tools, and green nodes are outputs; rows group the workflow by objective, and dashed links show data
+                reused within and across objectives.</figcaption>
+        </figure>
+
+        <div class="feature">
+            <span class="tag">Shared across modes</span>
+            <h4>One workflow concept, three modes</h4>
+            <p>The geoprocessing workflow underpins all three working modes: <strong>Data Retriever</strong> builds the
+            data-acquisition portion, <strong>Spatial Analysis</strong> plans and runs an analysis workflow on your data, and
+            <strong>Research</strong> chains multiple objective-level workflows into a full study. In every case the workflow is
+            generated first and presented for your review, so you approve <em>what</em> will run before <em>any</em> code executes.</p>
+        </div>
+
         <h3>Choosing a mode</h3>
         <p>Open the <em><strong>mode dropdown</strong></em> (bottom-right of the input box, labeled with the current mode) and select one:</p>
         <table>
@@ -431,6 +477,14 @@
                 <strong>proceed with available data</strong>, <strong>upload the missing file</strong> yourself, or
                 <strong>abort the workflow</strong>. Uploaded files are audited automatically and folded into the run.</li>
         </ul>
+
+        <figure>
+            <img src="doc/data-source-confirmation.jpg" alt="Inline data-source confirmation cards showing the LLM-suggested source, the finalized source, a confidence score, and Proceed / Always Proceed / Retry / Abort buttons" />
+            <figcaption>Human-in-the-loop data retrieval. For each dataset the system proposes a source, explains its reasoning,
+                and reports a confidence score; you can <em>Proceed with Download</em>, switch to a different source, <em>Retry</em>
+                the selection, or <em>Abort</em> - keeping you in control of exactly what data enters the analysis.</figcaption>
+        </figure>
+
         <div class="tip"><strong>Best practice:</strong>&nbsp; Be specific about year, geography level (county vs. tract), and
         variable name. Vague requests lead to more clarification prompts.</div>
     </section>
@@ -447,21 +501,26 @@
         <div class="step"><div class="num">3</div><div class="body">State the analysis you want - for example:<br>
             <em>"Test whether county obesity rates in California are spatially clustered."</em><br>
             <em>"Run a GWR of PM2.5 on income and rural classification."</em></div></div>
-        <div class="step"><div class="num">4</div><div class="body">Review the proposed <strong>geoprocessing workflow</strong>.
+        <div class="step"><div class="num">4</div><div class="body">Review the proposed <strong>geoprocessing workflow</strong>
+            (the spatial input &rarr; operation &rarr; output graph described in <a href="#modes-models">Section 8</a>).
             You can <strong>approve</strong> it, or send feedback to <strong>revise</strong> it before anything runs.</div></div>
         <div class="step"><div class="num">5</div><div class="body">The system generates the <strong>code</strong>, executes it, and
             returns maps, tables, statistics, and figures in the <em>Results</em> panel.</div></div>
 
-        
+        <figure>
+            <img src="doc/generated-code.jpg" alt="A completed analysis step showing the execution log with output tiles, the generated Python code, and Edit Code / Re-run / Provide Feedback / Re-execute Step controls" />
+            <figcaption>Each step exposes its <strong>generated code</strong> and execution log. Output tiles (console output,
+                tables, figures) appear inline, and you can <em>Edit Code</em>, <em>Re-run</em>, <em>Provide Feedback</em>, or
+                <em>Re-execute</em> a single step - so nothing is a black box.</figcaption>
+        </figure>
 
         <h3>Reviewing &amp; re-running</h3>
         <ul>
-            
+            <li><strong>Inspect</strong> - every step shows the exact geoprocessing operation and the code that implements it.</li>
             <li><strong>Revise</strong> - give feedback in plain language and the workflow or code is regenerated.</li>
             <li><strong>Re-run steps</strong> - individual steps can be re-executed without restarting the whole analysis.</li>
-            
         </ul>
-        
+
     </section>
 
     <!-- ═══════════════════ 11. RESEARCH ═══════════════════ -->
@@ -480,7 +539,8 @@
             system interprets research question and breaks it into concrete analytical tasks. Human can review the breakdown and
             ask it to revise or proceed.</div></div>
         <div class="step"><div class="num">2</div><div class="body"><strong>Research plan</strong> - a step-by-step plan
-            (data, methods, analyses) is drafted and shown as a flowchart / geoprocessing workflow. Approve or revise it.</div></div>
+            (data, methods, analyses) is drafted, organized by objective, and shown alongside its
+            <strong>geoprocessing workflow</strong> (see <a href="#modes-models">Section 8</a>). Approve or revise it.</div></div>
         <div class="step"><div class="num">3</div><div class="body"><strong>Data acquisition</strong> - required datasets are
             retrieved (subject to the Auto Data setting) or taken from data layer uploads.</div></div>
         <div class="step"><div class="num">4</div><div class="body"><strong>Code generation &amp; execution</strong> - each analysis
@@ -489,6 +549,20 @@
             <em>presentation</em> of rendered figures.</div></div>
         <div class="step"><div class="num">6</div><div class="body"><strong>Manuscript drafting</strong> - a full paper is written
             section by section.</div></div>
+
+        <figure>
+            <img src="doc/research-plan.jpg" alt="A research plan broken into objectives, each with a hypothesis and a numbered list of geoprocessing steps that can be run, edited, or extended" />
+            <figcaption>The research plan. Each objective carries a hypothesis and an ordered list of concrete geoprocessing steps;
+                you can run, edit, add, or remove steps before execution. A <em>Geoprocessing Workflow</em> view turns the same plan
+                into the input &rarr; operation &rarr; output graph.</figcaption>
+        </figure>
+
+        <figure>
+            <img src="doc/execution-flowchart.jpg" alt="An execution flowchart of completed and pending steps next to the executed code and the list of files each step created" />
+            <figcaption>The execution flowchart tracks each step's status (OK, error, pending) across all objectives, and links to
+                the exact <strong>executed code</strong> and the <strong>files</strong> each step produced - full transparency and
+                reproducibility from question to manuscript.</figcaption>
+        </figure>
 
         <h3>The manuscript deliverable</h3>
         <p>The reporting pipeline produces a structured research paper with standard academic sections:</p>
@@ -526,7 +600,14 @@
     <!-- ═══════════════════ 13. RESULTS / MAP ═══════════════════ -->
     <section id="results">
         <h2>13. Results, Map &amp; Artifacts</h2>
-        
+
+        <figure>
+            <img src="doc/results-map.jpg" alt="The interface during a run: generated code and step outputs in the center, an interactive Map Viewer on the upper right, and a choropleth result map in the Results and Artifacts panel below" />
+            <figcaption>Results in context. The center column streams each step's generated code and output; the
+                <em>Map Viewer</em> (upper right) renders spatial layers, and the <em>Results &amp; Artifacts</em> panel (lower right)
+                shows result maps, tables, and figures - here, a choropleth of the analysis output.</figcaption>
+        </figure>
+
         <h3>Map Viewer</h3>
         <ul>
             <li>Renders your uploaded layers and analysis outputs on an interactive map.</li>
@@ -730,6 +811,20 @@
             } else if(e.key === '/' && !typing){
                 e.preventDefault(); input.focus();
             }
+        });
+    })();
+
+    // ─────────────────────────────────────────────────────────────────
+    // Click a figure image to open the full-resolution original in a new
+    // browser tab, where the browser's native zoom / pan can be used.
+    (function(){
+        const imgs = Array.from(document.querySelectorAll('main figure img'));
+        imgs.forEach(img => {
+            img.classList.add('zoomable');
+            img.title = 'Click to open the full-resolution image in a new tab';
+            img.addEventListener('click', () => {
+                window.open(img.currentSrc || img.src, '_blank', 'noopener');
+            });
         });
     })();
 </script>
