@@ -33,14 +33,14 @@
         position:sticky;top:0;z-index:20;
     }
     .hero-inner{max-width:none;margin:0;display:flex;align-items:center;gap:22px;flex-wrap:wrap}
-    .hero img{height:40px;width:auto}
+    .hero img{height:35px;width:auto}
     .hero h1{margin:0;font-size:25px;font-weight:700;letter-spacing:.2px}
     .hero p{margin:6px 0 0;color:#d7e6ef;font-size:15px;max-width:760px}
     .hero .badge{display:inline-block;margin-top:14px;background:rgba(255,255,255,.14);
         border:1px solid rgba(255,255,255,.28);padding:5px 12px;border-radius:30px;font-size:12.5px;color:#eaf3f8}
 
     .hero-gibd{display:flex;align-items:center;flex:0 0 auto}
-    .hero-gibd img{height:40px;width:auto;display:block;transition:opacity .15s}
+    .hero-gibd img{height:30px;width:auto;display:block;transition:opacity .15s}
     .hero-gibd:hover img{opacity:.85}
 
     .hero-search{margin-left:auto;position:relative}
