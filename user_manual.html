@@ -102,7 +102,7 @@
 
         <div class="step"><div class="num">2</div><div class="body">
             <strong>Pick a mode:</strong> In the chat input toolbar, open the mode dropdown (bottom-right of the input box) and
-            choose <em style="color: black;">Data Retriever</em>, <em style="color: black;">Spatial Analysis</em>, <em style="color: black;">Research</em>, or <em style="color: black;">Chat</em>.</div></div>
+            choose <em style="color: black;">Data Retrieval</em>, <em style="color: black;">Spatial Analysis</em>, <em style="color: black;">Research</em>, or <em style="color: black;">Chat</em>.</div></div>
 
         <div class="step"><div class="num">3</div><div class="body">
             <strong>Upload data (Optional):</strong> Click the <span class="ui">＋</span> button (or <em>Data layers → Add Data Layer</em>)
@@ -111,7 +111,7 @@
         <div class="step"><div class="num">4</div><div class="body">
             <strong>Set Auto Data (Optional):</strong> Use the <span class="ui">Auto Data</span> toggle in the input toolbar to control how
             datasets are fetched. When <em>on</em>, the system automatically downloads any data your request needs; when <em>off</em>, it
-            works with the data already uploaded instead of fetching new datasets. (In <it>Data Retriever</it> mode, data is always fetched.)
+            works with the data already uploaded instead of fetching new datasets. (In <it>Data Retrieval</it> mode, data is always fetched.)
             See <a href="#data-mode">Section 9</a> for details.</div></div>
 
         <div class="step"><div class="num">5</div><div class="body">
@@ -149,14 +149,14 @@
         <div class="step"><div class="num">3</div><div class="body">Click <span class="ui">Save Key</span>. A status message confirms it was stored.
             Use <span class="ui">Clear Key</span> to remove it.</div></div>
 
-        <div class="note">API key is <strong>stored locally on your browser</strong> and is never sent to or stored on our server. Keep it private, and use
+        <div class="note">API key is <strong>stored locally on your browser</strong> and is never stored on our server. Keep it private, and use
         <span class="ui">Clear Key</span> to remove it whenever you like.</div>
 
     </section>
 
     <!-- ═══════════════════ 4. LAYOUT ═══════════════════ -->
     <section id="layout">
-        <h2>4. UI Layout Overview</h2>
+        <h2>UI Layout Overview</h2>
         <figure>
             <img src="doc/User Interface.png" alt="User Interface" />
             <figcaption>GIS Co-Scientist user interface overview.</figcaption>
@@ -194,7 +194,7 @@
 
     <!-- ═══════════════════ 5. SETTINGS ═══════════════════ -->
     <section id="settings">
-        <h2>5. Settings</h2>
+        <h2>Settings</h2>
         <p class="lead">Opened from the <span class="ui">Settings</span> button.</p>
 
         <h3>API Key</h3>
@@ -215,7 +215,7 @@
 
     <!-- ═══════════════════ 6. DATA LAYERS ═══════════════════ -->
     <section id="datalayers">
-        <h2>6. Data Layers</h2>
+        <h2>Data Layers</h2>
 
         <h3>Adding a data layer</h3>
         <p>Click the 
@@ -259,7 +259,7 @@
 
     <!-- ═══════════════════ 7. CONVERSATIONS ═══════════════════ -->
     <section id="conversations">
-        <h2>7. Conversation History &amp; Sharing</h2>
+        <h2>Conversation History &amp; Sharing</h2>
         <p class="lead">Each conversation is saved automatically and scoped to your API key.</p>
 
         <h3>History</h3>
@@ -290,13 +290,13 @@
 
     <!-- ═══════════════════ 8. MODES / MODELS ═══════════════════ -->
     <section id="modes-models">
-        <h2>8. Modes, Models &amp; Autonomous mode</h2>
+        <h2>Modes, Models &amp; Autonomous mode</h2>
 
         <h3>Choosing a mode</h3>
         <p>Open the <em><strong>mode dropdown</strong></em> (bottom-right of the input box, labeled with the current mode) and select one:</p>
         <table>
             <tr><th>Mode</th><th>Usage</th><th>Section</th></tr>
-            <tr><td><strong>Data Retriever</strong></td><td>Download data only - no analysis.</td><td><a href="#data-mode">§9</a></td></tr>
+            <tr><td><strong>Data Retrieval</strong></td><td>Download data only - no analysis.</td><td><a href="#data-mode">§9</a></td></tr>
             <tr><td><strong>Spatial Analysis</strong></td><td>Run a direct spatial analysis on your data.</td><td><a href="#spatial-mode">§10</a></td></tr>
             <tr><td><strong>Research</strong></td><td>Run the full workflow and draft a manuscript.</td><td><a href="#research-mode">§11</a></td></tr>
             <tr><td><strong>Chat</strong></td><td>Ask conversational questions, no workflow.</td><td><a href="#chat-mode">§12</a></td></tr>
@@ -379,14 +379,42 @@
         application, so changing those selectors does not change the model that runs.</div>
     </section>
 
+    <!-- ═══════════════════ GEOPROCESSING WORKFLOW ═══════════════════ -->
+    <section id="geoprocessing">
+        <h2>Geoprocessing Workflow</h2>
+        
+        
+        <p>Before writing any code, GIS Co-Scientist constructs an explicit <strong>geoprocessing workflow</strong>. The geoprocessing workflow is represented as a directed 
+        graph where <strong>spatial input data</strong> &rarr; <strong>geoprocessing operations / tools</strong> &rarr;
+        <strong> and output data</strong> are connected. Each analytical objective is decomposed into a sequence of spatial operations and the output of one step becomes
+        the input for the next step. This geoprocessing workflow serves as an executable blueprint for any geospatial task.</p>
+
+
+        <figure>
+            <img src="doc/Example_GeoprocessingWorkflow_SpatialAnalysis.jpg" alt="The components of a geoprocessing workflow: input data, operations/tools, and output data" />
+            <figcaption>An example of geoprocessing workflow generated during spatial analysis. <strong>Blue nodes</strong> are <strong>input data</strong>, 
+                <strong>yellow nodes</strong> are <strong>geoprocessing operations/tools</strong>, and <strong>green nodes</strong> are <strong>intermediate outputs</strong>, and <strong>purple nodes</strong> are <strong>final outputs</strong>.</figcaption>
+        </figure>
+
+        <figure>
+            <img src="doc/geoprocessing-workflow.jpg" alt="A geoprocessing workflow graph linking input datasets, geoprocessing operations, and output data across three research objectives" />
+            <figcaption>An example of geoprocessing workflow generated during research mode. <strong>Blue nodes</strong> are <strong>input data</strong>, 
+                <strong>yellow nodes</strong> are <strong>geoprocessing operations/tools</strong>, and <strong>green nodes</strong> are <strong>intermediate outputs</strong>; rows group the workflow by objective, and dashed links show data
+                operations/tools, and green nodes are outputs; rows group the workflow by objective, and dashed links show data
+                reused within and across objectives.</figcaption>
+        </figure>
+
+        
+    </section>
+
     <!-- ═══════════════════ 9. DATA RETRIEVER ═══════════════════ -->
     <section id="data-mode">
-        <h2>9. Data Retriever Mode</h2>
-        <p class="lead"><em>Data Retriever: </em>Find and download geospatial datasets from public data
+        <h2>9. Data Retrieval Mode</h2>
+        <p class="lead"><em>Data retrieval mode: </em>Find and download geospatial datasets from public data
         sources, without running any analysis.</p>
 
-        <h3 id="dr-use">How to use the Data Retriever mode</h3>
-        <div class="step"><div class="num">1</div><div class="body">Switch the mode to <strong>Data Retriever</strong>.</div></div>
+        <h3 id="dr-use">How to use the Data Retrieval mode</h3>
+        <div class="step"><div class="num">1</div><div class="body">Switch the mode to <strong>Data Retrieval</strong>.</div></div>
         <div class="step"><div class="num">2</div><div class="body">Describe what you need in natural language. Be as specific as you can about the variables, geography, and time frame (See examples).
         </div></div>
         <div class="step"><div class="num">3</div><div class="body">The system identifies the best matching <strong>data
@@ -528,7 +556,7 @@
             <li><strong>Re-run steps</strong> - individual steps can be re-executed without restarting the whole analysis.</li>
         </ul>
 
-        <h3 id="sa-examples">Examples</h3>
+        <h3 id="sa-examples">Examples - Spatial Analysis</h3>
 
         <h4>Example 1 - Distribution of restaurants by county in Ohio</h4>
         <p><strong>Request:</strong> <em>"Create a visual representation that displays the distribution of restaurants across each county in Ohio."</em></p>
@@ -571,13 +599,17 @@
 
         
         <div class="step"><div class="num">1</div><div class="body"><strong>Question understanding &amp; breakdown</strong> - the
-            system interprets research question and breaks it into concrete analytical tasks. Human can review the breakdown and
-            ask it to revise or proceed.</div></div>
-        <div class="step"><div class="num">2</div><div class="body"><strong>Research plan</strong> - a step-by-step plan
+        system parses and interprets the research question provided by human. At this stage, a structured research specification encoding the research intent, 
+        and data required to answer the question is generated.</div></div>
+
+        <div class="step"><div class="num">2</div><div class="body"><strong>Data acquisition</strong> - required datasets are
+            retrieved (subject to the Auto Data setting) or taken from data layer uploads.</div></div>
+        
+
+        <div class="step"><div class="num">3</div><div class="body"><strong>Research plan generation</strong> - a step-by-step plan
             (data, methods, analyses) is drafted, organized by objective, and shown alongside its
             <strong>geoprocessing workflow</strong> (see <a href="#geoprocessing">Section 13</a>). Approve or revise it.</div></div>
-        <div class="step"><div class="num">3</div><div class="body"><strong>Data acquisition</strong> - required datasets are
-            retrieved (subject to the Auto Data setting) or taken from data layer uploads.</div></div>
+        
         <div class="step"><div class="num">4</div><div class="body"><strong>Code generation &amp; execution</strong> - each analysis
             step is implemented in code and run; intermediate outputs are shown in tiles within the execution panel.</div></div>
         <div class="step"><div class="num">5</div><div class="body"><strong>Result analysis</strong> - outputs are interpreted: a
@@ -585,19 +617,160 @@
         <div class="step"><div class="num">6</div><div class="body"><strong>Manuscript drafting</strong> - a full paper is written
             section by section.</div></div>
 
+
+        <h3 id="human-ai-collaboration">Human-AI collaboration in the research mode</h3>
+
+        <p>GIS Co-Scientist incorporates <strong>human-in-the-loop checkpoints</strong> at the stages where expert judgment most
+        strongly conditions the validity of downstream inference. At each checkpoint you can either approve and let the system
+        proceed, or provide feedback that re-prompts the responsible agent with targeted revisions - all before any external
+        code is generated or executed.</p>
+
+        <h3>Checkpoint 1 - Task breakdown &amp; data requirements</h3>
+        <p>The first checkpoint follows the <strong>research question understanding</strong> stage, where the <strong>data requirements</strong> are surfaced. Two options are given:</p>
+            <ul>
+                <li><strong>Proceed</strong> - instructs the system to move on to retrieval and planning.</li>
+                <li><strong>Provide feedback</strong> - you can give feedback in natural language describing what's missing or wrong. Then the data requirements are regenerated based on your input, 
+                    and you can review again.</li>  
+            </ul>
+        
+        <!-- [insert DataRequirements image] -->
+
+        <h3>Checkpoint 2 - Data source selection (optional)</h3>
+        <p>A second, checkpoint is triggered by the <strong>Geospatial Data Retrieval Agent</strong> once it has
+        selected an appropriate data source for each unmet data requirement. The chosen source, together with the rationale for
+        its selection, is presented to you; you may authorize retrieval or provide feedback to redirect the agent toward an
+        alternative source or refine the request before external code is generated.</p>
+        
+        <!-- [insert DataSourceConfirmation image] -->
+
+        <h3>Checkpoint 3 - Research plan review</h3>
+        <p>The third checkpoint occurs during <strong>research plan generation</strong>. Through a dedicated revision interface
+        you can operate on the finalized plan before approving it for execution: 
+        <ui>
+            <li><strong>Edit the plan directly</strong> - make changes to the plan's text, structure, or content; the system then regenerates the geoprocessing workflow and downstream code to align with the revised plan.</li>
+            <li><strong>Provide feedback</strong> - give natural-language feedback describing the desired changes to the plan, and the system regenerates a revised plan based on your input.</li>
+
+        </ui>
+        
+        <!-- [insert ResearchPlanReview image] -->
+
+        <h3>Checkpoint 4 - Execution review</h3>
+        <p>The fourth checkpoint occurs immediately after objective execution. An <strong>execution checkpoint</strong> surfaces
+        a per-step summary of statuses, errors, and produced artifacts; you may proceed to result analysis and manuscript
+        drafting, or re-run selected steps.</p> 
+        <p> In each steps, you can do any of the following: </p>
+            <li><strong>Edit code</strong> - you can edit the code by editing the text directly.</li>
+            <li><strong>Re-run the step</strong> - if a step failed or produced unsatisfactory output, you can re-run it without affecting other steps.</li>
+            <li><strong>Provide feedback</strong> - you can give natural-language feedback describing any desired change to the code; the system regenerates 
+                the code for that step based on your input, and you can re-run it - without affecting other steps in the workflow.</li>
+            <li><strong>Re-execute Step</strong> - you can re-execute a step to refresh its output or apply changes.</li>
+
+            
+        <!-- [insert ExecutionCheckpoint image] -->
+
+        <!-- <h4>Checkpoint 5 - Figures &amp; tables catalog</h4>
+        <p>The fifth checkpoint lets you verify the <strong>figures and tables catalog</strong> created by the
+        <strong>Result Analysis Agent</strong> before it is passed to the <strong>Reporting Agent</strong>.</p>
+        [insert FiguresTablesCatalog image] -->
+
+        <h3>Post-hoc step revisitation</h3>
+        <p>At any point after execution you may return to an individual step and supply natural-language feedback describing the desired
+        modification - a methodological refinement, a parameter adjustment, an alternative model specification, or a corrected
+        interpretation. You may then choose to propagate the revised outputs into the manuscript, at which point the Reporting
+        Agent selectively regenerates only the sections whose input has changed - preserving editorial continuity while keeping
+        the final document faithful to the most recent analytical state.</p>
+
+        <h3>Research mode examples</h3>
+      
+
+
+        <h4>Example 1 - Spatial inequalities in air pollution exposure and income inequality in California </h4>
+        <p><strong>Request:</strong> <em>"How do spatial inequalities in PM2.5 exposure across California counties vary with income inequality (Gini) in 2019, and does the spatial relationship vary by urban–rural classification?"</em></p>
         <figure>
-            <img src="doc/research-plan.jpg" alt="A research plan broken into objectives, each with a hypothesis and a numbered list of geoprocessing steps that can be run, edited, or extended" />
-            <figcaption>The research plan. Each objective carries a hypothesis and an ordered list of concrete geoprocessing steps;
-                you can run, edit, add, or remove steps before execution. A <em>Geoprocessing Workflow</em> view turns the same plan
-                into the input &rarr; operation &rarr; output graph.</figcaption>
+            <img src="Figures\Figure 4.jpg" alt="Research Question Understanding Agent identifying required datasets" />
+            <figcaption>Research Question Understanding Agent identifying required datasets. </figcaption>
+        </figure>
+        <figure>
+            <img src="Figures\Figure 5\Figure 5a.jpg" alt="Geospatial Data Retrieval Agent showing EPA Air Quality System (AQS) data source for human verification." />
+            <figcaption>Geospatial Data Retrieval Agent showing selected EPA Air Quality System (AQS) data source for human verification.</figcaption>
+        </figure>
+        <figure>
+            <img src="Figures\Figure 5\Figure 5b.jpg" alt="Geospatial Data Retrieval Agent showing US Census Bureau demography data source for human verification." />
+            <figcaption>Geospatial Data Retrieval Agent showing selected US Census Bureau demography data source for human verification.</figcaption>
+        </figure>
+        <figure>
+            <img src="Figures\Figure 5\Figure 5c.jpg" alt="Geospatial Data Retrieval Agent showing USDA ERS data source for human verification." />
+            <figcaption>Geospatial Data Retrieval Agent showing selected USDA ERS data source for human verification.</figcaption>
+        </figure>
+        <figure>
+            <img src="Figures\Figure 5\Figure 5d.jpg" alt="Geospatial Data Retrieval Agent showing US Census Bureau boundary data source for human verification." />
+            <figcaption>Geospatial Data Retrieval Agent showing selected US Census Bureau boundary data source for human verification.</figcaption>
+        </figure>
+        <figure>
+            <img src="Figures\Figure 6.jpg" alt="Research plan generated by Planning Agent." />
+            <figcaption>Research plan generated by Planning Agent.</figcaption>
+        </figure>
+        <figure>
+            <img src="Figures\Figure 7.jpg" alt="Geoprocessing workflow corresponding to the research plan." />
+            <figcaption>Geoprocessing workflow corresponding to the research plan.</figcaption>
+        </figure>
+        <figure>
+            <img src="Figures\Figure 8.jpg" alt="Step-level code generation and execution." />
+            <figcaption>Step-level code generation and execution.</figcaption>
+        </figure>
+        <figure>
+            <img src="Figures\Figure 9.jpg" alt="Step-level code generation and execution." />
+            <figcaption>Execution flowchart of the completed pipeline and a sample step-detail popup.</figcaption>
         </figure>
 
+        
+
+
+        <div class="tip">The full session of the above example is available at
+                <a href="https://www.gis-coscientist.online/?conversation=a4c5a1b9-449e-440c-a2cf-003513b58787" target="_blank" rel="noopener">here</a>.</div>
+    </section>
+
+
+
+        <h4>Example 2 - Mobility-mediated socioeconomic and mental health analysis</h4>
+        <p><strong>Request:</strong> <em>"How do spatial patterns of mobility (place visitation) mediate the relationship between neighborhood social economic status and
+             depression prevalence across the counties of South Carolina"</em></p>
         <figure>
-            <img src="doc/execution-flowchart.jpg" alt="An execution flowchart of completed and pending steps next to the executed code and the list of files each step created" />
-            <figcaption>The execution flowchart tracks each step's status (OK, error, pending) across all objectives, and links to
-                the exact <strong>executed code</strong> and the <strong>files</strong> each step produced - full transparency and
-                reproducibility from question to manuscript.</figcaption>
+            <img src="Figures\Figure 10.jpg" alt="Research plan for proximity-based asthma analysis" />
+            <figcaption>Research plan for proximity-based asthma analysis.</figcaption>
         </figure>
+                
+        
+        <figure>
+            <img src="Figures\Figure 11.jpg" alt="Geoprocessing workflow for mobility-mediated mediation analysis" />
+            <figcaption>Geoprocessing workflow for mobility-mediated mediation analysis. </figcaption>
+        </figure>
+
+        <div class="tip">The full session of the above example is available at
+                <a href="https://www.gis-coscientist.online/?conversation=124e6b8e-ad5a-49f9-802e-87cc5101dda4" target="_blank" rel="noopener">here</a>.</div>
+    
+
+
+        <h4>Example 2 - Mobility-mediated socioeconomic and mental health analysis</h4>
+            <p><strong>Request:</strong> <em>"How do spatial patterns of mobility (place visitation) mediate the relationship between neighborhood social economic status and
+                depression prevalence across the counties of South Carolina"</em></p>
+            <figure>
+                <img src="Figures\Figure 12.jpg" alt="Research plan for proximity-based asthma analysis" />
+                <figcaption>Research plan for proximity-based asthma analysis.</figcaption>
+            </figure>
+                    
+            
+            <figure>
+                <img src="Figures\Figure 13.jpg" alt="Geoprocessing workflow for proximity-based asthma analysis" />
+                <figcaption>Geoprocessing workflow for proximity-based asthma analysis. </figcaption>
+            </figure>
+
+            <div class="tip">The full session of the above example is available at
+                    <a href="https://www.gis-coscientist.online/?conversation=c52bc37f-8e66-4df1-b20b-57c92bbd2311" target="_blank" rel="noopener">here</a>.</div>
+        
+
+
+
 
         <h3 id="rs-manuscript">The manuscript deliverable</h3>
         <p>The reporting pipeline produces a structured research paper with standard academic sections:</p>
@@ -611,7 +784,7 @@
         <p>The finished Manuscript can be downloaded. Individual stages - analysis, manuscript, specific steps - can be re-run or refined without
         starting over.</p>
 
-        <h3 id="rs-demo">Demo</h3>
+        <h3 id="rs-demo">Video Demonstration</h3>
         Video demonstration of a selected cases are available <a href="https://www.youtube.com/watch?v=vOeFTgkdw4I&list=PL6ON3gdLloDE_aLyFjj4X7EYKDDdAfJi2" target="_blank" rel="noopener">here</a>.
 
 
@@ -632,37 +805,7 @@
         <p>Chat mode answers directly without generating or running code.</p>
     </section>
 
-    <!-- ═══════════════════ 13. GEOPROCESSING WORKFLOW ═══════════════════ -->
-    <section id="geoprocessing">
-        <h2>13. Geoprocessing Workflow</h2>
-        <p class="lead"><em>The geospatial core that sets GIS Co-Scientist apart from general-purpose AI assistants.</em></p>
-
-        <h3 id="gw-what">What it is</h3>
-        <p>Before writing any code, GIS Co-Scientist constructs an explicit <strong>geoprocessing workflow</strong>: a directed graph
-        that connects <strong>spatial input data</strong> &rarr; <strong>geoprocessing operations / tools</strong> &rarr;
-        <strong>output data</strong>, organized by analytical objective. This is what distinguishes the system from general-purpose
-        AI assistants - the reasoning is grounded in concrete spatial operations (joins, spatial weights, Moran's I, spatial
-        regression, hotspot detection, and so on) rather than free-form code, which makes every run transparent, reviewable, and
-        reproducible.</p>
-
-        <figure>
-            <img src="doc/geoprocessing-workflow.jpg" alt="A geoprocessing workflow graph linking input datasets, geoprocessing operations, and output data across three research objectives" />
-            <figcaption>A generated geoprocessing workflow. Blue nodes are input data, yellow nodes are geoprocessing
-                operations/tools, and green nodes are outputs; rows group the workflow by objective, and dashed links show data
-                reused within and across objectives.</figcaption>
-        </figure>
-
-        <h3 id="gw-modes">One workflow, every mode</h3>
-        <div class="feature">
-            <span class="tag">Shared across modes</span>
-            <p>The geoprocessing workflow underpins the working modes: <strong>Data Retriever</strong> builds the
-            data-acquisition portion, <strong>Spatial Analysis</strong> plans and runs an analysis workflow on your data, and
-            <strong>Research</strong> chains multiple objective-level workflows into a full study. In every case the workflow is
-            generated first and presented for your review, so you approve <em>what</em> will run before <em>any</em> code executes.</p>
-        </div>
-    </section>
-
-    <!-- ═══════════════════ 14. RESULTS / MAP ═══════════════════ -->
+    <!-- ═══════════════════ 14. RESULTS / MAP ═══════════════════
     <section id="results">
         <h2>14. Results, Map &amp; Artifacts</h2>
 
@@ -688,11 +831,11 @@
             <li><strong>Reports</strong> - drafted result presentations, discussions, and manuscripts, downloadable in document formats.</li>
             <li>Clear the panel anytime with the <span class="ui">×</span> button; artifacts remain saved with the conversation.</li>
         </ul>
-    </section>
+    </section> -->
 
     <!-- ═══════════════════ 14. TIPS ═══════════════════ -->
     <section id="tips">
-        <h2>15. Tips &amp; Troubleshooting</h2>
+        <h2>13. Tips &amp; Troubleshooting</h2>
 
         <table>
             <tr><th>Symptom</th><th>What to check</th></tr>
@@ -737,20 +880,26 @@
             { label:'Getting Started',
               sections:['intro','quickstart','apikey'],
               items:[
-                { id:'intro',         label:'1. What is GIS Co-Scientist?' },
-                { id:'quickstart',    label:'2. Quick Start' },
-                { id:'apikey',        label:'3. API Key' },
+                { id:'intro',         label:'What is GIS Co-Scientist?' },
+                { id:'quickstart',    label:'Quick Start' },
+                { id:'apikey',        label:'API Key' },
               ]},
             { label:'The Interface',
               sections:['layout','settings','datalayers','conversations','modes-models'],
               items:[
-                { id:'layout',        label:'4. UI Layout Overview' },
-                { id:'settings',      label:'5. Settings' },
-                { id:'datalayers',    label:'6. Data Layers' },
-                { id:'conversations', label:'7. Conversations & Sharing' },
-                { id:'modes-models',  label:'8. Modes, Models & Autonomous' },
+                { id:'layout',        label:'UI Layout Overview' },
+                { id:'settings',      label:'Settings' },
+                { id:'datalayers',    label:'Data Layers' },
+                { id:'conversations', label:'Conversations & Sharing' },
+                { id:'modes-models',  label:'Modes, Models & Autonomous' },
               ]},
-            { label:'Data Retriever',
+            { label:'Geoprocessing Workflow',
+              sections:['geoprocessing'],
+              items:[
+                { id:'gw-what',       label:'What it is' },
+                { id:'gw-modes',      label:'One workflow, every mode' },
+              ]},
+            { label:'Data Retrieval Mode',
               sections:['data-mode'],
               items:[
                 { id:'dr-use',        label:'How to use it' },
@@ -759,36 +908,30 @@
                 { id:'dr-feedback',   label:'Feedback & approval' },
                 { id:'dr-examples',   label:'Examples' },
               ]},
-            { label:'Spatial Analysis',
+            { label:'Spatial Analysis Mode',
               sections:['spatial-mode'],
               items:[
                 { id:'sa-use',        label:'How to use it' },
                 { id:'sa-review',     label:'Reviewing & re-running' },
                 { id:'sa-examples',   label:'Examples' },
               ]},
-            { label:'Research',
+            { label:'Research Mode',
               sections:['research-mode'],
               items:[
                 { id:'rs-stages',     label:'The workflow stages' },
                 { id:'rs-manuscript', label:'The manuscript deliverable' },
                 { id:'rs-demo',       label:'Demo' },
               ]},
-            { label:'Chat',
+            { label:'Chat Mode',
               sections:['chat-mode'],
               items:[
                 { id:'chat-mode',     label:'Overview' },
               ]},
-            { label:'Geoprocessing Workflow',
-              sections:['geoprocessing'],
-              items:[
-                { id:'gw-what',       label:'What it is' },
-                { id:'gw-modes',      label:'One workflow, every mode' },
-              ]},
             { label:'Reference',
               sections:['results','tips'],
               items:[
-                { id:'results',       label:'14. Results, Map & Artifacts' },
-                { id:'tips',          label:'15. Tips & Troubleshooting' },
+                { id:'results',       label:'Results, Map & Artifacts' },
+                { id:'tips',          label:'Tips & Troubleshooting' },
               ]},
         ];
 

@@ -22,8 +22,8 @@
         margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
         color:#000;background:var(--bg);line-height:1.65;font-size:16px;
     }
-    a{color:var(--brand);text-decoration:none}
-    a:hover{text-decoration:underline}
+    a{color:#0066cc;text-decoration:underline;font-weight:700}
+    a:hover{color:#0066cc;text-decoration:underline;font-weight:700}
     em{font-style:italic;font-weight:500}
     it{font-style:italic;font-weight:450}
 
@@ -84,7 +84,7 @@
         height:calc(100vh - var(--hero-h));overflow-y:auto;padding:26px 6px 60px 0;
     }
     nav.toc h2{font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);margin:18px 0 8px}
-    nav.toc a{display:block;color:var(--muted);padding:5px 12px;border-left:2px solid transparent;font-size:14px;border-radius:0 4px 4px 0}
+    nav.toc a{display:block;color:var(--muted);padding:5px 12px;border-left:2px solid transparent;font-size:14px;border-radius:0 4px 4px 0;text-decoration:none;font-weight:200}
     nav.toc a:hover{color:var(--brand);background:#eef3f6;text-decoration:none}
     nav.toc a.active{color:var(--brand);border-left-color:var(--brand);background:#eef3f6;font-weight:600}
     /* Left rail: top-level page groups */
