@@ -126,6 +126,16 @@
     transition: transform .15s, opacity .15s;
   }
   .video-frame:hover .play svg { transform: scale(1.06); opacity: 1; }
+  .video-cat {
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 400;
+    font-size: 1.08rem;
+    color: var(--text);
+    margin: 36px 0 16px;
+    letter-spacing: .01em;
+  }
+  .video-cat:first-of-type { margin-top: 8px; }
+  .videos.solo { grid-template-columns: 1fr; max-width: 540px; }
 
   .resources { display: grid; gap: 14px; grid-template-columns: 1fr; }
   @media (min-width: 720px) { .resources { grid-template-columns: repeat(2, 1fr); } }
@@ -197,14 +207,32 @@
 
   <section>
     <h2 class="section-title">Video demos</h2>
+    <!--
+      Each tile opens the video on YouTube in a new tab.
+      Thumbnail comes from img.youtube.com/vi/<ID>/hqdefault.jpg.
+    -->
+
+    <h3 class="video-cat">Introduction</h3>
+    <div class="videos solo">
+      <figure class="video">
+        <a class="video-frame" href="https://www.youtube.com/watch?v=oyf4I1VRlLU" target="_blank" rel="noopener" aria-label="Watch Introduction to GIS Co-Scientist on YouTube">
+          <img src="https://img.youtube.com/vi/oyf4I1VRlLU/hqdefault.jpg" alt="Introduction to GIS Co-Scientist thumbnail" loading="lazy">
+          <div class="play">
+            <svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55C3.97 2.33 2.27 4.81 1.48 7.74 0 13.05 0 24 0 24s0 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C68 34.95 68 24 68 24s0-10.95-1.48-16.26z" fill="#f00"/>
+              <path d="M45 24 27 14v20" fill="#fff"/>
+            </svg>
+          </div>
+        </a>
+        <figcaption>Introduction to GIS Co-Scientist</figcaption>
+      </figure>
+    </div>
+
+    <h3 class="video-cat">Data Retrieval Mode</h3>
     <div class="videos">
-      <!--
-        Each tile opens the video on YouTube in a new tab.
-        Thumbnail comes from img.youtube.com/vi/<ID>/hqdefault.jpg.
-      -->
       <figure class="video">
-        <a class="video-frame" href="https://www.youtube.com/watch?v=u0HePpi4IZE" target="_blank" rel="noopener" aria-label="Watch Case 1 demo on YouTube">
-          <img src="https://img.youtube.com/vi/u0HePpi4IZE/hqdefault.jpg" alt="Case 1 demo thumbnail" loading="lazy">
+        <a class="video-frame" href="https://www.youtube.com/watch?v=TltGDALyw88" target="_blank" rel="noopener" aria-label="Watch Data Retrieval Mode, Example 1 on YouTube">
+          <img src="https://img.youtube.com/vi/TltGDALyw88/hqdefault.jpg" alt="Data Retrieval Mode, Example 1 thumbnail" loading="lazy">
           <div class="play">
             <svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55C3.97 2.33 2.27 4.81 1.48 7.74 0 13.05 0 24 0 24s0 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C68 34.95 68 24 68 24s0-10.95-1.48-16.26z" fill="#f00"/>
@@ -212,11 +240,11 @@
             </svg>
           </div>
         </a>
-        <figcaption>Case 1 - walkthrough</figcaption>
+        <figcaption>Example 1</figcaption>
       </figure>
       <figure class="video">
-        <a class="video-frame" href="https://www.youtube.com/watch?v=3ewtgUbmo1w" target="_blank" rel="noopener" aria-label="Watch Case 2 demo on YouTube">
-          <img src="https://img.youtube.com/vi/3ewtgUbmo1w/hqdefault.jpg" alt="Case 2 demo thumbnail" loading="lazy">
+        <a class="video-frame" href="https://www.youtube.com/watch?v=ASX5dAL9DXo" target="_blank" rel="noopener" aria-label="Watch Data Retrieval Mode, Example 2 on YouTube">
+          <img src="https://img.youtube.com/vi/ASX5dAL9DXo/hqdefault.jpg" alt="Data Retrieval Mode, Example 2 thumbnail" loading="lazy">
           <div class="play">
             <svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55C3.97 2.33 2.27 4.81 1.48 7.74 0 13.05 0 24 0 24s0 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C68 34.95 68 24 68 24s0-10.95-1.48-16.26z" fill="#f00"/>
@@ -224,11 +252,11 @@
             </svg>
           </div>
         </a>
-        <figcaption>Case 2 - walkthrough</figcaption>
+        <figcaption>Example 2</figcaption>
       </figure>
       <figure class="video">
-        <a class="video-frame" href="https://www.youtube.com/watch?v=vOeFTgkdw4I" target="_blank" rel="noopener" aria-label="Watch Case 3 demo on YouTube">
-          <img src="https://img.youtube.com/vi/vOeFTgkdw4I/hqdefault.jpg" alt="Case 3 demo thumbnail" loading="lazy">
+        <a class="video-frame" href="https://www.youtube.com/watch?v=hhOa5ffN2_k" target="_blank" rel="noopener" aria-label="Watch Data Retrieval Mode, Example 3 on YouTube">
+          <img src="https://img.youtube.com/vi/hhOa5ffN2_k/hqdefault.jpg" alt="Data Retrieval Mode, Example 3 thumbnail" loading="lazy">
           <div class="play">
             <svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55C3.97 2.33 2.27 4.81 1.48 7.74 0 13.05 0 24 0 24s0 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C68 34.95 68 24 68 24s0-10.95-1.48-16.26z" fill="#f00"/>
@@ -236,7 +264,87 @@
             </svg>
           </div>
         </a>
-        <figcaption>Case 3 - walkthrough</figcaption>
+        <figcaption>Example 3</figcaption>
+      </figure>
+    </div>
+
+    <h3 class="video-cat">Spatial Analysis Mode</h3>
+    <div class="videos">
+      <figure class="video">
+        <a class="video-frame" href="https://www.youtube.com/watch?v=Ue53TqW_Su0" target="_blank" rel="noopener" aria-label="Watch Spatial Analysis Mode, Example 1 on YouTube">
+          <img src="https://img.youtube.com/vi/Ue53TqW_Su0/hqdefault.jpg" alt="Spatial Analysis Mode, Example 1 thumbnail" loading="lazy">
+          <div class="play">
+            <svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55C3.97 2.33 2.27 4.81 1.48 7.74 0 13.05 0 24 0 24s0 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C68 34.95 68 24 68 24s0-10.95-1.48-16.26z" fill="#f00"/>
+              <path d="M45 24 27 14v20" fill="#fff"/>
+            </svg>
+          </div>
+        </a>
+        <figcaption>Example 1</figcaption>
+      </figure>
+      <figure class="video">
+        <a class="video-frame" href="https://www.youtube.com/watch?v=q5El_f-rJpY" target="_blank" rel="noopener" aria-label="Watch Spatial Analysis Mode, Example 2 on YouTube">
+          <img src="https://img.youtube.com/vi/q5El_f-rJpY/hqdefault.jpg" alt="Spatial Analysis Mode, Example 2 thumbnail" loading="lazy">
+          <div class="play">
+            <svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55C3.97 2.33 2.27 4.81 1.48 7.74 0 13.05 0 24 0 24s0 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C68 34.95 68 24 68 24s0-10.95-1.48-16.26z" fill="#f00"/>
+              <path d="M45 24 27 14v20" fill="#fff"/>
+            </svg>
+          </div>
+        </a>
+        <figcaption>Example 2</figcaption>
+      </figure>
+      <figure class="video">
+        <a class="video-frame" href="https://www.youtube.com/watch?v=-ppIPHSYqwk" target="_blank" rel="noopener" aria-label="Watch Spatial Analysis Mode, Example 3 on YouTube">
+          <img src="https://img.youtube.com/vi/-ppIPHSYqwk/hqdefault.jpg" alt="Spatial Analysis Mode, Example 3 thumbnail" loading="lazy">
+          <div class="play">
+            <svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55C3.97 2.33 2.27 4.81 1.48 7.74 0 13.05 0 24 0 24s0 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C68 34.95 68 24 68 24s0-10.95-1.48-16.26z" fill="#f00"/>
+              <path d="M45 24 27 14v20" fill="#fff"/>
+            </svg>
+          </div>
+        </a>
+        <figcaption>Example 3</figcaption>
+      </figure>
+    </div>
+
+    <h3 class="video-cat">Research Mode</h3>
+    <div class="videos">
+      <figure class="video">
+        <a class="video-frame" href="https://www.youtube.com/watch?v=Ib5p8sdtxGk" target="_blank" rel="noopener" aria-label="Watch Research Mode, Example 1 on YouTube">
+          <img src="https://img.youtube.com/vi/Ib5p8sdtxGk/hqdefault.jpg" alt="Research Mode, Example 1 thumbnail" loading="lazy">
+          <div class="play">
+            <svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55C3.97 2.33 2.27 4.81 1.48 7.74 0 13.05 0 24 0 24s0 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C68 34.95 68 24 68 24s0-10.95-1.48-16.26z" fill="#f00"/>
+              <path d="M45 24 27 14v20" fill="#fff"/>
+            </svg>
+          </div>
+        </a>
+        <figcaption>Example 1</figcaption>
+      </figure>
+      <figure class="video">
+        <a class="video-frame" href="https://www.youtube.com/watch?v=wOeYBPgxOj0" target="_blank" rel="noopener" aria-label="Watch Research Mode, Example 2 on YouTube">
+          <img src="https://img.youtube.com/vi/wOeYBPgxOj0/hqdefault.jpg" alt="Research Mode, Example 2 thumbnail" loading="lazy">
+          <div class="play">
+            <svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55C3.97 2.33 2.27 4.81 1.48 7.74 0 13.05 0 24 0 24s0 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C68 34.95 68 24 68 24s0-10.95-1.48-16.26z" fill="#f00"/>
+              <path d="M45 24 27 14v20" fill="#fff"/>
+            </svg>
+          </div>
+        </a>
+        <figcaption>Example 2</figcaption>
+      </figure>
+      <figure class="video">
+        <a class="video-frame" href="https://www.youtube.com/watch?v=z9f7fri45SM" target="_blank" rel="noopener" aria-label="Watch Research Mode, Example 3 on YouTube">
+          <img src="https://img.youtube.com/vi/z9f7fri45SM/hqdefault.jpg" alt="Research Mode, Example 3 thumbnail" loading="lazy">
+          <div class="play">
+            <svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55C3.97 2.33 2.27 4.81 1.48 7.74 0 13.05 0 24 0 24s0 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C68 34.95 68 24 68 24s0-10.95-1.48-16.26z" fill="#f00"/>
+              <path d="M45 24 27 14v20" fill="#fff"/>
+            </svg>
+          </div>
+        </a>
+        <figcaption>Example 3</figcaption>
       </figure>
     </div>
   </section>
