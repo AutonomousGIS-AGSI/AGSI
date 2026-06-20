@@ -221,7 +221,7 @@
         <h4>Supported formats</h4>
         <table>
             <tr><th>Type</th><th>Extensions</th><th>Notes</th></tr>
-            <tr><td>GeoJSON</td><td><code>.geojson</code> </td><td>Vector features.</td></tr>
+            <tr><td>GeoJSON</td><td><code>.geojson</code> <code>.json</code></td><td>Vector features.</td></tr>
             <tr><td>GeoPackage</td><td><code>.gpkg</code></td><td>Single-file vector store.</td></tr>
             <tr><td>Shapefile</td><td><code>.shp .shx .dbf .prj</code></td><td>Select <em>all</em> components at once, or zip them.</td></tr>
             <tr><td>Zipped shapefile</td><td><code>.zip</code></td><td>A ZIP containing the shapefile parts.</td></tr>
@@ -375,8 +375,6 @@
         application, so changing those selectors does not change the model that runs.</div>
     </section>
 
-    
-
     <!-- ═══════════════════ GEOPROCESSING WORKFLOW ═══════════════════ -->
     <section id="geoprocessing">
         <h2>Geoprocessing Workflow</h2>
@@ -405,150 +403,9 @@
         
     </section>
 
-
-    <!-- ═══════════════════ dding a New Data Source ═══════════════════ -->
-    <section id="data-sources-manual">
-        <h2>Adding a New Data Source</h2>
-        <p class="lead">Users are allowed to <strong>register your own data sources</strong> so the
-        assistant can retrieve from them. As a way of allowing contributions, the data sources added by user can be added to the shared data sources which every user has access to.</p>
-
-        
-
-        <h3 id="dsm-open">Opening the Data Sources panel</h3>
-        <p>Click the <span class="ui"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/></svg> Data Sources</span> button (bottom-right of the screen by default). It opens a
-        full-panel view on the right. </p>
-        <p>The launcher can be dragged up the right edge to dock it as a vertical tab. </p>
-        
-
-        <h3 id="dsm-tabs">The three tabs</h3>
-        <table>
-            <tr><th>Tab</th><th>What it shows</th></tr>
-            <tr><td><strong>My Sources</strong></td><td>The sources you've added, plus the option to add a new one.</td></tr>
-            <tr><td><strong>Shared Sources</strong></td><td>Read-only list of shared sources available to every user.</td></tr>
-            <!-- <tr><td><strong>Review queue</strong></td><td>Admins only - submissions awaiting approval (see <a href="#dsm-review">below</a>).</td></tr> -->
-        </table>
-        
-        <div class="tip"><strong>Tip:</strong>&nbsp; Click a card to open a <strong>detail popup</strong> 
-            (a movable, resizable window) showing
-        its description, website link, required credentials, handbook, and code example. Each card also has an always-visible
-        <span class="ui">⤓ download</span> icon that saves the source as a <code>.toml</code>
-            </div>
-
-        
-
-        <h3 id="dsm-add">Adding a data source</h3>
-       
-        <p>On <strong>My Sources</strong>, click <span class="ui">＋ Add data source</span> and fill in the form:</p>
-        <table>
-            <tr><th>Field</th><th>Purpose</th></tr>
-            <tr><td><strong>Source Name</strong> (required)</td><td>A clear, human-readable name (e.g. <em>NOAA Tides</em>).</td></tr>
-            <tr><td><strong>Brief Description</strong></td><td>One or two sentences - the assistant uses this to decide when to pick the source.</td></tr>
-            <tr><td><strong>Website</strong></td><td>The data source's official site (shown as a link in the detail popup).</td></tr>
-            <tr><td><strong>Handbook / Instructions</strong></td><td>Technical notes: base URL, endpoints, auth, parameters, gotchas - one
-                per line. Use <code>{YOUR_KEY_NAME}</code> where an API key is needed.</td></tr>
-            <tr><td><strong>Code Example</strong></td><td>A working Python snippet that downloads from the source and saves a file.</td></tr>
-        </table>
-        <p>Instead of typing, you can click <span class="ui">Import from file…</span> to load a <code>.toml</code>
-        handbook which fills every field - see <a href="#dsm-handbook">Creating a data source handbook</a> below for how to write one.</p>
-        <!-- <div class="tip"><strong>Tip:</strong>&nbsp; You can customize the downloaded <code>.toml</code> before re-importing it, which makes it easy to copy, back up, or tweak a source without rebuilding it from scratch.</div> -->
-
-
-        <h3 id="dsm-handbook">Creating a data source handbook</h3>
-        <p>A <strong>handbook</strong> is a complete data source definition which provides the technical information that GIS Co-Scientist needs to retrieve data from one specific source.</p>
-        <p>A handbook serves a single data source and is maintained on its own, so adding, updating, or removing a source is plug-and-play. It is normally saved in a structured file format (<code>.toml</code>).
-        <!-- <p> All the fields contained in a handbook are described in the table under
-        <a href="#dsm-add">Adding a data source</a></p> -->
-        
-        
-
-        <h4>Writing a good handbook</h4>
-        <p>A handhook consists of three required parts: data_source_name, brief_description, and handbook.</p>
-        <table>
-            <tr><th>Field</th><th>Description</th></tr>
-            <tr><td><strong><code>data_source_name</code></strong></td><td>A short, meaningful, human-readable name - for example
-                <code>OpenStreetMap</code>, <code>US_Census_demography</code>, <code>US_Census_boundary</code>,
-                <code>OpenTopography</code>, <code>OpenWeather</code>, <code>COVID_NYT</code>, or
-                <code>ESRI_world_imagery</code>.</td></tr>
-            <tr><td><strong><code>brief_description</code></strong></td><td>One line describing the source so the assistant knows when to use
-                it. Include the critical scope - geographic <em>extent</em> and time <em>period</em>. E.g. for
-                <code>COVID_NYT</code>: <em>"US COVID-19 data by the New York Times. Cumulative counts of COVID-19 cases and deaths
-                in the United States, at the state and county level, from 2020-01-21 to 2023-03-23."</em></td></tr>
-            <tr><td><strong><code>handbook</code></strong></td><td>This is the most critical section of the handbook. This includ the technical requirements for downloading from the data source -
-                one requirement per line. Cover the access URL and endpoints, the parameters and their allowed values,
-                the column/attribute names.</td></tr>
-        </table>
-
-
-        <p>Other fields of the handbook include: Code example, website</p> 
-        <table>
-            <tr><th>Optional field</th><th>Description</th></tr>
-            <tr><td><code>code_example</code></td><td>  A short, working Python snippet that downloads data from this source and saves it to a file. The assistant uses it as
-                a verified template, so keep it self-contained: put the logic in a <code>download_data()</code> function with a final line that calls it, use
-                <code>{KEY_NAME}</code> placeholders for any credentials, and save to a plain relative filename. See example</p> </td></tr>
-
-            <tr><td><code>Websitee</code></td><td>  The data source's official homepage. It's shown in the source's details for reference and lets users quickly verify or
-                learn more about the provider.</td></tr>
-
-        </table>
-        
-
-        <p>Beyond these fields, a few best practices for the handbook (instructions):</p>
-        <ul>
-            <li><strong>Be explicit about endpoints and parameters.</strong> State the exact URL pattern, and for each parameter
-                say what it means and what it accepts (allowed values, min/max, defaults).</li>
-            <li><strong>Use placeholders for credentials.</strong> Write <code>{KEY_NAME}</code> wherever a key or login is needed -
-                never hard-code a real key. (The placeholder names must match the credential names you list - see
-                <a href="#dsm-credentials">Sources that need an API key</a>.)</li>
-            
-            <li><strong>Surface errors.</strong> Instruct the code to raise on failure (an invalid key, a bad response) rather than
-                silently swallowing exceptions, so problems are visible.</li>
-        </ul>
-
-        
-        <div class="tip"><strong>Tip:</strong>&nbsp; An example of a complete handbook is provided here: (<a href="data_agent/DataRetriever_Handbooks/Handbooks/OpenStreetMap.toml" download="OpenStreetMap.toml">Data source handbook example</a>). In creating a new handbook, you don't have to start from scratch - download the example provided or other existing source as a
-        <code>.toml</code> (the <span class="ui">⤓</span> icon), edit its handbook and code, and re-import it with
-        <span class="ui">Import from file…</span>.</div>
-
-
-        <h3 id="dsm-credentials">Sources that need an API key or credentials</h3>
-        <p>Turn on <span class="ui">This source needs an API key or credentials</span> and list the credential name(s),
-        comma-separated (e.g. <code>EPA_AQS_email, EPA_AQS_key</code>).</p>
-        <ul>
-            <li>ensures each name appears as a <code>{name}</code> placeholder in the handbook, so its value can be substituted at
-                retrieval time</li>
-            
-        </ul>
-        <p>The actual value will be provided at runtime when the system ask for it. You can also provide it under <strong>Settings → Data Source Keys</strong>.</p>
-        
-
-        <h3 id="dsm-status">Status, sharing, and approval</h3>
-        <p>When adding a source, the <span class="ui">Allow to be shared with other users</span> allows you to add it to the shared data sources which makes it reusable by other users. 
-        An admin will review it before it's been added to the shared data source. Each data source card added shows a status badge:</p>
-        <table>
-            <tr><th>Badge</th><th>Meaning</th></tr>
-            <tr><td><strong>Private</strong></td><td>Saved to your account only. A <span class="ui">Share</span> button submits it for review.</td></tr>
-            <tr><td><strong>Pending</strong></td><td>Submitted and awaiting an admin's decision.</td></tr>
-            <tr><td><strong>Shared</strong></td><td>Approved and published to the shared data source for everyone.</td></tr>
-            <tr><td><strong>Rejected</strong></td><td>An admin declined it (with an optional reason shown in the popup). A
-                <span class="ui">Resubmit</span> button lets you send it back after edits.</td></tr>
-        </table>
-        <p>Once you add a data source handbook, it's immediately  available to the system for use. Your private copy always stays in your account.</p>
-
-        <h3 id="dsm-manage">Editing, downloading, and deleting</h3>
-        <ul>
-            <li><strong>Edit</strong> - open a card's popup and click <span class="ui">Edit</span> to reopen the form pre-filled; renaming
-                is handled cleanly.</li>
-            <li><strong>Download</strong> - the <span class="ui">⤓</span> icon on any card (or in the popup header) exports the source as
-                <code>.toml</code>.</li>
-            <li><strong>Delete</strong> - the <span class="ui">×</span> on your own cards removes the source (and withdraws any pending
-                submission). Built-in/shared sources are read-only.</li>
-        </ul>
-
-    </section>
-
     <!-- ═══════════════════ 9. DATA RETRIEVER ═══════════════════ -->
     <section id="data-mode">
-        <h2>Data Retrieval Mode</h2>
+        <h2>9. Data Retrieval Mode</h2>
         <p class="lead"><em>Data retrieval mode: </em>Find and download geospatial datasets from public data
         sources, without running any analysis.</p>
 
@@ -566,8 +423,7 @@
         </em> and <em>Research</em> modes when they need extra data.</p>
 
         <h3 id="dr-sources">Available data sources</h3>
-        <p>These public sources are built in. The system picks the right one from your request, but you can name a source explicitly.
-        You can also <strong>register your own</strong> sources - see <a href="#data-sources-manual">Adding a New Data Source</a>.</p>
+        <p>These public sources are built in. The system picks the right one from your request, but you can name a source explicitly.</p>
         <table>
             <tr><th>Source</th><th>What it provides</th><th>Coverage</th><th>API key?</th></tr>
             <tr><td><strong><a href="https://api.census.gov" target="_blank" rel="noopener">US Census -  Boundaries</a></strong></td><td>Administrative boundaries: nation, state, county, tract, block group, metro areas.</td><td>USA</td><td><span class="no">No</span></td></tr>
@@ -658,13 +514,15 @@
 
         
 
+        
+
 
 
     </section>
 
     <!-- ═══════════════════ 10. SPATIAL ANALYSIS ═══════════════════ -->
     <section id="spatial-mode">
-        <h2>Spatial Analysis Mode</h2>
+        <h2>10. Spatial Analysis Mode</h2>
         <p class="lead"><em>Spatial Analysis:</em> Run a specific spatial analysis - the system
         plans the geoprocessing workflow, writes the code, and executes it.</p>
 
@@ -726,7 +584,7 @@
 
     <!-- ═══════════════════ 11. RESEARCH ═══════════════════ -->
     <section id="research-mode">
-        <h2>Research Mode</h2>
+        <h2>11. Research Mode</h2>
         <p><em>Research:</em> The complete pipeline - from research question to a drafted
         manuscript.</p>
 
@@ -932,7 +790,7 @@
 
     <!-- ═══════════════════ 12. CHAT ═══════════════════ -->
     <section id="chat-mode">
-        <h2>Chat Mode</h2>
+        <h2>12. Chat Mode</h2>
         <p><em>Chat:</em> Plain conversational QandA - no workflow is launched.</p>
         <p>Use Chat mode to ask questions, clarify concepts, or plan your approach before committing to an analysis. For example:</p>
         <ul>
@@ -942,9 +800,6 @@
         </ul>
         <p>Chat mode answers directly without generating or running code.</p>
     </section>
-
-
-    
 
     <!-- ═══════════════════ 14. RESULTS / MAP ═══════════════════
     <section id="results">
@@ -1034,27 +889,12 @@
                 { id:'conversations', label:'Conversations & Sharing' },
                 { id:'modes-models',  label:'Modes, Models & Autonomous' },
               ]},
-            
             { label:'Geoprocessing Workflow',
               sections:['geoprocessing'],
               items:[
                 { id:'gw-what',       label:'What it is' },
                 { id:'gw-modes',      label:'One workflow, every mode' },
               ]},
-
-            { label:'Adding a New Data Source',
-              sections:['data-sources-manual'],
-              items:[
-                { id:'dsm-open',        label:'Opening the panel' },
-                { id:'dsm-tabs',        label:'The three tabs' },
-                { id:'dsm-add',         label:'Adding a source' },
-                { id:'dsm-handbook',    label:'Creating a handbook' },
-                { id:'dsm-credentials', label:'API keys & credentials' },
-                { id:'dsm-status',      label:'Status & sharing' },
-                { id:'dsm-manage',      label:'Edit, download, delete' },
-                
-              ]},
-            
             { label:'Data Retrieval Mode',
               sections:['data-mode'],
               items:[
@@ -1083,16 +923,12 @@
               items:[
                 { id:'chat-mode',     label:'Overview' },
               ]},
-
-            
-
             { label:'Tips and Troubleshooting',
               sections:['results','tips'],
               items:[
                 { id:'results',       label:'Results, Map & Artifacts' },
                 { id:'tips',          label:'Tips & Troubleshooting' },
               ]},
-              
         ];
 
         const nav = document.getElementById('toc');
