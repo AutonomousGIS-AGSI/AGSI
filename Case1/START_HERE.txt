@@ -1,7 +1,7 @@
-AGM — Offline Conversation Snapshot
-====================================
+GIS Co-Scientist — Offline Conversation Snapshot
+=================================================
 
-This folder is a self-contained, read-only copy of an AGM conversation —
+This folder is a self-contained, read-only copy of a GIS Co-Scientist conversation —
 chat, workflow cards, research plan, figures, manuscript, uploaded data,
 and all generated artifacts. No server, network, or API key required.
 
