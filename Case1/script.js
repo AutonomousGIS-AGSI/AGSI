@@ -8794,10 +8794,14 @@ window.addEventListener('DOMContentLoaded', () => {
     // If URL contains ?conversation=<id>, auto-load that conversation
     const urlParams = new URLSearchParams(window.location.search);
     const sharedConversationId = urlParams.get('conversation');
+    const deepLinkView = urlParams.get('view');
     if (sharedConversationId) {
         loadConversation(sharedConversationId).then(() => {
             // Ensure the shared conversation appears in the sidebar
             loadConversationList();
+            if (deepLinkView === 'geoprocessing') {
+                _openGeoprocessingDeepLink(sharedConversationId);
+            }
         });
     }
 
@@ -16746,3 +16750,25 @@ async function updateResultAnalysis(taskId) {
 }
 
 // ==================== End Map Resize Functionality (Removed) ====================
+
+
+// &view=geoprocessing opens the conversation's geoprocessing workflow in full view.
+async function _openGeoprocessingDeepLink(conversationId) {
+    const taskId = window._completedTaskId || conversationId;
+    const src = `${API_BASE_URL}/api/research-plan-geoprocessing/${taskId}?v=${Date.now()}`;
+    // Drop the view param so switching conversations or reloading doesn't reopen the overlay.
+    const url = new URL(window.location);
+    url.searchParams.delete('view');
+    history.replaceState(null, '', url);
+    let hideFlowchart = false;
+    try {
+        const resp = await fetch(src, { method: 'HEAD' });
+        if (!resp.ok) {
+            addLog('[Link] This conversation has no geoprocessing workflow.', 'warning');
+            return;
+        }
+        const fc = await fetch(`${API_BASE_URL}/api/research-plan-flowchart/${taskId}`, { method: 'HEAD' });
+        hideFlowchart = !fc.ok;
+    } catch (_) { /* let the iframe report the error */ }
+    openResearchPlanFullView(src, taskId, { hideFlowchart });
+}

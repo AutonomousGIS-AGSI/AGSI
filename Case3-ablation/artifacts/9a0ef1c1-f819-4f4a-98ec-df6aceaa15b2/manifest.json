@@ -1,0 +1,159 @@
+{
+  "figures": [
+    {
+      "path": "tables/ols_coefficients.csv",
+      "caption": "Table 1. OLS regression coefficients predicting tract-level asthma prevalence from proximity to hazardous waste facilities and socioeconomic/demographic context (standardized predictors; HC1 robust SEs).",
+      "role": "promoted",
+      "kind": "table",
+      "columns": [
+        "model",
+        "variable",
+        "coef",
+        "std_err",
+        "t",
+        "p_value"
+      ]
+    },
+    {
+      "path": "tables/model_fit_stats.csv",
+      "caption": "Model fit statistics for the global OLS model (robust standard errors).",
+      "role": "promoted",
+      "kind": "table",
+      "columns": [
+        "model",
+        "n",
+        "r2",
+        "adj_r2",
+        "aic",
+        "bic",
+        "f_pvalue"
+      ]
+    },
+    {
+      "path": "tables/vif_main_effects.csv",
+      "caption": "Variance inflation factors (VIF) for main-effect covariates used in OLS/GWR (excluding interactions).",
+      "role": "intermediate",
+      "kind": "table",
+      "columns": [
+        "variable",
+        "VIF"
+      ]
+    },
+    {
+      "path": "tables/moran_global.csv",
+      "caption": "Global Moran's I for asthma prevalence and for OLS residuals (Queen contiguity, row-standardized).",
+      "role": "promoted",
+      "kind": "table",
+      "columns": [
+        "variable",
+        "moran_I",
+        "p_sim",
+        "n"
+      ]
+    },
+    {
+      "path": "tables/stratified_proximity_differences.csv",
+      "caption": "Stratified mean differences in asthma prevalence (within 3 km vs outside) by terciles of poverty, Black population share, and median income.",
+      "role": "promoted",
+      "kind": "table"
+    },
+    {
+      "path": "figures/map_asthma_prevalence.png",
+      "caption": "Choropleth of tract-level asthma prevalence overlaid with hazardous waste facility locations across North Carolina.",
+      "role": "final",
+      "kind": "figure",
+      "objective_key": "objective_1",
+      "step_index": 1
+    },
+    {
+      "path": "figures/map_distance_to_hw.png",
+      "caption": "Distance to the nearest hazardous waste facility (from tract centroids), mapped by tract across North Carolina.",
+      "role": "promoted",
+      "kind": "figure",
+      "objective_key": "objective_1",
+      "step_index": 2
+    },
+    {
+      "path": "figures/map_lisa_asthma_clusters.png",
+      "caption": "Local Moran's I (LISA) cluster map identifying significant hot spots/cold spots of asthma prevalence (Queen contiguity, p \u2264 0.05).",
+      "role": "promoted",
+      "kind": "figure",
+      "objective_key": "objective_1",
+      "step_index": 3
+    },
+    {
+      "path": "figures/map_gwr_beta_lnDist.png",
+      "caption": "Geographically weighted regression (GWR) map of the spatially varying association between hazardous-waste proximity (ln distance) and asthma prevalence.",
+      "role": "final",
+      "kind": "figure",
+      "objective_key": "objective_1",
+      "step_index": 4
+    },
+    {
+      "path": "figures/map_gwr_localR2.png",
+      "caption": "Local R\u00b2 from the GWR model, highlighting where hazardous-waste proximity and covariates better explain asthma prevalence.",
+      "role": "promoted",
+      "kind": "figure",
+      "objective_key": "objective_1",
+      "step_index": 5
+    },
+    {
+      "path": "figures/scatter_asthma_lnDist_by_poverty.png",
+      "caption": "Scatter of tract asthma prevalence versus hazardous-waste proximity (ln distance), stratified by poverty terciles to illustrate contextual variation.",
+      "role": "promoted",
+      "kind": "figure",
+      "objective_key": "objective_1",
+      "step_index": 6
+    },
+    {
+      "path": "tables/stratified_effects.csv",
+      "caption": "Table 2. Stratified OLS estimates of the proximity (ln distance) association with asthma prevalence across socioeconomic/demographic context (median splits; standardized predictors; HC1 robust SEs).",
+      "role": "promoted",
+      "kind": "table",
+      "columns": [
+        "stratification",
+        "group",
+        "n",
+        "coef_ln_dist",
+        "se_ln_dist",
+        "p_ln_dist",
+        "r2"
+      ]
+    },
+    {
+      "path": "fig_asthma_choropleth.png",
+      "caption": "Choropleth map of asthma prevalence across North Carolina census tracts.",
+      "role": "final",
+      "kind": "figure",
+      "objective_key": "objective_1",
+      "step_index": 1
+    },
+    {
+      "path": "fig_distance_to_hw_choropleth.png",
+      "caption": "Choropleth map of tract centroid distance to the nearest hazardous waste facility (km).",
+      "role": "promoted",
+      "kind": "figure",
+      "objective_key": "objective_1",
+      "step_index": 2
+    },
+    {
+      "path": "fig_asthma_vs_distance.png",
+      "caption": "Scatterplot of tract-level asthma prevalence versus distance to nearest hazardous waste facility, with binned mean trend.",
+      "role": "final",
+      "kind": "figure",
+      "objective_key": "objective_1",
+      "step_index": 3
+    },
+    {
+      "path": "tables/analysis_results_key_metrics.csv",
+      "caption": "Table 3. Key quantitative results: proximity effect estimates, interaction significance, and spatial autocorrelation diagnostics.",
+      "role": "promoted",
+      "kind": "table",
+      "columns": [
+        "metric",
+        "value",
+        "notes"
+      ]
+    }
+  ]
+}

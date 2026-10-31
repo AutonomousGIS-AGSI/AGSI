@@ -1,0 +1,5 @@
+section,mediation_label,mediator,n,c_total_SES_effect,cp_direct_SES_effect,a_SES_to_M,b_M_to_y,indirect_ab,indirect_se,sobel_z,sobel_p,prop_mediated_ab_over_c,R2_total_model,R2_direct_mediator_model,metric,model,moran_I,moran_p_sim,moran_z_sim
+mediation_results,MobilityTotalVisits_log1p,log_mobility_total_visits,46,-0.9431568028229333,-0.9778022310584129,0.575835394181228,0.06016550664587045,0.0346454282355381,0.11539953195883379,0.30022156630494035,0.7640081558621958,-0.03673347648221584,0.6719035346308434,0.6724341095798043,,,,,
+mediation_results,MobilityDiversity_entropy,mobility_entropy,46,-0.9431568028229333,-0.9024851837319761,0.015172110468540001,-2.6806830318890125,-0.040671619090960835,0.05980087338127543,-0.6801174764062182,0.4964300794842287,0.04312286034435406,0.6719035346308434,0.6765966107376131,,,,,
+spatial_residual_diagnostics,,,46,,,,,,,,,,,,Moran_I_residuals,MobilityTotalVisits_log1p_direct_plus_mediator,0.014694226291174181,0.332,0.424507665239828
+spatial_residual_diagnostics,,,46,,,,,,,,,,,,Moran_I_residuals,MobilityDiversity_entropy_direct_plus_mediator,-0.04510399704733039,0.409,-0.241048218895751

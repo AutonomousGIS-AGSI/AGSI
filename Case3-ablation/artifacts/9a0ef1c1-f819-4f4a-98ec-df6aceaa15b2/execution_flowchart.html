@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Impact of Proximity to Hazardous Waste Facilities on Asthma Prevalence by Census Tract in North Carolina - Execution Flowchart</title>
+<style>
+  body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: #f8f9fa; display: flex; flex-direction: column; height: 100vh; }
+  h1 { text-align: center; padding: 12px 0 4px 0; margin: 0; font-size: 18px; color: #2C3E50; }
+  .legend {
+    display: flex; gap: 16px; padding: 8px 24px; background: #fff; font-size: 0.8em;
+    border-bottom: 1px solid #dee2e6; align-items: center; flex-wrap: wrap;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+  .graph-panel { flex: 1; overflow: hidden; position: relative; cursor: grab; }
+  svg { display: block; width: 100%; height: 100%; }
+  .node-box { cursor: pointer; transition: filter 0.15s; }
+  .node-box:hover { filter: brightness(1.12); }
+  marker { overflow: visible; }
+
+  /* Zoom controls toolbar */
+  .zoom-toolbar {
+    position: absolute; top: 10px; right: 10px;
+    display: flex; flex-direction: column; gap: 4px; z-index: 50;
+    background: white; border-radius: 8px; padding: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15); border: 1px solid #ddd;
+  }
+  .zoom-btn {
+    width: 32px; height: 32px; border: 1px solid #ddd; border-radius: 6px;
+    background: #fff; cursor: pointer; font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    color: #444; transition: all 0.15s; padding: 0;
+  }
+  .zoom-btn:hover { background: #e9ecef; color: #111; }
+  .zoom-btn:active { background: #dee2e6; }
+  .zoom-level { font-size: 10px; text-align: center; color: #888; padding: 2px 0; user-select: none; }
+  .zoom-divider { height: 1px; background: #e0e0e0; margin: 2px 0; }
+
+  /* Popup overlay */
+  .popup-overlay {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.35); z-index: 100; justify-content: center; align-items: center;
+  }
+  .popup-overlay.visible { display: flex; }
+
+  /* Popup box */
+  .popup-box {
+    background: white; border-radius: 10px; padding: 24px 28px;
+    max-width: 800px; width: 92%; max-height: 80vh; overflow-y: auto;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25); position: relative;
+    animation: popIn 0.18s ease-out;
+  }
+  @keyframes popIn {
+    from { transform: scale(0.92); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .popup-box h3 { margin-top: 0; color: #2C3E50; border-bottom: 2px solid #4C72B0; padding-bottom: 8px; }
+  .popup-box p { line-height: 1.6; color: #333; font-size: 13px; }
+  .popup-close {
+    position: absolute; top: 10px; right: 14px;
+    background: none; border: none; font-size: 20px; color: #999;
+    cursor: pointer; line-height: 1; padding: 4px 8px; border-radius: 4px;
+  }
+  .popup-close:hover { background: #f0f0f0; color: #333; }
+
+  /* Execution popup specifics */
+  .meta-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px;
+  }
+  .meta-item {
+    background: #f1f3f5; padding: 8px 12px; border-radius: 6px; font-size: 0.85em;
+  }
+  .meta-label { display: block; color: #6c757d; font-size: 0.8em; }
+  .meta-value { display: block; color: #212529; margin-top: 2px; }
+  .code-section { margin-top: 12px; }
+  .code-section h4 { font-size: 0.95em; color: #495057; margin-bottom: 8px; margin-top: 0; }
+  pre {
+    background: #1e293b; padding: 14px; border-radius: 8px; overflow-x: auto;
+    font-size: 0.82em; line-height: 1.5; color: #e2e8f0;
+    font-family: 'Fira Code', 'Consolas', monospace; white-space: pre-wrap; word-wrap: break-word;
+    max-height: 350px; overflow-y: auto;
+  }
+  .output-section pre { color: #a3e635; background: #0c1222; }
+  .error-section pre { color: #f87171; background: #1c0c0c; }
+  .files-list { display: flex; flex-wrap: wrap; gap: 4px; }
+  .file-tag {
+    display: inline-block; background: #e7f5ff; color: #1971c2;
+    padding: 2px 8px; border-radius: 4px; font-size: 0.8em;
+  }
+</style>
+</head>
+<body>
+<h1>Impact of Proximity to Hazardous Waste Facilities on Asthma Prevalence by Census Tract in North Carolina — Execution Flowchart</h1>
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#2C3E50;"></div> Research Question</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#4C72B0;"></div> Objective</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#28a745;"></div> Step (OK)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#dc3545;"></div> Step (Error)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#6c757d;"></div> Step (Pending)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#58a6ff;"></div> Dependency</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#40916C;"></div> Analysis Stage</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#7B2D8E;"></div> Manuscript</div>
+  <span style="margin-left:auto; color:#94a3b8;">Click any node to view details</span>
+</div>
+<div class="graph-panel" id="graphPanel">
+<!-- Zoom controls -->
+<div class="zoom-toolbar">
+  <button class="zoom-btn" onclick="zoomIn()" title="Zoom in">+</button>
+  <button class="zoom-btn" onclick="zoomOut()" title="Zoom out">&minus;</button>
+  <div class="zoom-divider"></div>
+  <span class="zoom-level" id="zoomLevel">100%</span>
+  <div class="zoom-divider"></div>
+  <button class="zoom-btn" onclick="zoomReset()" title="Reset view">&#8634;</button>
+  <button class="zoom-btn" onclick="zoomFit()" title="Fit to view">&#11036;</button>
+  <div class="zoom-divider"></div>
+  <button class="zoom-btn" id="fullscreenBtn" onclick="toggleFullscreen()" title="Toggle fullscreen">&#x26F6;</button>
+</div>
+<svg id="flowchartSvg" width="1000" height="750" viewBox="0 0 1000 750">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#666"/>
+    </marker>
+    <marker id="arrowblue" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#58a6ff"/>
+    </marker>
+  </defs>
+  <g id="zoomGroup">
+    <line x1="500" y1="80" x2="500" y2="153" stroke="#555" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="500" y1="207" x2="500" y2="285" stroke="#4C72B0" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="500" y1="335" x2="500" y2="443" stroke="#555" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="500" y1="497" x2="500" y2="543" stroke="#555" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <g class="node-box" onclick="showPopup('RQ')">
+      <rect x="200" y="20" width="600" height="60" rx="10" ry="10" fill="#2C3E50" stroke="#333" stroke-width="1.5"/>
+      <text x="500" y="47.2" text-anchor="middle" fill="white" font-size="13" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">How does proximity to hazardous waste facilities influence spatial patterns of a</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj_1')">
+      <rect x="380" y="153" width="240" height="55" rx="10" ry="10" fill="#4C72B0" stroke="#333" stroke-width="1.5"/>
+      <text x="500" y="170.4" text-anchor="middle" fill="white" font-size="11" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">Obj 1: How does proximity to hazardous</text>
+      <text x="500" y="184.4" text-anchor="middle" fill="white" font-size="11" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">waste</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj1_s1')">
+      <polygon points="400,285 615,285 600,335 385,335" fill="#85e29b" stroke="#28a745" stroke-width="2"/>
+      <text x="500" y="301.0" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">[OK] S1.1: Direct code generation</text>
+      <text x="500" y="314.0" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">(ModelingAgent)</text>
+    </g>
+    <g class="node-box" onclick="showPopup('result_collation')">
+      <rect x="350" y="443" width="300" height="55" rx="10" ry="10" fill="#D4A017" stroke="#28a745" stroke-width="1.5"/>
+      <text x="500" y="467.3" text-anchor="middle" fill="white" font-size="12" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">Result Collation [OK]</text>
+    </g>
+    <g class="node-box" onclick="showPopup('manuscript')">
+      <rect x="350" y="543" width="300" height="55" rx="10" ry="10" fill="#7B2D8E" stroke="#28a745" stroke-width="1.5"/>
+      <text x="500" y="567.3" text-anchor="middle" fill="white" font-size="12" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">Manuscript [OK]</text>
+    </g>
+  </g>
+</svg>
+</div>
+
+<!-- Popup overlay -->
+<div class="popup-overlay" id="popupOverlay" onclick="closePopup(event)">
+  <div class="popup-box" id="popupBox" onclick="event.stopPropagation()">
+    <button class="popup-close" onclick="closePopup()">&times;</button>
+    <div id="popupContent"></div>
+  </div>
+</div>
+
+<script>
+const details = {"RQ": "<h3>Research Question</h3><p>How does proximity to hazardous waste facilities influence spatial patterns of asthma prevalence across census tracts of North Carolina, and how do these relationships vary spatially by socioeconomic and demographic context?</p>", "obj_1": "<h3>Objective 1</h3><p><b>Title:</b> How does proximity to hazardous waste facilities influence spatial patterns of asthma prevalence across census tracts of North Carolina, and how do these relationships vary spatially by socioeconomic and demographic context?</p><p><b>Hypothesis:</b> </p>", "obj1_s1": "<h3 style=\"border-bottom-color:#4C72B0; display:flex; align-items:center; justify-content:space-between; gap:8px;\"><span style=\"cursor:pointer;\" onclick=\"goToStepCard('exec_obj1_step1')\">OBJECTIVE 1 | Step 1</span><button onclick=\"goToStepCard('exec_obj1_step1')\" style=\"font-size:0.65em; padding:3px 10px; border:1px solid #4a90d9; border-radius:4px; background:#f0f6ff; color:#2a6cb6; cursor:pointer; white-space:nowrap;\">Go to Card</button></h3><div class=\"meta-grid\"><div class=\"meta-item\"><span class=\"meta-label\">Status</span><span class=\"meta-value\" style=\"color:#28a745;font-weight:bold;\">Completed</span></div><div class=\"meta-item\"><span class=\"meta-label\">Agent</span><span class=\"meta-value\">ModelingAgent</span></div><div class=\"meta-item\" style=\"grid-column:span 2\"><span class=\"meta-label\">Description</span><span class=\"meta-value\">Answer the research question end to end: How does proximity to hazardous waste facilities influence spatial patterns of asthma prevalence across census tracts of North Carolina, and how do these relationships vary spatially by socioeconomic and demographic context?\n\nResearch question breakdown:\n- Intent: To assess the influence of proximity to hazardous waste facilities on the spatial distribution of asthma prevalence across census tracts in North Carolina, considering variations based on socioeconomic and demographic factors.\n- Brief description: This research aims to explore if living near hazardous waste sites is associated with higher asthma prevalence in North Carolina&#x27;s census tracts, and examine how this association varies with socioeconomic and demographic variables.\n- Category: explanatory\n- Spatial scale: Census Tract\n- Data requirement: [&quot;Georeferenced locations of hazardous waste facilities&quot;, &quot;Asthma prevalence rates per census tract&quot;, &quot;Socioeconomic and demographic data per census tract&quot;]\n\nDo all data preparation, analysis, and visualization this requires in one script, and save the key quantitative results to analysis_results.csv.</span></div></div><div class=\"meta-item\" style=\"margin-bottom:12px\"><span class=\"meta-label\">Code File</span><span class=\"meta-value\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\9a0ef1c1-f819-4f4a-98ec-df6aceaa15b2\\generated_code\\op_Direct code generation for the_ef8b9654.py</span></div><div class=\"code-section\"><h4>Executed Code</h4><pre>import os\nimport warnings\n\nimport numpy as np\nimport pandas as pd\nimport geopandas as gpd\nimport matplotlib.pyplot as plt\n\nfrom shapely.geometry import Point\nfrom sklearn.preprocessing import StandardScaler\nimport statsmodels.api as sm\n\nfrom libpysal.weights import KNN\nfrom esda.moran import Moran\n\n# ----------------------------\n# Paths\n# ----------------------------\nTRACT_PATH = r&quot;C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\WebUI\\uploads\\9a0ef1c1-f819-4f4a-98ec-df6aceaa15b2\\NC_tract.gpkg&quot;\nPLACES_PATH = r&quot;C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\WebUI\\uploads\\9a0ef1c1-f819-4f4a-98ec-df6aceaa15b2\\NC_PLACES.csv&quot;\nHW_PATH = r&quot;C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\WebUI\\uploads\\9a0ef1c1-f819-4f4a-98ec-df6aceaa15b2\\NC_HW_sites.gpkg&quot;\nACS_PATH = r&quot;C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\WebUI\\uploads\\9a0ef1c1-f819-4f4a-98ec-df6aceaa15b2\\NC_ACS_data.csv&quot;\n\nOUTPUT_CSV = r&quot;C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\9a0ef1c1-f819-4f4a-98ec-df6aceaa15b2\\analysis_results.csv&quot;\nOUTPUT_DIR = os.path.dirname(OUTPUT_CSV)\nos.makedirs(OUTPUT_DIR, exist_ok=True)\n\n# manuscript artifacts helpers are pre-imported in the system:\n# record_figure, record_table, record_data_to_viz\n\nwarnings.filterwarnings(&quot;ignore&quot;, category=UserWarning)\n\n# ----------------------------\n# Utility\n# ----------------------------\ndef to_float(series: pd.Series) -&gt; pd.Series:\n    return pd.to_numeric(series.astype(str).str.replace(&quot;,&quot;, &quot;&quot;, regex=False).str.strip(), errors=&quot;coerce&quot;)\n\ndef safe_log1p(x: pd.Series) -&gt; pd.Series:\n    x = pd.to_numeric(x, errors=&quot;coerce&quot;)\n    x = x.clip(lower=0)\n    return np.log1p(x)\n\ndef ensure_unique_geoid(df: pd.DataFrame, geoid_col: str) -&gt; pd.DataFrame:\n    &quot;&quot;&quot;\n    Enforce one row per GEOID to prevent downstream duplicate-id errors.\n    If duplicates exist, keep the first non-null-heavy row by sorting on\n    non-null count (descending).\n    &quot;&quot;&quot;\n    if geoid_col not in df.columns:\n        raise KeyError(f&quot;Missing key column &#x27;{geoid_col}&#x27;. Available: {list(df.columns)}&quot;)\n\n    df = df.copy()\n    df[geoid_col] = df[geoid_col].astype(str)\n\n    dup_mask = df.duplicated(subset=[geoid_col], keep=False)\n    if dup_mask.any():\n        tmp = df.copy()\n        # rank rows within each GEOID by non-null count (descending), keep best\n        tmp[&quot;_nn&quot;] = tmp.notna().sum(axis=1)\n        tmp = tmp.sort_values([geoid_col, &quot;_nn&quot;], ascending=[True, False])\n        tmp = tmp.drop_duplicates(subset=[geoid_col], keep=&quot;first&quot;).drop(columns=[&quot;_nn&quot;])\n        return tmp.reset_index(drop=True)\n\n    return df.reset_index(drop=True)\n\ndef fit_ols(y: pd.Series, X: pd.DataFrame):\n    Xc = sm.add_constant(X, has_constant=&quot;add&quot;)\n    model = sm.OLS(y.values, Xc.values, missing=&quot;drop&quot;)\n    res = model.fit(cov_type=&quot;HC1&quot;)\n    return res, Xc.columns.tolist()\n\ndef partial_r2(full_res, reduced_res):\n    # 1 - SSE_full/SSE_reduced\n    sse_full = np.sum(full_res.resid ** 2)\n    sse_reduced = np.sum(reduced_res.resid ** 2)\n    if sse_reduced &lt;= 0:\n        return np.nan\n    return 1.0 - (sse_full / sse_reduced)\n\n# ----------------------------\n# STEP 3: Script\n# ----------------------------\n\n# ---- Load spatial data ----\ntract_gdf = gpd.read_file(TRACT_PATH)\nhw_gdf = gpd.read_file(HW_PATH)\n\n# Basic geometry validation\ntract_gdf = tract_gdf[tract_gdf.geometry.notna()]\ntract_gdf = tract_gdf[tract_gdf.geometry.is_valid &amp; ~tract_gdf.geometry.is_empty].copy()\nhw_gdf = hw_gdf[hw_gdf.geometry.notna()]\nhw_gdf = hw_gdf[hw_gdf.geometry.is_valid &amp; ~hw_gdf.geometry.is_empty].copy()\n\n# Ensure unique tract GEOID before any join/analysis (prevents duplicate-id failures)\ntract_gdf[&quot;GEOID&quot;] = tract_gdf[&quot;GEOID&quot;].astype(str)\ntract_gdf = tract_gdf.drop_duplicates(subset=[&quot;GEOID&quot;], keep=&quot;first&quot;).reset_index(drop=True)\n\n# Load tabular data\nplaces_df = pd.read_csv(PLACES_PATH, dtype={&quot;GEOID&quot;: &quot;string&quot;})\nacs_df = pd.read_csv(ACS_PATH, dtype={&quot;GEOID&quot;: &quot;string&quot;})\n\n# Enforce unique GEOID in tables too (prevents 1-to-many merge duplication)\nplaces_df = ensure_unique_geoid(places_df, &quot;GEOID&quot;)\nacs_df = ensure_unique_geoid(acs_df, &quot;GEOID&quot;)\n\n# Cast and clean analysis fields\nplaces_df[&quot;Asthma_prev&quot;] = to_float(places_df[&quot;Asthma_prev&quot;])\n\nratio_cols = [\n    &quot;ratio_white&quot;, &quot;ratio_black&quot;, &quot;ratio_asian&quot;, &quot;ratio_hispanic&quot;, &quot;ratio_other_race&quot;,\n    &quot;ratio_male&quot;, &quot;ratio_female&quot;, &quot;ratio_poverty&quot;, &quot;ratio_unemployed&quot;, &quot;ratio_uninsured&quot;\n]\nfor c in ratio_cols:\n    acs_df[c] = to_float(acs_df[c])\nacs_df[&quot;med_income&quot;] = to_float(acs_df[&quot;med_income&quot;])\n\n# If NC_PLACES has a geometry column as WKT/strings, we don&#x27;t rely on it for spatial ops.\n# We&#x27;ll join by GEOID to the tract geometry.\n\n# ---- Merge tract + asthma + ACS ----\ndf = tract_gdf[[&quot;GEOID&quot;, &quot;geometry&quot;]].merge(\n    places_df[[&quot;GEOID&quot;, &quot;Asthma_prev&quot;]],\n    on=&quot;GEOID&quot;,\n    how=&quot;left&quot;,\n    validate=&quot;one_to_one&quot;,\n)\n\ndf = df.merge(\n    acs_df[[&quot;GEOID&quot;] + ratio_cols + [&quot;med_income&quot;]],\n    on=&quot;GEOID&quot;,\n    how=&quot;left&quot;,\n    validate=&quot;one_to_one&quot;,\n)\n\ngdf = gpd.GeoDataFrame(df, geometry=&quot;geometry&quot;, crs=tract_gdf.crs)\n\n# Guard: ensure uniqueness (again) after merges\ngdf = gdf.drop_duplicates(subset=[&quot;GEOID&quot;], keep=&quot;first&quot;).reset_index(drop=True)\n\n# ---- Reproject for distance calculations ----\n# Use EPSG:3857 for metric distances (meters) as a robust default\ngdf_m = gdf.to_crs(epsg=3857)\nhw_m = hw_gdf.to_crs(epsg=3857)\n\n# Use centroids (distance from tract centroid to nearest hazardous site)\ngdf_m[&quot;centroid&quot;] = gdf_m.geometry.centroid\n\n# Compute nearest facility distance (meters) using unary_union for speed\nhw_union = hw_m.geometry.unary_union\ngdf_m[&quot;dist_to_hw_m&quot;] = gdf_m[&quot;centroid&quot;].apply(lambda p: p.distance(hw_union) if p is not None else np.nan)\n\n# Derive proximity indicators\ngdf_m[&quot;dist_to_hw_km&quot;] = gdf_m[&quot;dist_to_hw_m&quot;] / 1000.0\ngdf_m[&quot;ln_dist_km_plus1&quot;] = safe_log1p(gdf_m[&quot;dist_to_hw_km&quot;])\n\n# Example threshold: within 5 km\ngdf_m[&quot;within_5km_hw&quot;] = (gdf_m[&quot;dist_to_hw_km&quot;] &lt;= 5.0).astype(int)\n\n# Prepare final analysis frame (drop rows missing outcome or key predictors)\nanalysis_cols = [&quot;GEOID&quot;, &quot;Asthma_prev&quot;, &quot;dist_to_hw_km&quot;, &quot;ln_dist_km_plus1&quot;, &quot;within_5km_hw&quot;] + ratio_cols + [&quot;med_income&quot;]\nagdf = gdf_m[analysis_cols + [&quot;geometry&quot;]].copy()\n\n# Clean impossible ratios (keep [0,1] if they are proportions; otherwise leave as-is but still numeric)\n# We won&#x27;t clamp, only set clearly impossible negatives to NA.\nfor c in ratio_cols:\n    agdf.loc[agdf[c] &lt; 0, c] = np.nan\n\n# Drop NA for core model\nagdf_model = agdf.dropna(subset=[&quot;Asthma_prev&quot;, &quot;ln_dist_km_plus1&quot;, &quot;ratio_poverty&quot;, &quot;ratio_black&quot;, &quot;ratio_hispanic&quot;, &quot;ratio_uninsured&quot;, &quot;med_income&quot;]).copy()\nagdf_model = agdf_model.reset_index(drop=True)\n\nif len(agdf_model) &lt; 50:\n    raise ValueError(f&quot;Too few tracts after cleaning for modeling: n={len(agdf_model)}. Check missingness in Asthma_prev/ACS variables.&quot;)\n\n# ----------------------------\n# Modeling: OLS + interactions (context heterogeneity)\n# We model higher asthma with &quot;closer to HW&quot;: use negative distance relationship.\n# Using ln(distance+1): smaller distance =&gt; smaller ln-dist; expected negative coef if closer increases asthma.\n# ----------------------------\ny = agdf_model[&quot;Asthma_prev&quot;]\n\nbase_X = agdf_model[[\n    &quot;ln_dist_km_plus1&quot;,\n    &quot;ratio_poverty&quot;,\n    &quot;ratio_black&quot;,\n    &quot;ratio_hispanic&quot;,\n    &quot;ratio_uninsured&quot;,\n    &quot;med_income&quot;,\n]].copy()\n\n# Standardize predictors for comparability (including ln_dist)\nscaler = StandardScaler()\nX_scaled = pd.DataFrame(\n    scaler.fit_transform(base_X.values),\n    columns=base_X.columns,\n    index=base_X.index\n)\n\n# Add interaction terms between proximity and context\nX_scaled[&quot;ln_dist_x_poverty&quot;] = X_scaled[&quot;ln_dist_km_plus1&quot;] * X_scaled[&quot;ratio_poverty&quot;]\nX_scaled[&quot;ln_dist_x_black&quot;] = X_scaled[&quot;ln_dist_km_plus1&quot;] * X_scaled[&quot;ratio_black&quot;]\nX_scaled[&quot;ln_dist_x_hispanic&quot;] = X_scaled[&quot;ln_dist_km_plus1&quot;] * X_scaled[&quot;ratio_hispanic&quot;]\nX_scaled[&quot;ln_dist_x_uninsured&quot;] = X_scaled[&quot;ln_dist_km_plus1&quot;] * X_scaled[&quot;ratio_uninsured&quot;]\nX_scaled[&quot;ln_dist_x_income&quot;] = X_scaled[&quot;ln_dist_km_plus1&quot;] * X_scaled[&quot;med_income&quot;]\n\n# Fit reduced and full models\nreduced_res, reduced_cols = fit_ols(y, X_scaled[[&quot;ln_dist_km_plus1&quot;, &quot;ratio_poverty&quot;, &quot;ratio_black&quot;, &quot;ratio_hispanic&quot;, &quot;ratio_uninsured&quot;, &quot;med_income&quot;]])\nfull_res, full_cols = fit_ols(y, X_scaled)\n\n# Partial R2 of adding interaction block\npartial_r2_interactions = partial_r2(full_res, reduced_res)\n\n# Build coefficient tables\ndef coef_table(res, colnames, model_name):\n    out = pd.DataFrame({\n        &quot;model&quot;: model_name,\n        &quot;variable&quot;: colnames,\n        &quot;coef&quot;: res.params,\n        &quot;std_err&quot;: res.bse,\n        &quot;t&quot;: res.tvalues,\n        &quot;p_value&quot;: res.pvalues\n    })\n    return out\n\nreduced_tbl = coef_table(reduced_res, reduced_cols, &quot;OLS_reduced&quot;)\nfull_tbl = coef_table(full_res, full_cols, &quot;OLS_full&quot;)\n\ncoef_tbl = pd.concat([reduced_tbl, full_tbl], ignore_index=True)\n\n# Save coefficient table for manuscript\ntables_dir = os.path.join(OUTPUT_DIR, &quot;tables&quot;)\nos.makedirs(tables_dir, exist_ok=True)\ncoef_path = os.path.join(tables_dir, &quot;ols_coefficients.csv&quot;)\ncoef_tbl.to_csv(coef_path, index=False)\nrecord_table(\n    output_dir=OUTPUT_DIR,\n    file_path=coef_path,\n    caption=&quot;Table 1. OLS regression coefficients predicting tract-level asthma prevalence from proximity to hazardous waste facilities and socioeconomic/demographic context (standardized predictors; HC1 robust SEs).&quot;,\n    role=&quot;promoted&quot;,\n    columns=[&quot;model&quot;, &quot;variable&quot;, &quot;coef&quot;, &quot;std_err&quot;, &quot;t&quot;, &quot;p_value&quot;],\n)\n\n# ----------------------------\n# Spatial autocorrelation diagnostic on outcome + residuals\n# IMPORTANT: Avoid duplicate-id error by using KNN weights with unique integer ids (index),\n# and by ensuring one row per GEOID already.\n# ----------------------------\n# Weights on the same cleaned gdf used for residuals\nw_gdf = agdf_model[[&quot;GEOID&quot;, &quot;geometry&quot;]].copy()\nw_gdf = gpd.GeoDataFrame(w_gdf, geometry=&quot;geometry&quot;, crs=gdf_m.crs).reset_index(drop=True)\nw_gdf = w_gdf[w_gdf.geometry.is_valid &amp; ~w_gdf.geometry.is_empty].copy().reset_index(drop=True)\n\n# Ensure the model design aligns with weight gdf row order\n# (agdf_model is already reset_index; we assume same order)\nif len(w_gdf) != len(agdf_model):\n    raise ValueError(&quot;Weights GeoDataFrame and model dataframe differ in length after cleaning; cannot compute Moran&#x27;s I reliably.&quot;)\n\n# KNN weights uses index as ids, avoiding GEOID duplicates entirely\nw = KNN.from_dataframe(w_gdf, k=8)\nw.transform = &quot;r&quot;\n\n# Residuals for diagnostics\nagdf_model[&quot;ols_full_resid&quot;] = full_res.resid\n\nmi_y = Moran(agdf_model[&quot;Asthma_prev&quot;].values, w, permutations=999)\nmi_resid = Moran(agdf_model[&quot;ols_full_resid&quot;].values, w, permutations=999)\n\n# ----------------------------\n# Context-stratified associations (variation by context)\n# Compare proximity effect (simple adjusted model) across low/high poverty and low/high %Black\n# ----------------------------\ndef stratified_effect(df_in, strat_col, label):\n    d = df_in.dropna(subset=[strat_col, &quot;Asthma_prev&quot;, &quot;ln_dist_km_plus1&quot;, &quot;ratio_uninsured&quot;, &quot;med_income&quot;]).copy()\n    if len(d) &lt; 100:\n        return []\n\n    med = d[strat_col].median()\n    out_rows = []\n    for grp_name, grp in [(&quot;low&quot;, d[d[strat_col] &lt;= med]), (&quot;high&quot;, d[d[strat_col] &gt; med])]:\n        if len(grp) &lt; 50:\n            continue\n        X = grp[[&quot;ln_dist_km_plus1&quot;, &quot;ratio_uninsured&quot;, &quot;med_income&quot;]].copy()\n        Xs = pd.DataFrame(StandardScaler().fit_transform(X.values), columns=X.columns, index=X.index)\n        res, cols = fit_ols(grp[&quot;Asthma_prev&quot;], Xs)\n        # variable name after add_constant\n        vname = &quot;ln_dist_km_plus1&quot;\n        # Map to param index (since we passed numpy array)\n        idx = cols.index(vname)\n        out_rows.append({\n            &quot;analysis&quot;: &quot;stratified_ols&quot;,\n            &quot;stratification&quot;: label,\n            &quot;group&quot;: grp_name,\n            &quot;n&quot;: int(len(grp)),\n            &quot;coef_ln_dist&quot;: float(res.params[idx]),\n            &quot;se_ln_dist&quot;: float(res.bse[idx]),\n            &quot;p_ln_dist&quot;: float(res.pvalues[idx]),\n            &quot;r2&quot;: float(res.rsquared),\n        })\n    return out_rows\n\nstrat_rows = []\nstrat_rows += stratified_effect(agdf_model, &quot;ratio_poverty&quot;, &quot;poverty_median_split&quot;)\nstrat_rows += stratified_effect(agdf_model, &quot;ratio_black&quot;, &quot;black_share_median_split&quot;)\nstrat_df = pd.DataFrame(strat_rows)\n\n# Save stratified table\nstrat_path = os.path.join(tables_dir, &quot;stratified_effects.csv&quot;)\nstrat_df.to_csv(strat_path, index=False)\nrecord_table(\n    output_dir=OUTPUT_DIR,\n    file_path=strat_path,\n    caption=&quot;Table 2. Stratified OLS estimates of the proximity (ln distance) association with asthma prevalence across socioeconomic/demographic context (median splits; standardized predictors; HC1 robust SEs).&quot;,\n    role=&quot;promoted&quot;,\n    columns=[&quot;stratification&quot;, &quot;group&quot;, &quot;n&quot;, &quot;coef_ln_dist&quot;, &quot;se_ln_dist&quot;, &quot;p_ln_dist&quot;, &quot;r2&quot;],\n)\n\n# ----------------------------\n# Visualization\n# ----------------------------\n# Prepare mapping GeoDataFrame (back to geographic for plotting if needed; keep web mercator too)\nplot_gdf = agdf.copy()\nplot_gdf = plot_gdf.dropna(subset=[&quot;Asthma_prev&quot;, &quot;dist_to_hw_km&quot;]).copy()\n\n# 1) Choropleth: asthma prevalence\nfig, ax = plt.subplots(1, 1, figsize=(10, 10))\nplot_gdf.plot(column=&quot;Asthma_prev&quot;, cmap=&quot;Reds&quot;, linewidth=0.0, ax=ax, legend=True)\nax.set_title(&quot;North Carolina census tracts: Asthma prevalence&quot;)\nax.set_axis_off()\nasthma_map_path = os.path.join(OUTPUT_DIR, &quot;fig_asthma_choropleth.png&quot;)\nplt.tight_layout()\nplt.savefig(asthma_map_path, dpi=300)\nplt.close()\nrecord_figure(\n    output_dir=OUTPUT_DIR,\n    file_path=asthma_map_path,\n    caption=&quot;Choropleth map of asthma prevalence across North Carolina census tracts.&quot;,\n    role=&quot;final&quot;,\n    objective_key=&quot;objective_1&quot;,\n    step_index=1,\n)\n\n# 2) Choropleth: distance to nearest hazardous waste site (km)\nfig, ax = plt.subplots(1, 1, figsize=(10, 10))\nplot_gdf.plot(column=&quot;dist_to_hw_km&quot;, cmap=&quot;Blues&quot;, linewidth=0.0, ax=ax, legend=True)\nax.set_title(&quot;North Carolina census tracts: Distance to nearest hazardous waste facility (km)&quot;)\nax.set_axis_off()\ndist_map_path = os.path.join(OUTPUT_DIR, &quot;fig_distance_to_hw_choropleth.png&quot;)\nplt.tight_layout()\nplt.savefig(dist_map_path, dpi=300)\nplt.close()\nrecord_figure(\n    output_dir=OUTPUT_DIR,\n    file_path=dist_map_path,\n    caption=&quot;Choropleth map of tract centroid distance to the nearest hazardous waste facility (km).&quot;,\n    role=&quot;promoted&quot;,\n    objective_key=&quot;objective_1&quot;,\n    step_index=2,\n)\n\n# 3) Scatter with binned trend: asthma vs distance\ntmp = plot_gdf[[&quot;Asthma_prev&quot;, &quot;dist_to_hw_km&quot;]].dropna().copy()\ntmp = tmp[tmp[&quot;dist_to_hw_km&quot;].between(0, tmp[&quot;dist_to_hw_km&quot;].quantile(0.99))]  # trim extreme 1%\ntmp[&quot;dist_bin&quot;] = pd.qcut(tmp[&quot;dist_to_hw_km&quot;], q=20, duplicates=&quot;drop&quot;)\nbinned = tmp.groupby(&quot;dist_bin&quot;, observed=True).agg(\n    dist_km_mean=(&quot;dist_to_hw_km&quot;, &quot;mean&quot;),\n    asthma_mean=(&quot;Asthma_prev&quot;, &quot;mean&quot;),\n    n=(&quot;Asthma_prev&quot;, &quot;size&quot;),\n).reset_index(drop=True)\n\nfig, ax = plt.subplots(1, 1, figsize=(8, 5))\nax.scatter(tmp[&quot;dist_to_hw_km&quot;], tmp[&quot;Asthma_prev&quot;], s=5, alpha=0.15, color=&quot;gray&quot;, label=&quot;Tracts&quot;)\nax.plot(binned[&quot;dist_km_mean&quot;], binned[&quot;asthma_mean&quot;], color=&quot;black&quot;, linewidth=2, label=&quot;Binned mean (20 quantiles)&quot;)\nax.set_xlabel(&quot;Distance to nearest hazardous waste facility (km)&quot;)\nax.set_ylabel(&quot;Asthma prevalence&quot;)\nax.set_title(&quot;Asthma prevalence vs proximity to hazardous waste facilities&quot;)\nax.legend(frameon=False)\nscatter_path = os.path.join(OUTPUT_DIR, &quot;fig_asthma_vs_distance.png&quot;)\nplt.tight_layout()\nplt.savefig(scatter_path, dpi=300)\nplt.close()\nrecord_figure(\n    output_dir=OUTPUT_DIR,\n    file_path=scatter_path,\n    caption=&quot;Scatterplot of tract-level asthma prevalence versus distance to nearest hazardous waste facility, with binned mean trend.&quot;,\n    role=&quot;final&quot;,\n    objective_key=&quot;objective_1&quot;,\n    step_index=3,\n)\n\n# ----------------------------\n# Key quantitative results to analysis_results.csv (primary output)\n# ----------------------------\n# Summaries: model fit + key proximity coefficients + Moran diagnostics + interaction block value\ndef pick_coef(res_tbl, model, var):\n    s = res_tbl[(res_tbl[&quot;model&quot;] == model) &amp; (res_tbl[&quot;variable&quot;] == var)]\n    if len(s) != 1:\n        return (np.nan, np.nan, np.nan)\n    return (float(s[&quot;coef&quot;].iloc[0]), float(s[&quot;std_err&quot;].iloc[0]), float(s[&quot;p_value&quot;].iloc[0]))\n\n# For reduced and full models, coefficients are standardized.\n# Interpret sign: negative coef on ln_dist =&gt; closer (smaller distance) associated with higher asthma.\ncoef_red, se_red, p_red = pick_coef(coef_tbl, &quot;OLS_reduced&quot;, &quot;ln_dist_km_plus1&quot;)\ncoef_full, se_full, p_full = pick_coef(coef_tbl, &quot;OLS_full&quot;, &quot;ln_dist_km_plus1&quot;)\n\nresults_rows = [\n    {\n        &quot;metric&quot;: &quot;n_tracts_model&quot;,\n        &quot;value&quot;: int(len(agdf_model)),\n        &quot;notes&quot;: &quot;Number of census tracts with complete data for full model.&quot;\n    },\n    {\n        &quot;metric&quot;: &quot;ols_reduced_r2&quot;,\n        &quot;value&quot;: float(reduced_res.rsquared),\n        &quot;notes&quot;: &quot;R-squared for reduced OLS (no interactions), HC1 robust SEs.&quot;\n    },\n    {\n        &quot;metric&quot;: &quot;ols_full_r2&quot;,\n        &quot;value&quot;: float(full_res.rsquared),\n        &quot;notes&quot;: &quot;R-squared for full OLS (with interactions), HC1 robust SEs.&quot;\n    },\n    {\n        &quot;metric&quot;: &quot;partial_r2_interactions&quot;,\n        &quot;value&quot;: float(partial_r2_interactions),\n        &quot;notes&quot;: &quot;Partial R2 improvement when adding proximity\u00d7context interactions (full vs reduced).&quot;\n    },\n    {\n        &quot;metric&quot;: &quot;ols_reduced_coef_ln_dist&quot;,\n        &quot;value&quot;: coef_red,\n        &quot;notes&quot;: &quot;Standardized coefficient for ln(distance_km+1). Negative implies higher asthma closer to sites.&quot;\n    },\n    {\n        &quot;metric&quot;: &quot;ols_reduced_p_ln_dist&quot;,\n        &quot;value&quot;: p_red,\n        &quot;notes&quot;: &quot;P-value for standardized ln(distance_km+1) coefficient in reduced model.&quot;\n    },\n    {\n        &quot;metric&quot;: &quot;ols_full_coef_ln_dist&quot;,\n        &quot;value&quot;: coef_full,\n        &quot;notes&quot;: &quot;Standardized coefficient for ln(distance_km+1) in full interaction model.&quot;\n    },\n    {\n        &quot;metric&quot;: &quot;ols_full_p_ln_dist&quot;,\n        &quot;value&quot;: p_full,\n        &quot;notes&quot;: &quot;P-value for standardized ln(distance_km+1) coefficient in full interaction model.&quot;\n    },\n    {\n        &quot;metric&quot;: &quot;morans_I_asthma&quot;,\n        &quot;value&quot;: float(mi_y.I),\n        &quot;notes&quot;: f&quot;Global Moran&#x27;s I for asthma prevalence (KNN k=8), permutations=999; p_sim={mi_y.p_sim:.6g}.&quot;\n    },\n    {\n        &quot;metric&quot;: &quot;morans_p_asthma&quot;,\n        &quot;value&quot;: float(mi_y.p_sim),\n        &quot;notes&quot;: &quot;Permutation p-value for Global Moran&#x27;s I (asthma).&quot;\n    },\n    {\n        &quot;metric&quot;: &quot;morans_I_ols_full_residuals&quot;,\n        &quot;value&quot;: float(mi_resid.I),\n        &quot;notes&quot;: f&quot;Global Moran&#x27;s I for full-model residuals (KNN k=8), permutations=999; p_sim={mi_resid.p_sim:.6g}.&quot;\n    },\n    {\n        &quot;metric&quot;: &quot;morans_p_ols_full_residuals&quot;,\n        &quot;value&quot;: float(mi_resid.p_sim),\n        &quot;notes&quot;: &quot;Permutation p-value for Global Moran&#x27;s I (full-model residuals).&quot;\n    },\n]\n\n# Add key interaction terms from full model\nfor v in [&quot;ln_dist_x_poverty&quot;, &quot;ln_dist_x_black&quot;, &quot;ln_dist_x_hispanic&quot;, &quot;ln_dist_x_uninsured&quot;, &quot;ln_dist_x_income&quot;]:\n    c, s, p = pick_coef(coef_tbl, &quot;OLS_full&quot;, v)\n    results_rows.append({\n        &quot;metric&quot;: f&quot;ols_full_coef_{v}&quot;,\n        &quot;value&quot;: c,\n        &quot;notes&quot;: f&quot;Standardized interaction coefficient for {v} (proximity\u00d7context).&quot;\n    })\n    results_rows.append({\n        &quot;metric&quot;: f&quot;ols_full_p_{v}&quot;,\n        &quot;value&quot;: p,\n        &quot;notes&quot;: f&quot;P-value for interaction term {v} in full model.&quot;\n    })\n\n# Include stratified summary compactly (if present)\nif len(strat_df) &gt; 0:\n    for _, r in strat_df.iterrows():\n        results_rows.append({\n            &quot;metric&quot;: f&quot;strat_{r[&#x27;stratification&#x27;]}_{r[&#x27;group&#x27;]}_coef_ln_dist&quot;,\n            &quot;value&quot;: float(r[&quot;coef_ln_dist&quot;]),\n            &quot;notes&quot;: f&quot;Stratified (median split) standardized ln(distance) coefficient; n={int(r[&#x27;n&#x27;])}; p={float(r[&#x27;p_ln_dist&#x27;]):.6g}.&quot;\n        })\n\nresults_df = pd.DataFrame(results_rows)\nos.makedirs(os.path.dirname(OUTPUT_CSV), exist_ok=True)\nresults_df.to_csv(OUTPUT_CSV, index=False)\n\n# Also record the primary results CSV as a promoted table for manuscript traceability\nprimary_table_path = os.path.join(tables_dir, &quot;analysis_results_key_metrics.csv&quot;)\nresults_df.to_csv(primary_table_path, index=False)\nrecord_table(\n    output_dir=OUTPUT_DIR,\n    file_path=primary_table_path,\n    caption=&quot;Table 3. Key quantitative results: proximity effect estimates, interaction significance, and spatial autocorrelation diagnostics.&quot;,\n    role=&quot;promoted&quot;,\n    columns=[&quot;metric&quot;, &quot;value&quot;, &quot;notes&quot;],\n)</pre></div><div class=\"code-section\"><h4>Created Files</h4><div class=\"files-list\"><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\9a0ef1c1-f819-4f4a-98ec-df6aceaa15b2\\analysis_results.csv</span><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\9a0ef1c1-f819-4f4a-98ec-df6aceaa15b2\\fig_asthma_choropleth.png</span><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\9a0ef1c1-f819-4f4a-98ec-df6aceaa15b2\\fig_asthma_vs_distance.png</span><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\9a0ef1c1-f819-4f4a-98ec-df6aceaa15b2\\fig_distance_to_hw_choropleth.png</span><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\9a0ef1c1-f819-4f4a-98ec-df6aceaa15b2\\manifest.json</span><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\9a0ef1c1-f819-4f4a-98ec-df6aceaa15b2\\tables\\analysis_results_key_metrics.csv</span><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\9a0ef1c1-f819-4f4a-98ec-df6aceaa15b2\\tables\\ols_coefficients.csv</span><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\9a0ef1c1-f819-4f4a-98ec-df6aceaa15b2\\tables\\stratified_effects.csv</span></div></div>", "result_collation": "<h3 style=\"border-bottom-color:#D4A017;\">Result Collation</h3><div class=\"meta-item\"><span class=\"meta-label\">Status</span><span class=\"meta-value\" style=\"color:#28a745;font-weight:bold;\">Completed</span></div><div class=\"meta-item\" style=\"margin-top:8px\"><span class=\"meta-label\">Figures</span><span class=\"meta-value\">16 figure(s) cataloged</span></div>", "manuscript": "<h3 style=\"border-bottom-color:#7B2D8E;\">Manuscript</h3><div class=\"meta-item\"><span class=\"meta-label\">Status</span><span class=\"meta-value\" style=\"color:#28a745;font-weight:bold;\">Completed</span></div><div class=\"meta-item\" style=\"margin-top:8px\"><span class=\"meta-label\">File</span><span class=\"meta-value\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\9a0ef1c1-f819-4f4a-98ec-df6aceaa15b2\\manuscript.md</span></div><div class=\"code-section\"><h4>Exported Formats</h4><div class=\"files-list\"><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\9a0ef1c1-f819-4f4a-98ec-df6aceaa15b2\\manuscript.docx</span><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\9a0ef1c1-f819-4f4a-98ec-df6aceaa15b2\\manuscript.pdf</span></div></div><div class=\"code-section\"><h4>Content Preview</h4><pre style=\"color:#e2e8f0;max-height:400px;\"># Spatial Patterns of Asthma Prevalence Near Hazardous Waste Facilities: Evidence from North Carolina Census Tracts\n\n## Abstract\n\n**Background and Purpose:** Proximity to hazardous waste facilities is a persistent environmental justice concern, yet the magnitude of its association with respiratory health and the extent to which it varies across socioeconomic and demographic contexts remain uncertain at fine spatial scales. This study evaluates whether distance to hazardous waste facilities is associated with tract-level asthma prevalence across North Carolina and tests whether this relationship differs by poverty and racial composition. **Methods:** The analysis integrated tract geographies for North Carolina, georeferenced hazardous waste facility locations, tract-level asthma prevalence, and American Community Survey socioeconomic and demographic attributes. Global ordinary least squares models with HC1 robust standard errors were estimated using standardized predictors, including a reduced specification (main effects) and a full specification adding proximity-by-context interactions; model performance was compared using $R^2$ and partial $R^2$. Heterogeneity was further assessed via stratified OLS models estimated separately for median-split groups of poverty and Black population share. **Results:** Complete-case modeling included 2,169 census tracts. The reduced model explained substantial variation in asthma prevalence ($R^2=0.821752$), and adding proximity\u00d7context inter</pre></div>"};
+
+// Zoom & Pan state
+let scale = 1;
+let panX = 0, panY = 0;
+let isPanning = false;
+let _wasDragged = false;
+let panStartX = 0, panStartY = 0;
+let _mdX = 0, _mdY = 0;
+const PAN_THRESHOLD = 4;
+const MIN_SCALE = 0.2;
+const MAX_SCALE = 5;
+const ZOOM_STEP = 0.15;
+const svg = document.getElementById('flowchartSvg');
+const zoomGroup = document.getElementById('zoomGroup');
+const graphPanel = document.getElementById('graphPanel');
+
+function applyTransform() {
+  zoomGroup.setAttribute('transform', `translate(${panX}, ${panY}) scale(${scale})`);
+  document.getElementById('zoomLevel').textContent = Math.round(scale * 100) + '%';
+}
+
+function zoomIn() {
+  scale = Math.min(MAX_SCALE, scale + ZOOM_STEP);
+  applyTransform();
+}
+
+function zoomOut() {
+  scale = Math.max(MIN_SCALE, scale - ZOOM_STEP);
+  applyTransform();
+}
+
+function zoomReset() {
+  scale = 1; panX = 0; panY = 0;
+  applyTransform();
+}
+
+function zoomFit() {
+  const bbox = zoomGroup.getBBox();
+  const vb = svg.viewBox.baseVal;
+  const pad = 30;
+  const scaleX = (vb.width - pad * 2) / bbox.width;
+  const scaleY = (vb.height - pad * 2) / bbox.height;
+  scale = Math.min(scaleX, scaleY, MAX_SCALE);
+  panX = (vb.width / scale - bbox.width) / 2 - bbox.x + pad / scale;
+  panY = (vb.height / scale - bbox.height) / 2 - bbox.y + pad / scale;
+  applyTransform();
+}
+
+function toggleFullscreen() {
+  const elem = document.documentElement;
+  if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if (elem.webkitRequestFullscreen) {
+      elem.webkitRequestFullscreen();
+    }
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    }
+  }
+}
+
+document.addEventListener('fullscreenchange', function() {
+  const btn = document.getElementById('fullscreenBtn');
+  if (document.fullscreenElement) {
+    btn.innerHTML = '&#x2716;';
+    btn.title = 'Exit fullscreen';
+  } else {
+    btn.innerHTML = '&#x26F6;';
+    btn.title = 'Toggle fullscreen';
+  }
+  setTimeout(zoomFit, 200);
+});
+
+// Mouse wheel zoom (centered on cursor)
+graphPanel.addEventListener('wheel', function(e) {
+  e.preventDefault();
+  const rect = svg.getBoundingClientRect();
+  const mouseX = e.clientX - rect.left;
+  const mouseY = e.clientY - rect.top;
+  const vb = svg.viewBox.baseVal;
+  const svgX = (mouseX / rect.width) * vb.width;
+  const svgY = (mouseY / rect.height) * vb.height;
+  const oldScale = scale;
+  if (e.deltaY < 0) {
+    scale = Math.min(MAX_SCALE, scale + ZOOM_STEP);
+  } else {
+    scale = Math.max(MIN_SCALE, scale - ZOOM_STEP);
+  }
+  panX = svgX / scale - svgX / oldScale + panX;
+  panY = svgY / scale - svgY / oldScale + panY;
+  applyTransform();
+}, { passive: false });
+
+// Pan with left-click drag (or middle mouse)
+graphPanel.addEventListener('mousedown', function(e) {
+  if (e.button === 0 || e.button === 1) {
+    e.preventDefault();
+    isPanning = true;
+    _wasDragged = false;
+    panStartX = e.clientX;
+    panStartY = e.clientY;
+    _mdX = e.clientX;
+    _mdY = e.clientY;
+    graphPanel.style.cursor = 'grabbing';
+  }
+});
+
+window.addEventListener('mousemove', function(e) {
+  if (!isPanning) return;
+  const dist = Math.abs(e.clientX - _mdX) + Math.abs(e.clientY - _mdY);
+  if (dist > PAN_THRESHOLD) _wasDragged = true;
+  const vb = svg.viewBox.baseVal;
+  const rect = svg.getBoundingClientRect();
+  const dx = (e.clientX - panStartX) * (vb.width / rect.width) / scale;
+  const dy = (e.clientY - panStartY) * (vb.height / rect.height) / scale;
+  panX += dx;
+  panY += dy;
+  panStartX = e.clientX;
+  panStartY = e.clientY;
+  applyTransform();
+});
+
+window.addEventListener('mouseup', function() {
+  if (isPanning) {
+    isPanning = false;
+    graphPanel.style.cursor = '';
+  }
+});
+
+// Suppress node clicks after a drag
+graphPanel.addEventListener('click', function(e) {
+  if (_wasDragged) {
+    e.stopPropagation();
+    _wasDragged = false;
+  }
+}, true);
+
+// Node popup
+function showPopup(nodeId) {
+  const content = document.getElementById('popupContent');
+  const overlay = document.getElementById('popupOverlay');
+  if (details[nodeId]) {
+    content.innerHTML = details[nodeId];
+  } else {
+    content.innerHTML = '<p style="color:#999; font-style:italic;">No details available.</p>';
+  }
+  overlay.classList.add('visible');
+
+  // Highlight selected node
+  document.querySelectorAll('.node-box rect, .node-box polygon').forEach(el => {
+    el.setAttribute('stroke-width', el.tagName === 'polygon' ? '2' : '1.5');
+    el.setAttribute('stroke', el.dataset.origStroke || '#333');
+  });
+  const clicked = event.currentTarget.querySelector('rect, polygon');
+  if (clicked) {
+    clicked.setAttribute('stroke-width', '3.5');
+    clicked.setAttribute('stroke', '#FFD700');
+  }
+}
+
+function closePopup(e) {
+  if (e && e.target !== document.getElementById('popupOverlay')) return;
+  document.getElementById('popupOverlay').classList.remove('visible');
+  document.querySelectorAll('.node-box rect, .node-box polygon').forEach(el => {
+    el.setAttribute('stroke-width', el.tagName === 'polygon' ? '2' : '1.5');
+    el.setAttribute('stroke', el.dataset.origStroke || '#333');
+  });
+}
+
+// Navigate to the step card in the parent WebUI
+function goToStepCard(phase) {
+  closePopup();
+  // If inside an iframe, post message to parent; otherwise try directly
+  if (window.parent && window.parent !== window) {
+    window.parent.postMessage({ type: 'scrollToStepCard', phase: phase }, '*');
+  } else {
+    // Standalone — try finding the card in this document
+    const card = document.getElementById('wf-card-' + phase);
+    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closePopup();
+});
+
+// Store original stroke colors
+document.querySelectorAll('.node-box rect, .node-box polygon').forEach(el => {
+  el.dataset.origStroke = el.getAttribute('stroke') || '#333';
+});
+
+// Fit to view on initial load
+window.addEventListener('DOMContentLoaded', function() {
+  setTimeout(zoomFit, 100);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIS Co-Scientist</title>
+    <!-- Deep-link routes like /handbook-studio/<session-id> serve this same
+         file from a nested path; pin relative asset/API URLs to the app root
+         so they don't resolve against the current URL's path segments. -->
+    <link rel="stylesheet" href="styles.css">
+    <!-- Syntax highlighting for code review -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+    <!-- Markdown rendering for result presentation/discussion -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.1/marked.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-title">
+                <a href="https://giscience.psu.edu" target="_blank" rel="noopener noreferrer" class="coscientist-logo-link">
+                    <img src="icon/GIS-Coscientist_logo.png" alt="GIS Co-Scientist Logo" class="coscientist-logo">
+                </a>
+                <h1>GIS Co-Scientist</h1>
+            </div>
+            <div class="header-buttons">
+                <button class="header-menu-item handbook-nav-btn" id="handbook-studio-nav-btn" type="button"
+                        onclick="HandbookStudioMode.open()">Handbook Studio</button>
+                <button class="header-menu-item handbook-nav-btn" id="handbook-nav-btn" type="button"
+                        onclick="HandbookGenerator.open()">Handbook Generator</button>
+                <button class="header-menu-item config-toggle-btn" onclick="toggleConfigDropdown()">Settings</button>
+                
+                <a href="https://autonomousgis-agsi.github.io/AGSI/user_manual" target="_blank" rel="noopener noreferrer" class="header-menu-item">User Manual</a>
+                 <!-- <a href="user_manual_future.html" target="_blank" rel="noopener noreferrer" class="header-menu-item">User Manual</a> -->
+                <!-- <a href="user_manual.html" target="_blank" rel="noopener noreferrer" class="header-menu-item">User Manual</a> -->
+                <a href="https://www.youtube.com/watch?v=oyf4I1VRlLU&list=PL6ON3gdLloDEY4YKHyEIgMhfpMwNRs0a7&index=1" target="_blank" rel="noopener noreferrer" class="header-menu-item">Video Demo</a>
+                <a href="https://dx.doi.org/10.2139/ssrn.6753098" target="_blank" rel="noopener noreferrer" class="header-menu-item">Preprint</a>
+                <a href="https://giscience.psu.edu" target="_blank" rel="noopener noreferrer" class="gibd-logo-link">
+                    <img src="icon/gibd_logo.png" alt="GIBD Logo" class="gibd-logo">
+                </a>
+            </div>
+        </header>
+
+        <!-- Configuration Dropdown -->
+        <div class="config-dropdown" id="config-dropdown">
+            <div class="config-dropdown-content">
+                <h2>Configuration Settings</h2>
+
+                <div class="config-section">
+                    <h3>API Key</h3>
+                    <p class="config-hint" style="margin:0 0 8px; font-style:italic;">Get one from <a href="https://www.gibd.online" target="_blank" rel="noopener noreferrer">GIBD services</a> or <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer">OpenAI</a>.</p>
+                    <div id="GIBD-API-key-input" style="display:flex; gap:8px; align-items:center;">
+                        <input type="password" id="GIBD-API-key" placeholder="Enter your GIBD or OpenAI API key" style="flex:1;" autocomplete="off">
+                        <script>(function(){ var k=localStorage.getItem('agm_openai_api_key'); if(k) document.getElementById('GIBD-API-key').value=k; })();</script>
+                        <button type="button" onclick="toggleApiKeyVisibility(this)" title="Show/hide key" style="background:none;border:1px solid #ccc;border-radius:4px;padding:4px 8px;cursor:pointer;font-size:14px;">👁</button>
+                    </div>
+                    <div style="display:flex; gap:8px; margin-top:8px; align-items:center;">
+                        <button type="button" id="GIBD-API-key-save" onclick="saveApiKey()">Save Key</button>
+                        <button type="button" id="GIBD-API-key-clear" onclick="clearApiKey()">Clear Key</button>
+                        <span id="api-key-status" style="font-size:12px;"></span>
+                    </div>
+                    <!-- user_id = sha256(key)[:16]; this is the id conversations, handbooks and
+                         studio sessions are filed under. Filled by refreshUserIdBadge(). -->
+                    <p id="api-key-user-id" class="config-hint" style="display:none; margin:6px 0 0; font-size:12px;" title="Your conversations are stored under this id, derived from your key. The key itself is never stored.">
+                        Your ID: <code id="api-key-user-id-value" style="user-select:all;"></code>
+                        <button type="button" onclick="copyUserId()" title="Copy ID" style="background:none;border:1px solid #ccc;border-radius:4px;padding:1px 6px;cursor:pointer;font-size:11px;margin-left:4px;">Copy</button>
+                    </p>
+                </div>
+
+                <div class="config-section">
+                    <h3>Anthropic API Key</h3>
+                    <p class="config-hint" style="margin:0 0 8px; font-style:italic;">Only needed to select "Claude Agent SDK" as the provider in Handbook Studio. Get one from <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener noreferrer">Anthropic's console</a>.</p>
+                    <div id="anthropic-API-key-input" style="display:flex; gap:8px; align-items:center;">
+                        <input type="password" id="anthropic-API-key" placeholder="Enter your Anthropic API key" style="flex:1;" autocomplete="off">
+                        <script>(function(){ var k=localStorage.getItem('agm_anthropic_api_key'); if(k) document.getElementById('anthropic-API-key').value=k; })();</script>
+                        <button type="button" onclick="toggleAnthropicApiKeyVisibility(this)" title="Show/hide key" style="background:none;border:1px solid #ccc;border-radius:4px;padding:4px 8px;cursor:pointer;font-size:14px;">👁</button>
+                    </div>
+                    <div style="display:flex; gap:8px; margin-top:8px; align-items:center;">
+                        <button type="button" id="anthropic-API-key-save" onclick="saveAnthropicApiKey()">Save Key</button>
+                        <button type="button" id="anthropic-API-key-clear" onclick="clearAnthropicApiKey()">Clear Key</button>
+                        <span id="anthropic-api-key-status" style="font-size:12px;"></span>
+                    </div>
+                </div>
+
+                <div class="config-section">
+                    <h3>Data Source Keys</h3>
+                    <p class="config-hint" style="margin:0 0 8px;">Keys for data sources (Census, EPA AQS, etc.). You're prompted for these automatically when a source needs one; saved here so you only enter each once.</p>
+                    <div id="data-source-keys-list"></div>
+                    <div style="display:flex; gap:6px; margin-top:8px; align-items:center;">
+                        <input type="text" id="ds-key-new-name" placeholder="Key name (e.g. US_Census_demography_key)" style="flex:1;" autocomplete="off">
+                        <input type="password" id="ds-key-new-value" placeholder="Value" style="flex:1;" autocomplete="off">
+                        <button type="button" onclick="addDataSourceKeyFromSettings()">Add</button>
+                    </div>
+                    <span id="ds-key-status" style="font-size:12px;"></span>
+                </div>
+
+
+                <!-- Hidden state store — model, mode, autonomous, and EDA selections are now made via the inline toolbar in the chat input area. Kept here as hidden elements so existing JS that reads these IDs continues to work. -->
+                <div style="display:none;" aria-hidden="true">
+                    <select id="model-select">
+                        <option value="gpt-6-luna" selected>GPT-6 Luna</option>
+                        <option value="gpt-5.3">GPT-5.3</option>
+                        <option value="gpt-5.4">GPT-5.4</option>
+                        <option value="gpt-4.1">GPT-4.1</option>
+                        <option value="gpt-4.1-mini">GPT-4.1 Mini</option>
+                        <option value="gpt-4.1-nano">GPT-4.1 Nano</option>
+                        <option value="gpt-4o">GPT-4o</option>
+                        <option value="gpt-4o-mini">GPT-4o Mini</option>
+                        <option value="gpt-4-turbo">GPT-4 Turbo</option>
+                    </select>
+                    <input type="range" id="temperature" min="0" max="2" step="0.1" value="0.7">
+                    <span id="temp-value">0.7</span>
+                    <div id="intent-mode-options">
+                        <input type="radio" name="intent-mode" value="research">
+                        <input type="radio" name="intent-mode" value="single_agent">
+                        <input type="radio" name="intent-mode" value="research_no_planning">
+                        <input type="radio" name="intent-mode" value="task" checked>
+                        <input type="radio" name="intent-mode" value="data_retriever">
+                        <input type="radio" name="intent-mode" value="chat">
+                    </div>
+                    <input type="checkbox" id="enable-eda-toggle">
+                    <input type="checkbox" id="autonomous-mode-toggle">
+                </div>
+
+                <!--
+                <div class="config-section">
+                    <h3>Workflow Settings</h3>
+
+                    <label class="toggle-label">
+                        <input type="checkbox" id="interactive-code-toggle">
+                        Interactive Code Review
+                    </label>
+                    <small class="config-hint">Pause before executing generated code to allow review and editing</small>
+                </div>
+                -->
+                <!-- Hidden state store for interactive-code-toggle (still read by JS) -->
+                <input type="checkbox" id="interactive-code-toggle" style="display:none;" aria-hidden="true">
+
+                <button class="btn-close-dropdown" onclick="toggleConfigDropdown()">Close</button>
+            </div>
+        </div>
+
+        <!-- Commented out: View Dropdown hidden (right panels removed)
+        <div class="view-dropdown" id="view-dropdown">
+            <div class="view-dropdown-content">
+                <div class="view-menu-items">
+                    <button class="view-menu-item" onclick="showPanel('llm-response-section')">
+                        LLM Live Response
+                    </button>
+                    <button class="view-menu-item" onclick="showPanel('logs-section')">
+                        Logs Panel
+                    </button>
+                </div>
+                <button class="btn-close-dropdown" onclick="toggleViewDropdown()">Close</button>
+            </div>
+        </div>
+        -->
+
+
+
+        <!-- Main Layout -->
+        <div class="main-layout">
+            <!-- Left Panel -->
+            <aside class="sidebar-left" id="sidebar-left">
+                <div class="sidebar-left-content">
+                    <!-- Data Layers Section -->
+                    <div class="sidebar-section">
+                        <div class="data-layers-header">
+                            <button class="btn-add-layer" onclick="addDataLayer()" title="Add Data Layer">
+                                <img src="icon/folder-plus.svg" alt="Add Data Layer" class="btn-add-layer-icon">
+                            </button>
+                            <h2 class="dl-toggle" onclick="toggleDataLayersSection()" title="Collapse / expand">
+                                <span class="dl-caret">▾</span>Data Layers
+                            </h2>
+                            <button class="btn-collapse-sidebar" onclick="toggleLeftSidebar()" title="Toggle sidebar">◧</button>
+                        </div>
+                        <div class="data-layer-list" id="data-layer-list">
+                            <!-- Data layers will be added here dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Left panel tabs: Conversations / Data Sources -->
+                    <div class="left-tabs" id="left-tabs">
+                        <button class="left-tab-btn active" id="left-tab-btn-conversations" onclick="switchLeftTab('conversations')">Conversations</button>
+                        <button class="left-tab-btn" id="left-tab-btn-datasources" onclick="switchLeftTab('datasources')">Data Sources</button>
+                    </div>
+
+                    <!-- Tab: Conversations -->
+                    <div class="left-tab-panel active" id="left-tab-conversations">
+                    <!-- Conversation History Section -->
+                    <div class="sidebar-section">
+                        <div class="conversation-toolbar">
+                            <button class="btn-new-chat" onclick="startNewChat()" title="Start a new conversation">
+                                <img src="icon/comment-plus.svg" alt="New chat" class="new-chat-icon">
+                                <span class="new-chat-text">New chat</span>
+                            </button>
+                            <div class="convo-controls">
+                                <button class="convo-sort-btn" id="convo-filter-btn"
+                                        onclick="toggleConversationFilterMenu(event)"
+                                        title="Filter conversations" aria-label="Filter conversations">
+                                    <svg class="convo-ctrl-icon" viewBox="0 0 16 16" width="11" height="11" aria-hidden="true"><path fill="currentColor" d="M1 2.2h14L9.6 8.4v5.1L6.4 15V8.4z"/></svg>
+                                    <span class="convo-sort-label" id="convo-filter-label">All</span>
+                                </button>
+                                <button class="convo-sort-btn" id="convo-sort-btn"
+                                        onclick="toggleConversationSortMenu(event)"
+                                        title="Sort conversations" aria-label="Sort conversations">
+                                    <span class="convo-sort-icon">⇅</span>
+                                    <span class="convo-sort-label" id="convo-sort-label">Newest</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="conversation-list" id="conversation-list">
+                            <p class="empty-conversation">No conversations yet</p>
+                        </div>
+                    </div>
+                    </div><!-- /Tab: Conversations -->
+
+                    <!-- Tab: Data Sources -->
+                    <div class="left-tab-panel" id="left-tab-datasources">
+                        <div class="ds-accordion">
+                            <!-- My Sources -->
+                            <div class="ds-acc-item open" id="ds-acc-mine">
+                                <button class="ds-acc-header" onclick="toggleDsAccordion(this)" aria-expanded="true">
+                                    <span class="ds-acc-title">My Sources</span>
+                                    <span class="ds-acc-icon" aria-hidden="true"></span>
+                                </button>
+                                <div class="ds-acc-body">
+                                    <button class="ds-btn-add-toggle" id="ds-add-toggle-left" onclick="addDataSourceFromLeft()">
+                                        <span class="ds-add-plus">+</span> Add data source
+                                    </button>
+                                    <!-- The "new source" form (#ds-form-card) is moved here at runtime. -->
+                                    <div id="ds-mine-list-left" class="ds-list ds-card-grid"></div>
+                                </div>
+                            </div>
+                            <!-- Shared Sources -->
+                            <div class="ds-acc-item open" id="ds-acc-shared">
+                                <button class="ds-acc-header" onclick="toggleDsAccordion(this)" aria-expanded="true">
+                                    <span class="ds-acc-title">Shared Sources</span>
+                                    <span class="ds-acc-icon" aria-hidden="true"></span>
+                                </button>
+                                <div class="ds-acc-body">
+                                    <p class="ds-intro">Data sources shared with everyone. The assistant can retrieve from any of these.</p>
+                                    <div id="ds-shared-list-left" class="ds-list ds-card-grid"></div>
+                                </div>
+                            </div>
+                            <!-- Review queue (admins only) -->
+                            <div class="ds-acc-item" id="ds-acc-review" style="display:none;">
+                                <button class="ds-acc-header" onclick="toggleDsAccordion(this)" aria-expanded="false">
+                                    <span class="ds-acc-title">Review queue</span>
+                                    <span class="ds-review-count" id="ds-review-count" style="display:none;">0</span>
+                                    <span class="ds-acc-icon" aria-hidden="true"></span>
+                                </button>
+                                <div class="ds-acc-body">
+                                    <div id="ds-review-list-left"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- /Tab: Data Sources -->
+                </div>
+            </aside>
+
+            <!-- Expand button (shown when sidebar is collapsed) -->
+            <button class="btn-expand-sidebar" id="btn-expand-sidebar" onclick="toggleLeftSidebar()" title="Open sidebar">
+                ◧
+            </button>
+
+            <!-- Resize Divider for Left Sidebar -->
+            <div class="resize-divider-left" id="resize-divider-left"></div>
+
+            <!-- Center Area: Split into Chat and Results -->
+            <main class="main-center">
+                <!-- Chat Area (Left Half) -->
+                <div class="chat-section">
+                    <div class="chat-header">
+                        <div class="chat-title-container">
+                        </div>
+                        <!-- <button class="btn-icon" onclick="clearChat()" title="Clear chat">×</button> -->
+                    </div>
+                    <div class="chat-messages" id="chat-messages">
+                        <!-- Welcome message (structure mirrors buildWelcomeHTML in script.js) -->
+                        <div class="chat-message agm welcome-message">
+                            <div class="message-avatar">
+                                <img src="icon/GIS-Coscientist_logo.png" alt="GIS Co-Scientist" class="avatar-img">
+                            </div>
+                            <div class="message-wrapper">
+                                <div class="message-header">
+                                    <span class="message-sender">GIS Co-Scientist</span>
+                                    <span class="message-time" id="welcome-time"></span>
+                                </div>
+                                <div class="message-bubble">
+                                    <div class="message-content" id="welcome-message-content"><span class="welcome-greeting">Hello! I'm your GIS Co-Scientist.</span><span class="welcome-body">What spatial analysis would you like to run? Describe your task and upload your dataset — or let me retrieve the data for you.</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Set timestamp immediately -->
+                    <script>
+                        (function() {
+                            const welcomeTime = document.getElementById('welcome-time');
+                            if (welcomeTime) {
+                                const now = new Date();
+                                welcomeTime.textContent = now.toLocaleTimeString('en-US', { hour12: false });
+                            }
+                        })();
+                    </script>
+
+                    <!-- Input bar moved here -->
+                    <div class="chat-input-bar">
+                        <div class="chat-input-wrapper">
+                            <textarea id="chat-input"
+                                   rows="1"
+                                   placeholder="Enter a request here ...."
+                                   onkeydown="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); chatWithAI(); }"
+                                   oninput="this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 150) + 'px';"></textarea>
+                            <div class="chat-input-toolbar">
+                                <div class="chat-input-toolbar-left">
+                                    <button class="chat-toolbar-btn" onclick="addDataLayer()" title="Add data">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                    </button>
+                                    <button class="chat-toolbar-btn" id="data-download-toggle-btn"
+                                            onclick="toggleDataDownloadMode()"
+                                            title="Auto-download data: off">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                            <polyline points="7 10 12 15 17 10"/>
+                                            <line x1="12" y1="15" x2="12" y2="3"/>
+                                        </svg>
+                                        <span class="toolbar-btn-label">Auto Data</span>
+                                    </button>
+                                </div>
+                                <div class="chat-input-toolbar-right">
+                                    <label id="spatial-condition-control" for="spatial-condition-select" hidden title="Spatial knowledge delivery for Research mode. Start a new chat for each pilot baseline.">Baseline
+                                        <select id="spatial-condition-select" disabled>
+                                            <option value="B0">B0 · No integration</option>
+                                            <option value="B1">B1 · Prompt checklist</option>
+                                            <option value="B2">B2 · Knowledge retrieval</option>
+                                            <option value="B3">B3 · Skill-based rules</option>
+                                            <option value="P">P · Proposed method</option>
+                                            <option value="P-no-structure">P without structured assumptions</option>
+                                            <option value="P-no-diagnostics">P without diagnostics</option>
+                                            <option value="P-no-critic">P without critic</option>
+                                            <option value="B3+structure">B3 + structured assumptions</option>
+                                        </select>
+                                        <a href="/spatial-conditions" target="_blank" rel="noopener" title="See and download what each baseline gives the planner" style="text-decoration: none; margin-left: 4px;">ⓘ</a>
+                                    </label>
+                                    <!-- Mode Dropdown -->
+                                    <div class="mode-selector-inline" id="mode-selector-inline">
+                                        <button class="mode-selector-btn" onclick="toggleModeDropdown(event)" title="Select mode">
+                                            <span class="mode-selector-label" id="mode-selector-label">Spatial Analysis</span>
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                                        </button>
+                                        <div class="mode-dropdown-popup" id="mode-dropdown-popup">
+                                            <div class="mode-dropdown-item has-flyout" onmouseenter="showFlyout('mode')" onmouseleave="hideFlyout('mode')" onclick="clickToggleFlyout('mode', event)">
+                                                <div class="mode-dropdown-item-info">
+                                                    <span class="mode-dropdown-item-desc">Mode</span>
+                                                    <span class="mode-dropdown-item-name" id="mode-dropdown-mode-name">Spatial Analysis</span>
+                                                </div>
+                                                <span class="mode-dropdown-arrow">&#8250;</span>
+                                                <div class="flyout-menu" id="flyout-mode">
+                                                    <div class="flyout-item" data-mode="data_retriever" onclick="selectModeFromDropdown('data_retriever', 'Data Retriever')">
+                                                        <div class="flyout-item-info">
+                                                            <span>Data Retriever</span>
+                                                            <span class="flyout-item-desc">Download data only — no analysis</span>
+                                                        </div>
+                                                        <span class="flyout-check">&#10003;</span>
+                                                    </div>
+                                                    <div class="flyout-item" data-mode="task" onclick="selectModeFromDropdown('task', 'Spatial Analysis')">
+                                                        <div class="flyout-item-info">
+                                                            <span>Spatial Analysis</span>
+                                                            <span class="flyout-item-desc">Direct spatial analysis execution</span>
+                                                        </div>
+                                                        <span class="flyout-check">&#10003;</span>
+                                                    </div>
+                                                    <div class="flyout-item" data-mode="research" onclick="selectModeFromDropdown('research', 'Research')">
+                                                        <div class="flyout-item-info">
+                                                            <span>Research</span>
+                                                            <span class="flyout-item-desc">Full workflow: plan, code, execute</span>
+                                                        </div>
+                                                        <span class="flyout-check">&#10003;</span>
+                                                    </div>
+                                                    <div class="flyout-item" data-mode="research_no_planning" onclick="selectModeFromDropdown('research_no_planning', 'Research (no planning)')">
+                                                        <div class="flyout-item-info">
+                                                            <span>Research (no planning)</span>
+                                                            <span class="flyout-item-desc">Ablation: no Planning Agent, Modeling Agent codes directly</span>
+                                                        </div>
+                                                        <span class="flyout-check">&#10003;</span>
+                                                    </div>
+                                                    <div class="flyout-item" data-mode="single_agent" onclick="selectModeFromDropdown('single_agent', 'Single Agent')">
+                                                        <div class="flyout-item-info">
+                                                            <span>Single Agent</span>
+                                                            <span class="flyout-item-desc">Baseline: one agent runs the full research workflow</span>
+                                                        </div>
+                                                        <span class="flyout-check">&#10003;</span>
+                                                    </div>
+                                                    <div class="flyout-item" data-mode="chat" onclick="selectModeFromDropdown('chat', 'Chat')">
+                                                        <div class="flyout-item-info">
+                                                            <span>Chat</span>
+                                                            <span class="flyout-item-desc">Conversational Q&A</span>
+                                                        </div>
+                                                        <span class="flyout-check">&#10003;</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="mode-dropdown-sep"></div>
+                                            <div class="mode-dropdown-toggle-item" id="autonomous-toggle-row" onclick="event.stopPropagation();">
+                                                <div class="toggle-item-info">
+                                                    <span>Autonomous</span>
+                                                    <span class="flyout-item-desc">Auto-approve plans and proceed</span>
+                                                </div>
+                                                <label class="toggle-switch">
+                                                    <input type="checkbox" id="autonomous-mode-toggle-inline"
+                                                           onchange="document.getElementById('autonomous-mode-toggle').checked = this.checked; localStorage.setItem('agm_autonomous_mode', this.checked ? 'true' : 'false');">
+                                                    <span class="toggle-switch-slider"></span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Model Dropdown (separate) -->
+                                    <div class="mode-selector-inline" id="model-selector-inline">
+                                        <button class="mode-selector-btn" onclick="toggleModelDropdown(event)" title="Select model">
+                                            <span class="mode-selector-label" id="model-selector-label">GPT-6 Luna</span>
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                                        </button>
+                                        <div class="mode-dropdown-popup" id="model-dropdown-popup">
+                                            <div class="mode-dropdown-section-label">Models</div>
+                                            <div class="flyout-item" data-model="gpt-6-luna" onclick="selectModelFromDropdown('gpt-6-luna', 'GPT-6 Luna')">
+                                                <span>GPT-6 Luna</span>
+                                                <span class="flyout-check">&#10003;</span>
+                                            </div>
+                                            <div class="flyout-item" data-model="gpt-5.3" onclick="selectModelFromDropdown('gpt-5.3', 'GPT-5.3')">
+                                                <span>GPT-5.3</span>
+                                                <span class="flyout-check">&#10003;</span>
+                                            </div>
+                                            <div class="flyout-item" data-model="gpt-5.4" onclick="selectModelFromDropdown('gpt-5.4', 'GPT-5.4')">
+                                                <span>GPT-5.4</span>
+                                                <span class="flyout-check">&#10003;</span>
+                                            </div>
+                                            <div class="mode-dropdown-sep"></div>
+                                            <div class="flyout-item" data-model="gpt-4.1" onclick="selectModelFromDropdown('gpt-4.1', 'GPT-4.1')">
+                                                <span>GPT-4.1</span>
+                                                <span class="flyout-check">&#10003;</span>
+                                            </div>
+                                            <div class="flyout-item" data-model="gpt-4.1-mini" onclick="selectModelFromDropdown('gpt-4.1-mini', 'GPT-4.1 Mini')">
+                                                <span>GPT-4.1 Mini</span>
+                                                <span class="flyout-check">&#10003;</span>
+                                            </div>
+                                            <div class="flyout-item" data-model="gpt-4.1-nano" onclick="selectModelFromDropdown('gpt-4.1-nano', 'GPT-4.1 Nano')">
+                                                <span>GPT-4.1 Nano</span>
+                                                <span class="flyout-check">&#10003;</span>
+                                            </div>
+                                            <div class="flyout-item" data-model="gpt-4o" onclick="selectModelFromDropdown('gpt-4o', 'GPT-4o')">
+                                                <span>GPT-4o</span>
+                                                <span class="flyout-check">&#10003;</span>
+                                            </div>
+                                            <div class="flyout-item" data-model="gpt-4o-mini" onclick="selectModelFromDropdown('gpt-4o-mini', 'GPT-4o Mini')">
+                                                <span>GPT-4o Mini</span>
+                                                <span class="flyout-check">&#10003;</span>
+                                            </div>
+                                            <div class="flyout-item" data-model="gpt-4-turbo" onclick="selectModelFromDropdown('gpt-4-turbo', 'GPT-4 Turbo')">
+                                                <span>GPT-4 Turbo</span>
+                                                <span class="flyout-check">&#10003;</span>
+                                            </div>
+                                            <div class="mode-dropdown-sep" id="effort-sep"></div>
+                                            <div class="mode-dropdown-item has-flyout" id="effort-dropdown-item" onmouseenter="showFlyout('effort')" onmouseleave="hideFlyout('effort')" onclick="clickToggleFlyout('effort', event)">
+                                                <div class="mode-dropdown-item-info">
+                                                    <span class="mode-dropdown-item-desc">Reasoning Effort</span>
+                                                    <span class="mode-dropdown-item-name" id="mode-dropdown-effort-name">Medium</span>
+                                                </div>
+                                                <span class="mode-dropdown-arrow">&#8250;</span>
+                                                <div class="flyout-menu" id="flyout-effort"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- EDA Toggle (hidden via feature flag) -->
+                                    <div class="toggle-switch-inline" title="Run exploratory data analysis before plan generation">
+                                        <span class="toggle-switch-label">EDA</span>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" id="enable-eda-toggle-inline"
+                                                   onchange="document.getElementById('enable-eda-toggle').checked = this.checked;">
+                                            <span class="toggle-switch-slider"></span>
+                                        </label>
+                                    </div>
+                                    <button class="btn-send" id="btn-send" onclick="chatWithAI()" title="Send message">
+                                        <svg class="send-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                        </svg>
+                                        <div class="spinner"></div>
+                                        <div class="stop-icon"></div>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resizable Divider -->
+                <div class="resize-divider" id="resize-divider"></div>
+
+                <!-- Right Section: Map Viewer (Top) + Results & Artifacts (Bottom) -->
+                <div class="right-section-container" id="right-section-container">
+                    <!-- Collapsed icon strip (visible only when collapsed) -->
+                    <div class="right-collapsed-strip" id="right-collapsed-strip">
+                        <button class="right-strip-btn expand-btn" onclick="toggleRightSidebar()" title="Expand panel">
+                            <span>◨</span>
+                        </button>
+                        <button class="right-strip-btn" onclick="toggleRightSidebar()" title="Map Viewer">
+                            <span>🗺️</span>
+                        </button>
+                        <button class="right-strip-btn" onclick="toggleRightSidebar()" title="Results & Artifacts">
+                            <span>📊</span>
+                        </button>
+                    </div>
+                    <!-- Map Viewer Section (Top Half) -->
+                    <div class="map-section-embedded" id="map-section-embedded">
+                        <div class="panel-header">
+                            <h2>Map Viewer</h2>
+                            <button class="btn-collapse-right-panel" onclick="toggleRightSidebar()" title="Collapse right panel">
+                                ◨
+                            </button>
+                            <!-- Commented out: Map control buttons hidden
+                            <button class="btn-icon" onclick="refreshMap()" title="Refresh map">↻</button>
+                            -->
+                        </div>
+                        <div class="map-content-embedded" id="map-content-embedded">
+                            <iframe id="map-iframe" src="map.html" frameborder="0"></iframe>
+                        </div>
+                    </div>
+
+                    <!-- Vertical Resizable Divider -->
+                    <div class="resize-divider-vertical" id="resize-divider-vertical"></div>
+
+                    <!-- Results & Artifacts (Bottom Half) -->
+                    <div class="results-section-main" id="results-section-main">
+                        <div class="panel-header">
+                            <h2>Results & Artifacts</h2>
+                            <button class="btn-icon" onclick="clearResults()" title="Clear results">×</button>
+                        </div>
+                        <div class="results-content-main" id="results-content-main">
+                            <p class="empty-message">No results yet</p>
+                        </div>
+                    </div>
+
+                    <!-- Data Sources (fills entire right panel when open) -->
+                    <div class="data-sources-section" id="data-sources-section">
+                        <div class="panel-header ds-panel-header">
+                            <!-- Tabs live in the header. Review queue is admin-only. -->
+                            <div class="ds-tabs" id="ds-tabs">
+                                <button class="ds-tab-btn active" id="ds-tab-btn-mine" onclick="switchDsTab('mine')">My Sources</button>
+                                <button class="ds-tab-btn" id="ds-tab-btn-all" onclick="switchDsTab('all')">Shared Sources</button>
+                                <button class="ds-tab-btn" id="ds-tab-btn-review" style="display:none;" onclick="switchDsTab('review')">Review queue</button>
+                            </div>
+                            <button class="ds-panel-close" onclick="closeDataSourcesPanel()" title="Close (back to Map &amp; Results)">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                <span>Close</span>
+                            </button>
+                        </div>
+                        <div class="data-sources-content">
+                            <!-- Tab: My Sources -->
+                            <div class="ds-tab-panel active" id="ds-tab-mine">
+                                <div class="ds-mine-header">
+                                    <!-- <h3 class="ds-subhead" style="margin:0;">Your data sources</h3> -->
+                                    <button class="ds-btn-add-toggle" id="ds-add-toggle" onclick="openCreateForm()">
+                                        <span class="ds-add-plus">+</span> Add data source
+                                    </button>
+                                </div>
+
+                                <!-- Your sources (list-first) -->
+                                <div id="data-source-list" class="ds-list ds-card-grid"></div>
+
+                                <!-- Collapsible "new source" form (hidden until "Add data source") -->
+                                <div class="ds-form-card" id="ds-form-card" style="display:none;">
+                                    <div class="ds-form-card-head">
+                                        <span id="ds-form-title">New data source</span>
+                                        <div class="ds-form-head-actions">
+                                            <span id="ds-import-status" style="font-size:0.78em; color:#666; font-weight:400;"></span>
+                                            <input type="file" id="ds-import-file" accept=".toml,.json,.py,.txt,.md" style="display:none;">
+                                            <button type="button" class="ds-btn-import ds-btn-ai" id="ds-ai-toggle" aria-expanded="false" onclick="toggleDsAiGen()" title="Let the AI draft the handbook, code example and credentials from a short description (and the source's website / API-docs URL).">
+                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l1.9 4.6L18.5 9.5 13.9 11.4 12 16l-1.9-4.6L5.5 9.5l4.6-1.9L12 3z"/><path d="M19 14l.8 2 .2.05L22 17l-2 .95-.8 2-.8-2L16 17l2-.95.8-2z"/></svg>
+                                                Generate with AI
+                                            </button>
+                                            <button type="button" class="ds-btn-import" onclick="document.getElementById('ds-import-file').click()" title="Import a .toml/.json handbook to prefill every field, or a .py/.txt/.md file to fill the code or instructions.">
+                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                                Import
+                                            </button>
+                                            <!-- TODO: replace href with the user-manual "Adding a data source" section URL -->
+                                            <a id="ds-form-help-link" class="ds-form-help-icon" href="https://autonomousgis-agsi.github.io/AGSI/user_manual#data-sources-manual" target="_blank" rel="noopener noreferrer" title="How to add a data source (opens the user manual)" aria-label="How to add a data source">
+                                                <img src="icon/Info-icon.svg" class="ds-info-img" alt="How to add a data source">
+                                            </a>
+                                            <button class="ds-form-close" onclick="toggleDsForm(false)" title="Cancel">&times;</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- AI draft: revealed by the "Generate with AI" button in the header.
+                                         Describe the source (and ideally its website / API-docs URL); the
+                                         AI reads the docs and fills every field below for review. -->
+                                    <div class="ds-ai-gen" id="ds-ai-gen" hidden>
+                                        <label for="ds-ai-input" class="ds-ai-gen-label" id="ds-ai-gen-label">Describe the data source</label>
+                                        <!-- Conversation log: user requests + the AI's short replies. Hidden until the first turn. -->
+                                        <div class="ds-ai-chat" id="ds-ai-chat" hidden></div>
+                                        <textarea id="ds-ai-input" rows="2" placeholder="Its name and, ideally, its website or API-documentation URL — e.g. “OpenTopography global DEM API, https://portal.opentopography.org/apidocs/”. The AI reads the docs and drafts every field below."></textarea>
+                                        <div class="ds-ai-gen-actions">
+                                            <button type="button" class="ds-btn-add" id="ds-generate-btn" onclick="dsAiSend()">Generate draft</button>
+                                            <button type="button" class="ds-ai-gen-cancel" id="ds-ai-logs-btn" onclick="toggleDsAiLogs()" hidden>Show logs</button>
+                                            <button type="button" class="ds-ai-gen-cancel" onclick="toggleDsAiGen(false)">Close</button>
+                                            <span id="ds-ai-status" style="font-size:0.85em;"></span>
+                                        </div>
+                                        <!-- Server-side run log for the last generate/refine call (doc fetches,
+                                             model calls, self-test runs). Revealed by the "Show logs" button. -->
+                                        <pre class="ds-ai-logs" id="ds-ai-logs" hidden></pre>
+                                        <p class="ds-ai-gen-hint" id="ds-ai-gen-hint" hidden>After a draft exists, paste an error from running the code or ask for a change to refine it. Edits you make in the fields below are kept.</p>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="ds-name-input">Source Name <span style="color:#a31b1b;">*</span></label>
+                                        <input type="text" id="ds-name-input" placeholder="e.g., US Census demography">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ds-desc-input">Brief Description</label>
+                                        <textarea id="ds-desc-input" rows="3" placeholder="A few sentences: what data this source provides. The assistant uses this to decide when to pick it."></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ds-website-input">Website</label>
+                                        <input type="url" id="ds-website-input" placeholder="https://example.org — the data source's official site">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="ds-handbook-input">Handbook / Instructions</label>
+                                        <textarea id="ds-handbook-input" rows="4" placeholder="Technical notes: base URL, endpoints, auth, parameters, gotchas. One requirement per line. Use {YOUR_KEY_NAME} where an API key is needed."></textarea>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ds-code-input">Code Example</label>
+                                        <div class="ds-code-editor" id="ds-code-editor">
+                                            <pre class="ds-code-highlight" aria-hidden="true"><code class="language-python" id="ds-code-highlight"></code></pre>
+                                            <textarea id="ds-code-input" wrap="off" spellcheck="false" placeholder="A working Python snippet that downloads data from this source and saves it to a file."></textarea>
+                                        </div>
+                                    </div>
+
+                                    <!-- Options -->
+                                    <div class="ds-options">
+                                        <div class="ds-option-row">
+                                            <div class="ds-option-info">
+                                                <span class="ds-option-label">
+                                                    This source needs an API key or credentials
+                                                    <span class="ds-info" tabindex="0" role="img" aria-label="Turn on if retrieving data requires a key or login credentials.">
+                                                        <img src="icon/Info-icon.svg" class="ds-info-img" alt="info">
+                                                        <span class="ds-tip">Turn on if retrieving data requires a key or login credentials. You can list more than one.</span>
+                                                    </span>
+                                                </span>
+                                            </div>
+                                            <label class="toggle-switch">
+                                                <input type="checkbox" id="ds-needkey-toggle" onchange="_dsToggleKeyField()">
+                                                <span class="toggle-switch-slider"></span>
+                                            </label>
+                                        </div>
+                                        <div class="form-group" id="ds-keyname-group" style="display:none;">
+                                            <label for="ds-keyname-input" class="ds-label-with-info">
+                                                Credential name(s)
+                                                <span class="ds-info ds-info-right" tabindex="0" role="img" aria-label="Separate multiple with commas. Each is used as {name} in the code. You'll be prompted to enter the credential at runtime. Alternatively, add the values in Settings → Data Source Keys.">
+                                                    <img src="icon/Info-icon.svg" class="ds-info-img" alt="info">
+                                                    <span class="ds-tip">Separate multiple with commas. Each is used as {name} in the code. You'll be prompted to enter the credential at runtime. Alternatively, add the values in Settings → Data Source Keys.</span>
+                                                </span>
+                                            </label>
+                                            <input type="text" id="ds-keyname-input" placeholder="e.g., EPA_AQS_email, EPA_AQS_key">
+                                            <a id="ds-key-signup-link" href="#" target="_blank" rel="noopener noreferrer"
+                                               style="display:none; font-size:12px; color:#8a3aa8; text-decoration:underline; margin-top:4px;">
+                                                Don't have credentials? Get them here ↗
+                                            </a>
+                                        </div>
+                                        <div class="ds-option-row">
+                                            <div class="ds-option-info">
+                                                <span class="ds-option-label">
+                                                    Allow to be shared with other users
+                                                    <span class="ds-info" tabindex="0" role="img" aria-label="Off = private to you. On = an admin reviews it for the shared catalog.">
+                                                        <img src="icon/Info-icon.svg" class="ds-info-img" alt="info">
+                                                        <span class="ds-tip">An admin reviews it and upon approval, it will be added to the shared data sources.</span>
+                                                    </span>
+                                                </span>
+                                            </div>
+                                            <label class="toggle-switch">
+                                                <input type="checkbox" id="ds-share-toggle" checked>
+                                                <span class="toggle-switch-slider"></span>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="ds-action-row">
+                                        <button class="ds-btn-add" id="ds-submit-btn" onclick="submitDataSource()">Add Source</button>
+                                    </div>
+                                    <div class="ds-status-row">
+                                        <span id="ds-form-status" style="font-size:0.85em;"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Tab: Shared sources (available to everyone) -->
+                            <div class="ds-tab-panel" id="ds-tab-all">
+                                <p class="ds-intro">Data sources shared with everyone. The assistant can retrieve from any of these.</p>
+                                <div id="ds-all-catalog-list" class="ds-list ds-card-grid"></div>
+                            </div>
+
+                            <!-- Tab: Review queue (admins only) -->
+                            <div class="ds-tab-panel" id="ds-tab-review">
+                                <h3 class="ds-subhead">Review queue (admin)</h3>
+                                <p class="ds-intro">Preview a submission to load it into the My Sources form, then Approve or Reject it here.</p>
+                                <div id="ds-pending-list"><p style="font-size:0.85em; color:#999;">No submissions awaiting review.</p></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+
+            <!-- Expand button for right panel (shown when collapsed) -->
+            <button class="btn-expand-right-panel" id="btn-expand-right-panel" onclick="toggleRightSidebar()" title="Open right panel">
+                ◨
+            </button>
+
+            <!-- COMMENTED OUT: Right Sidebar (GPT API Stream, LLM Response, Logs) -->
+            <!--
+            <aside class="sidebar-right">
+                <section class="right-panel gpt-stream-panel pinned" id="gpt-stream-section" data-panel-title="GPT API Stream" data-pin-index="0">
+                    <div class="panel-header-right">
+                        <div class="workflow-title-group">
+                            <h2>GPT API Stream</h2>
+                            <div class="status-indicator-compact">
+                                <span class="status-dot" id="gpt-stream-status-dot"></span>
+                                <span id="gpt-stream-status-text">Ready</span>
+                            </div>
+                        </div>
+                        <div class="panel-buttons">
+                            <button class="btn-icon" onclick="clearGPTStream()" title="Clear stream">×</button>
+                            <button class="btn-pin-panel" onclick="pinRightPanel('gpt-stream-section')" title="Pin to right edge">📌</button>
+                            <button class="btn-toggle-panel" onclick="toggleRightPanel('gpt-stream-section')" title="Toggle panel">
+                                <span class="toggle-icon">▼</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="gpt-stream-content panel-content" id="gpt-stream-content">
+                        <div class="empty-message">Waiting for GPT API stream...</div>
+                    </div>
+                </section>
+
+                <section class="right-panel llm-response-panel pinned" id="llm-response-section" data-panel-title="LLM Response" data-pin-index="1">
+                    <div class="panel-header-right">
+                        <div class="workflow-title-group">
+                            <h2>LLM Live Response</h2>
+                            <div class="status-indicator-compact">
+                                <span class="status-dot" id="llm-status-dot"></span>
+                                <span id="llm-status-text">Ready</span>
+                            </div>
+                        </div>
+                        <div class="panel-buttons">
+                            <button class="btn-icon" onclick="clearLLMResponse()" title="Clear response">×</button>
+                            <button class="btn-pin-panel" onclick="pinRightPanel('llm-response-section')" title="Pin to right edge">📌</button>
+                            <button class="btn-toggle-panel" onclick="toggleRightPanel('llm-response-section')" title="Toggle panel">
+                                <span class="toggle-icon">▼</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="llm-response-content panel-content" id="llm-response-content">
+                        <div class="empty-message">Waiting for LLM response...</div>
+                    </div>
+                </section>
+
+                <section class="right-panel logs-panel pinned" id="logs-section" data-panel-title="Logs" data-pin-index="2">
+                    <div class="panel-header-right">
+                        <h2>Logs</h2>
+                        <div class="panel-buttons">
+                            <button class="btn-icon" onclick="clearLogs()" title="Clear logs">×</button>
+                            <button class="btn-pin-panel" onclick="pinRightPanel('logs-section')" title="Pin to right edge">📌</button>
+                            <button class="btn-toggle-panel" onclick="toggleRightPanel('logs-section')" title="Toggle panel">
+                                <span class="toggle-icon">▼</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="logs-content panel-content" id="logs-content">
+                        <div class="log-entry info">[System] Web UI initialized</div>
+                    </div>
+                </section>
+            </aside>
+            -->
+        </div>
+
+    </div>
+
+    <!-- Add Data Layer Modal -->
+    <div class="modal" id="add-layer-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add Data Layer</h2>
+                <button class="modal-close" onclick="closeAddLayerModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="layer-name-input">Layer Name</label>
+                    <input type="text" id="layer-name-input" placeholder="Enter layer name (e.g., County Data)">
+                </div>
+                <div class="form-group">
+                    <label for="layer-file-input">Select File(s)</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="layer-file-input" accept=".shp,.shx,.dbf,.prj,.geojson,.json,.gpkg,.zip,.csv,.xlsx,.parquet,.tif,.tiff" multiple>
+                        <button class="btn-browse" onclick="document.getElementById('layer-file-input').click()">
+                            Browse Files
+                        </button>
+                        <span id="selected-file-name">No file selected</span>
+                    </div>
+                    <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 4px; padding: 8px; margin-top: 8px; font-size: 0.8em;">
+                        <strong style="color: #495057;">Supported formats:</strong>
+                        <ul style="margin: 5px 0 0 0; padding-left: 20px; color: #666;">
+                            <li><b>GeoJSON</b> (.geojson, .json)</li>
+                            <li><b>GeoPackage</b> (.gpkg)</li>
+                            <li><b>ZIP</b> containing shapefile components</li>
+                            <li><b>Shapefile</b> - select ALL components (.shp, .shx, .dbf, .prj)</li>
+                        </ul>
+                        <p style="margin: 5px 0 0 0; color: #856404; background: #fff3cd; padding: 4px 6px; border-radius: 3px;">
+                            <b>Tip:</b> For shapefiles, ZIP all components together OR select all files at once.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeAddLayerModal()">Cancel</button>
+                <button class="btn-primary" onclick="confirmAddLayer()">Add Layer</button>
+            </div>
+        </div>
+    </div>
+    <!-- Dedicated handbook-generator workspace. The existing, battle-tested
+         data-source form is mounted into #handbook-form-host while this view is
+         open, so every entry point uses one pipeline implementation. -->
+    <section class="handbook-workspace" id="handbook-workspace" hidden
+             aria-labelledby="handbook-workspace-title">
+        <header class="handbook-workspace-header">
+            <div>
+                <div class="handbook-eyebrow">DATA ACCESS STUDIO</div>
+                <h2 id="handbook-workspace-title">Handbook Generator</h2>
+                <p>Turn official data documentation into a reusable, tested retrieval guide.</p>
+            </div>
+            <div class="handbook-header-actions">
+                <button class="handbook-secondary-btn experiment2-launch" type="button"
+                        onclick="Experiment2Mode.open()">Experiment 2</button>
+                <button class="handbook-secondary-btn handbook-studio-launch" type="button"
+                        onclick="HandbookStudioMode.open()">Handbook Studio</button>
+                <button class="handbook-secondary-btn" type="button" id="handbook-versions-btn"
+                        onclick="HandbookGenerator.showVersions()" disabled
+                        title="Version history of the current handbook (v0 docs-only draft, then each verified/refined revision)">Versions</button>
+                <button class="handbook-secondary-btn" type="button" onclick="HandbookGenerator.newDraft()">New chat</button>
+                <button class="handbook-secondary-btn" type="button" onclick="HandbookGenerator.showLibrary()">My handbooks</button>
+                <button class="handbook-close-btn" type="button" onclick="HandbookGenerator.close()"
+                        aria-label="Close handbook generator">&times;</button>
+            </div>
+        </header>
+        <main class="handbook-chat">
+            <div class="handbook-chat-scroll" id="handbook-chat-scroll">
+                <div class="handbook-chat-thread" id="handbook-chat-thread" aria-live="polite">
+                    <section class="handbook-chat-welcome" id="handbook-chat-welcome">
+                        <div class="handbook-welcome-mark" aria-hidden="true">H</div>
+                        <h3>What data source should I build a handbook for?</h3>
+                        <p>Describe the source, dataset, or API you need. Including its official
+                           documentation link usually produces the best result.</p>
+                        <div class="handbook-prompt-examples">
+                            <button type="button" onclick="HandbookGenerator.useExample(this.textContent)">OpenTopography global DEM API</button>
+                            <button type="button" onclick="HandbookGenerator.useExample(this.textContent)">USGS stream gauge observations</button>
+                            <button type="button" onclick="HandbookGenerator.useExample(this.textContent)">WorldPop population raster downloads</button>
+                        </div>
+                    </section>
+                </div>
+            </div>
+            <div class="handbook-composer-shell">
+                <form class="handbook-composer" onsubmit="HandbookGenerator.sendMessage(event)">
+                    <textarea id="handbook-chat-input" rows="1"
+                              placeholder="Describe a data source or paste its documentation URL…"
+                              aria-label="Message the handbook generator"></textarea>
+                    <button id="handbook-chat-send" type="submit" aria-label="Send message">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" aria-hidden="true">
+                            <path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/>
+                        </svg>
+                    </button>
+                </form>
+                <div class="handbook-composer-options">
+                    <label class="handbook-mode-toggle"
+                           title="When off, the handbook is drafted from official documentation only — no sample-download test. Use this for documentation-only (H0) experiment baselines.">
+                        <input type="checkbox" id="handbook-verify-toggle" checked>
+                        <span>Test with a sample download</span>
+                    </label>
+                </div>
+                <p>Generated handbooks should be reviewed before use with sensitive or costly APIs.</p>
+            </div>
+            <!-- Compatibility mount: the established data-source form remains
+                 functional but hidden inside this new chat-only experience. -->
+            <div id="handbook-form-host" hidden></div>
+        </main>
+    </section>
+
+    <!-- Experiment 2 research workspace. This is intentionally separate from
+         the conversational Handbook Generator and coordinates multi-source,
+         multi-task execution-grounded refinement studies. -->
+    <section class="exp2-workspace" id="exp2-workspace" hidden
+             aria-labelledby="exp2-title">
+        <header class="exp2-header">
+            <div class="exp2-header-title">
+                <button class="exp2-back" type="button" onclick="Experiment2Mode.close()"
+                        aria-label="Return to Handbook Generator">←</button>
+                <div>
+                    <div class="exp2-eyebrow">HANDBOOK GENERATOR · RESEARCH MODE</div>
+                    <h2 id="exp2-title">Experiment 2</h2>
+                    <p id="exp2-subtitle">Execution-grounded refinement across access mechanisms</p>
+                </div>
+            </div>
+            <div class="exp2-header-actions">
+                <span class="exp2-save-state" id="exp2-save-state">Not saved</span>
+                <button type="button" class="exp2-btn secondary" onclick="Experiment2Mode.openStudyPicker()">Studies</button>
+                <button type="button" class="exp2-btn primary" onclick="Experiment2Mode.save()">Save study</button>
+                <button type="button" class="exp2-close" onclick="Experiment2Mode.close()" aria-label="Close Experiment 2">&times;</button>
+            </div>
+        </header>
+        <nav class="exp2-tabs" aria-label="Experiment 2 sections">
+            <button class="active" data-exp2-tab="setup" onclick="Experiment2Mode.switchTab('setup')">
+                <span>1</span><strong>Setup</strong><small>Sources, tasks &amp; controls</small>
+            </button>
+            <button data-exp2-tab="runs" onclick="Experiment2Mode.switchTab('runs')">
+                <span>2</span><strong>Runs</strong><small>Trials &amp; live status</small>
+            </button>
+            <button data-exp2-tab="refinement" onclick="Experiment2Mode.switchTab('refinement')">
+                <span>3</span><strong>Refinement</strong><small>Failures, versions &amp; reruns</small>
+            </button>
+            <button data-exp2-tab="results" onclick="Experiment2Mode.switchTab('results')">
+                <span>4</span><strong>Results</strong><small>Metrics, comparison &amp; export</small>
+            </button>
+        </nav>
+        <main class="exp2-main" id="exp2-main"></main>
+        <div class="exp2-toast" id="exp2-toast" role="status" aria-live="polite" hidden></div>
+    </section>
+
+    <!-- Generate & Test: a simpler, linear, OpenAI-only counterpart to
+         Experiment 2 — one source, one handbook, one retrieval test, with a
+         human review pause in between. Reuses the exp2-* form/card/button
+         styles directly; intentionally independent of Experiment 2's
+         multi-mechanism research state. -->
+    <section class="exp2-workspace" id="handbook-studio-workspace" hidden
+             aria-labelledby="handbook-studio-title">
+        <header class="exp2-header">
+            <div class="exp2-header-title">
+                <button class="exp2-back" type="button" onclick="HandbookStudioMode.close()"
+                        aria-label="Return to Handbook Generator">&larr;</button>
+                <div>
+                    <div class="exp2-eyebrow">HANDBOOK GENERATOR</div>
+                    <h2 id="handbook-studio-title">Handbook Studio</h2>
+                    <p id="handbook-studio-subtitle">Generate one handbook, review it, then test it</p>
+                </div>
+            </div>
+            <div class="exp2-header-actions">
+                <span class="exp2-save-state" id="handbook-studio-save-state">Not saved</span>
+                <!-- Public read-only link (manuscript appendix). Hidden in the shared view itself. -->
+                <button type="button" class="exp2-btn secondary hbs-share-btn" id="handbook-studio-share" onclick="HandbookStudioMode.toggleShare()" hidden>Share</button>
+                <button type="button" class="exp2-btn secondary hbs-copy-link" id="handbook-studio-copy-link" onclick="HandbookStudioMode.copyShareLink()" title="Copy the public link" hidden>Copy link</button>
+                <button type="button" class="exp2-btn secondary hbs-owner-only" id="handbook-studio-duplicate" onclick="HandbookStudioMode.duplicateCurrent()" title="Copy this session to reuse its handbook for a different retrieval task, without regenerating it" hidden>Duplicate</button>
+                <button type="button" class="exp2-btn secondary hbs-owner-only" onclick="HandbookStudioMode.openSessionPicker()">Sessions</button>
+                <button type="button" class="exp2-btn primary hbs-owner-only" onclick="HandbookStudioMode.save()">Save</button>
+                <button type="button" class="exp2-close" onclick="HandbookStudioMode.close()" aria-label="Close Handbook Studio">&times;</button>
+            </div>
+        </header>
+        <nav class="exp2-tabs" aria-label="Handbook Studio sections">
+            <button class="active" data-hbs-tab="setup" onclick="HandbookStudioMode.switchTab('setup')">
+                <span>1</span><strong>Setup</strong><small>Source &amp; retrieval task</small>
+            </button>
+            <button data-hbs-tab="review" onclick="HandbookStudioMode.switchTab('review')">
+                <span>2</span><strong>Generate &amp; retrieve</strong><small>Generate the handbook, then retrieve data</small>
+            </button>
+            <button data-hbs-tab="results" onclick="HandbookStudioMode.switchTab('results')">
+                <span>3</span><strong>Session report</strong><small>Runs, convergence &amp; exports</small>
+            </button>
+            <!-- Ribbon-style collapse: shrinks the bar to numbers and titles. -->
+            <button type="button" class="hbs-tabbar-toggle" id="hbs-tabbar-toggle"
+                    onclick="HandbookStudioMode.toggleTabBar()" aria-expanded="true"
+                    aria-controls="handbook-studio-main" title="Collapse the section bar"><i aria-hidden="true"></i></button>
+        </nav>
+        <main class="exp2-main" id="handbook-studio-main"></main>
+        <div class="exp2-toast" id="handbook-studio-toast" role="status" aria-live="polite" hidden></div>
+    </section>
+
+    <!-- Floating Data Sources launcher: bottom-right pill by default. Drag it up
+         the right side (or use the hover dock chevron) to dock it as a vertical
+         tab; click to open the panel. -->
+    <div class="ds-fab" id="btn-open-data-sources" role="button" tabindex="0" title="Open Data Sources (drag to dock)">
+        <span class="ds-fab-body">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/></svg>
+            <span class="ds-fab-label">Data Sources</span>
+        </span>
+        <button class="ds-fab-dock" id="ds-fab-dock" title="Dock to right edge" aria-label="Dock to right edge">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+    </div>
+
+    <!-- Data source detail popup -->
+    <div class="modal" id="ds-detail-modal">
+        <div class="modal-content ds-detail-content">
+            <div class="modal-header">
+                <h2 id="ds-detail-name">Data source</h2>
+                <div class="ds-detail-head-actions">
+                    <button class="ds-detail-head-dl" onclick="downloadFromDetail()" title="Download this data source (.toml)" aria-label="Download">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    </button>
+                    <button class="modal-close" onclick="closeSourceDetail()">&times;</button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="ds-detail-section" id="ds-detail-rejected-section" style="display:none;">
+                    <div class="ds-detail-label" style="color:#a31b1b;">Rejected</div>
+                    <div id="ds-detail-rejected" class="ds-detail-text"></div>
+                </div>
+                <div class="ds-detail-section">
+                    <div class="ds-detail-label">Description</div>
+                    <div id="ds-detail-desc" class="ds-detail-text"></div>
+                </div>
+                <div class="ds-detail-section" id="ds-detail-link-section" style="display:none;">
+                    <div class="ds-detail-label">Website</div>
+                    <a id="ds-detail-link" class="ds-detail-link" target="_blank" rel="noopener noreferrer"></a>
+                </div>
+                <div class="ds-detail-section" id="ds-detail-creds-section" style="display:none;">
+                    <div class="ds-detail-label">Required credentials</div>
+                    <div id="ds-detail-creds" class="ds-detail-creds"></div>
+                </div>
+                <div class="ds-detail-section">
+                    <div class="ds-detail-label">Handbook / Instructions</div>
+                    <div id="ds-detail-handbook" class="ds-detail-text"></div>
+                </div>
+                <div class="ds-detail-section">
+                    <div class="ds-detail-label">Code Example</div>
+                    <pre class="ds-detail-code"><code class="language-python" id="ds-detail-code"></code></pre>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="ds-review-btn ds-review-reject" id="ds-detail-del" style="margin-right:auto;" onclick="deleteSourceFromDetail()">Delete source</button>
+                <button class="ds-review-btn ds-review-preview" id="ds-detail-edit" onclick="editFromDetail()">Edit</button>
+                <button class="ds-review-btn" onclick="closeSourceDetail()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reject reason dialog (admin) -->
+    <div class="modal" id="ds-reject-modal">
+        <div class="modal-content" style="max-width:440px;">
+            <div class="modal-header">
+                <h2>Reject data source</h2>
+                <button class="modal-close" onclick="closeRejectDialog()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <label for="ds-reject-reason" style="display:block; font-size:0.85em; font-weight:600; margin-bottom:6px; color:#333;">Reason <span style="font-weight:400; color:#888;">(optional — the contributor will see this)</span></label>
+                <textarea id="ds-reject-reason" rows="4" placeholder="e.g., The handbook is missing the API endpoint and parameters." style="width:100%; box-sizing:border-box; padding:8px 10px; border:1px solid #ccc; border-radius:6px; font-size:0.85em;"></textarea>
+            </div>
+            <div class="modal-footer">
+                <button class="ds-review-btn" onclick="closeRejectDialog()">Cancel</button>
+                <button class="ds-review-btn ds-review-reject" onclick="confirmReject()">Reject</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="features.js"></script>
+    <script src="offline-config.js"></script>
+    <script src="data/conversations.js"></script>
+    <script src="data/conversation.js"></script>
+    <script src="data/workflow_steps.js"></script>
+    <script>(function(){var u=new URL(location.href);if(!u.searchParams.get('conversation')){u.searchParams.set('conversation',window.OFFLINE_CONVERSATION_ID);location.replace(u.toString());}})();</script>
+    <script src="offline-shim.js"></script>
+    <script src="script.js"></script>
+    <script src="handbook_generator_ui.js"></script>
+    <script src="experiment2_mode.js"></script>
+    <script src="handbook_studio_mode.js"></script>
+    <script src="view_router.js"></script>
+</body>
+</html>

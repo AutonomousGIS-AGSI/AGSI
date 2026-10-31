@@ -1,0 +1,1 @@
+sp_gdf = gpd.GeoDataFrame(sp_df, geometry="geometry", crs=gdf.crs)

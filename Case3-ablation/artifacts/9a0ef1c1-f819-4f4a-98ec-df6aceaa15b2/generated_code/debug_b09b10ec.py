@@ -1,0 +1,1 @@
+libpysal.weights.Queen.from_dataframe
