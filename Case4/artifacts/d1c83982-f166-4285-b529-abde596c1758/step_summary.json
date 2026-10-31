@@ -1,0 +1,58 @@
+[
+  {
+    "objective": "objective_1",
+    "step": 1,
+    "description": "Generate centroids for census tract geometries",
+    "status": "completed",
+    "error": ""
+  },
+  {
+    "objective": "objective_1",
+    "step": 2,
+    "description": "Calculate distance from tract centroids to nearest hazardous waste facility",
+    "status": "completed",
+    "error": ""
+  },
+  {
+    "objective": "objective_1",
+    "step": 3,
+    "description": "Join tract hazard distances with asthma prevalence data using GEOID",
+    "status": "completed",
+    "error": ""
+  },
+  {
+    "objective": "objective_2",
+    "step": 1,
+    "description": "Select socioeconomic variables: median_household_income, percent_minority, percent_children",
+    "status": "completed",
+    "error": ""
+  },
+  {
+    "objective": "objective_2",
+    "step": 2,
+    "description": "Integrate demographic variables with existing spatial and health data using GEOID",
+    "status": "error",
+    "error": "\"GEOID missing in filtered_ACS_vars.csv (available: ['med_income', 'ratio_black', 'ratio_black.1', 'ratio_asian', 'ratio_hispanic', 'ratio_other_race'])\""
+  },
+  {
+    "objective": "objective_2",
+    "step": 3,
+    "description": "Analyze spatially varying relationships between proximity (hazard_meters), demographics (minority_pct) and asthma (prevalence_rate)",
+    "status": "skipped",
+    "error": "Skipped: input(s) ['final_analysis_dataset.gpkg'] from failed/empty step"
+  },
+  {
+    "objective": "objective_3",
+    "step": 1,
+    "description": "Calculate Gi* statistics for combined variables hazard_meters and asthma_prevalence_rate",
+    "status": "error",
+    "error": "Required input 'final_analysis_dataset.gpkg' not found. Available datasets lack required columns 'hazard_meters' and 'asthma_prevalence_rate'"
+  },
+  {
+    "objective": "objective_3",
+    "step": 2,
+    "description": "Compare median minority_pct between hotspot and non-hotspot tracts using Kruskal-Wallis H-test",
+    "status": "skipped",
+    "error": "Skipped: input(s) ['risk_hotspots.gpkg'] from failed/empty step"
+  }
+]

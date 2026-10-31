@@ -17,6 +17,7 @@ or API key required.
 | `Case1-ablation/` | `dd5922b8-6439-4369-b784-21a662f7c30c` | Case 1 without the Planning Agent |
 | `Case2-ablation/` | `bb8805e4-6c34-49e8-aa70-b49981b7c56e` | Case 2 without the Planning Agent |
 | `Case3-ablation/` | `9a0ef1c1-f819-4f4a-98ec-df6aceaa15b2` | Case 3 without the Planning Agent |
+| `Case4/` | `d1c83982-f166-4285-b529-abde596c1758` | Partially failed run of the Case 3 research question |
 
 Append `?view=geoprocessing` to a case URL (for example
 `https://autonomousgis-agsi.github.io/AGSI/Case1/?view=geoprocessing`)
