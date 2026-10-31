@@ -16771,4 +16771,11 @@ async function _openGeoprocessingDeepLink(conversationId) {
         hideFlowchart = !fc.ok;
     } catch (_) { /* let the iframe report the error */ }
     openResearchPlanFullView(src, taskId, { hideFlowchart });
+    // The overlay writes its iframe via innerHTML, which the offline shim can't see;
+    // re-assign src so it resolves to the bundled file, and mark the matching tab active.
+    const fvIframe = document.getElementById('rp-fullview-iframe');
+    if (fvIframe) fvIframe.src = src;
+    document.querySelectorAll('.fv-tab').forEach(t => {
+        t.classList.toggle('active', t.dataset.fvView === 'geoprocessing');
+    });
 }
