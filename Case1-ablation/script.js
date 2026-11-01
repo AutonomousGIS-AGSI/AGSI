@@ -6921,8 +6921,9 @@ function rebuildWorkflowCards(cards, textContent, timestamp, usageSummary) {
                                 const filename = fig.relative_path.split('/').pop();
                                 const displayName = filename.length > 18 ? filename.substring(0, 15) + '...' : filename;
 
+                                const figIcon = /\.(csv|tsv|xlsx?)$/i.test(filename) ? '\u{1F4CA}' : '\u{1F5BC}\u{FE0F}';
                                 tile.innerHTML = `
-                                    <span class="artifact-icon">\u{1F5BC}\u{FE0F}</span>
+                                    <span class="artifact-icon">${figIcon}</span>
                                     <span class="artifact-name" title="Figure ${fig.figure_number}: ${fig.description || filename}">${displayName}</span>
                                     <span class="artifact-size">Fig ${fig.figure_number}</span>
                                 `;
@@ -6931,7 +6932,8 @@ function rebuildWorkflowCards(cards, textContent, timestamp, usageSummary) {
                                     previewArtifact({
                                         filename: filename,
                                         relative_path: fig.relative_path,
-                                        type: 'png',
+                                        // The catalog also lists tables (CSV) and HTML outputs; preview by extension.
+                                        type: (filename.split('.').pop() || 'png').toLowerCase(),
                                         size: 0,
                                         display_title: `Figure ${fig.figure_number}: ${fig.description || filename}`,
                                     });
