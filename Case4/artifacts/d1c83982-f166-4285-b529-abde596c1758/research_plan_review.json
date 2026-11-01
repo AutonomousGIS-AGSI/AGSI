@@ -1,0 +1,240 @@
+{
+  "review_summary": {
+    "issues_found": [
+      "Cross-objective duplicate join operations on 'merged_tract_data.csv' in Objective 2",
+      "Ambiguous 'ANOVA' method in Objective 3 step 2 requiring specification of target variables",
+      "Missing step for socioeconomic variable selection in Objective 2",
+      "Incomplete expected output description for hotspot analysis"
+    ],
+    "changes_made": [
+      "Consolidated duplicate join operation from Objective 2 into Objective 1",
+      "Specified Kruskal-Wallis test for non-parametric demographic variables in Objective 3",
+      "Added variable filtering step in Objective 2 to select socioeconomic predictors",
+      "Clarified hotspot output to include Gi* scores and p-values"
+    ]
+  },
+  "objectives": [
+    {
+      "number": 1,
+      "title": "Understand the spatial relationship between hazardous waste facility proximity and asthma prevalence in North Carolina census tracts",
+      "hypothesis": "Census tracts with closer proximity to hazardous waste facilities exhibit higher asthma prevalence rates, controlling for basic demographic factors",
+      "data_requirements": [
+        {
+          "source_id": "NC_tract",
+          "description": "Census tract boundary geometries for spatial analysis",
+          "suitability_score": 10,
+          "scale_note": {
+            "data_scale": "tract",
+            "question_scale": "tract",
+            "mismatch": false,
+            "resolution": "none"
+          },
+          "data_preprocessing": {
+            "required": false,
+            "rationale": "Dataset directly provides census tract geometries matching the question's scale",
+            "sources": null,
+            "what_each_contributes": null,
+            "method": null
+          },
+          "data_gap": false
+        },
+        {
+          "source_id": "NC_HW_sites",
+          "description": "Geospatial coordinates of hazardous waste facilities",
+          "suitability_score": 10,
+          "scale_note": {
+            "data_scale": "site",
+            "question_scale": "tract",
+            "mismatch": true,
+            "resolution": "aggregation"
+          },
+          "data_preprocessing": {
+            "required": true,
+            "rationale": "Facility points need spatial analysis to calculate tract-level proximity metrics",
+            "sources": [
+              "NC_tract",
+              "NC_HW_sites"
+            ],
+            "what_each_contributes": {
+              "NC_tract": "Census tract boundaries defining spatial units",
+              "NC_HW_sites": "Facility locations for proximity calculations"
+            },
+            "method": "Spatial nearest-neighbor distance calculation"
+          },
+          "data_gap": false
+        },
+        {
+          "source_id": "NC_PLACES",
+          "description": "Census tract-level asthma prevalence data",
+          "suitability_score": 10,
+          "scale_note": {
+            "data_scale": "tract",
+            "question_scale": "tract",
+            "mismatch": false,
+            "resolution": "none"
+          },
+          "data_preprocessing": {
+            "required": false,
+            "rationale": "Asthma data is directly available at census tract level",
+            "sources": null,
+            "what_each_contributes": null,
+            "method": null
+          },
+          "data_gap": false
+        }
+      ],
+      "steps": [
+        {
+          "step_number": 1,
+          "operation_type": "geoprocessing",
+          "operation": "extract_centroids",
+          "input_nodes": [
+            "NC_tract"
+          ],
+          "output_node": "tract_centroids.gpkg",
+          "description": "Generate centroids for census tract geometries",
+          "expected_output": "Geospatial file containing centroids for each tract"
+        },
+        {
+          "step_number": 2,
+          "operation_type": "geoprocessing",
+          "operation": "nearest_neighbor_analysis",
+          "input_nodes": [
+            "tract_centroids.gpkg",
+            "NC_HW_sites"
+          ],
+          "output_node": "tract_hazard_distance.csv",
+          "description": "Calculate distance from tract centroids to nearest hazardous waste facility",
+          "expected_output": "Table with GEOID and minimum distance to hazardous waste site"
+        },
+        {
+          "step_number": 3,
+          "operation_type": "data_wrangling",
+          "operation": "join_datasets",
+          "input_nodes": [
+            "tract_hazard_distance.csv",
+            "NC_PLACES"
+          ],
+          "output_node": "merged_tract_data.csv",
+          "description": "Join tract hazard distances with asthma prevalence data using GEOID",
+          "expected_output": "Comprehensive table with spatial metrics and health outcomes"
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "title": "Quantify how socioeconomic and demographic factors modify the relationship between environmental proximity and asthma outcomes",
+      "hypothesis": "The association between hazardous waste proximity and asthma prevalence varies significantly by median household income and racial composition across census tracts",
+      "data_requirements": [
+        {
+          "source_id": "NC_ACS_data",
+          "description": "Demographic and socioeconomic census tract data",
+          "suitability_score": 9,
+          "scale_note": {
+            "data_scale": "tract",
+            "question_scale": "tract",
+            "mismatch": false,
+            "resolution": "none"
+          },
+          "data_preprocessing": {
+            "required": false,
+            "rationale": "ACS data directly provides required tract-level socioeconomic variables",
+            "sources": null,
+            "what_each_contributes": null,
+            "method": null
+          },
+          "data_gap": false
+        }
+      ],
+      "steps": [
+        {
+          "step_number": 1,
+          "operation_type": "data_wrangling",
+          "operation": "filter_columns",
+          "input_nodes": [
+            "NC_ACS_data"
+          ],
+          "output_node": "filtered_ACS_vars.csv",
+          "description": "Select socioeconomic variables: median_household_income, percent_minority, percent_children",
+          "expected_output": "Subset of ACS data containing key socioeconomic predictors"
+        },
+        {
+          "step_number": 2,
+          "operation_type": "data_wrangling",
+          "operation": "join_datasets",
+          "input_nodes": [
+            "merged_tract_data.csv",
+            "filtered_ACS_vars.csv"
+          ],
+          "output_node": "final_analysis_dataset.gpkg",
+          "description": "Integrate demographic variables with existing spatial and health data using GEOID",
+          "expected_output": "Complete spatial dataset containing all required variables"
+        },
+        {
+          "step_number": 3,
+          "operation_type": "statistical",
+          "operation": "geographically_weighted_regression",
+          "input_nodes": [
+            "final_analysis_dataset.gpkg"
+          ],
+          "output_node": "gwr_coefficients.csv",
+          "description": "Analyze spatially varying relationships between proximity (hazard_meters), demographics (minority_pct) and asthma (prevalence_rate)",
+          "expected_output": "Regression coefficients showing local parameter variations for each variable"
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "title": "Identify census tracts with statistically significant high-risk clusters of environmental exposure and health outcomes",
+      "hypothesis": "Tracts with < 20% minority populations will show stronger spatial clustering of high-risk combinations",
+      "data_requirements": [
+        {
+          "source_id": "final_analysis_dataset.gpkg",
+          "description": "Complete integrated dataset from prior objectives",
+          "suitability_score": 10,
+          "scale_note": {
+            "data_scale": "tract",
+            "question_scale": "tract",
+            "mismatch": false,
+            "resolution": "none"
+          },
+          "data_preprocessing": {
+            "required": false,
+            "rationale": "All required data already prepared in prior objective",
+            "sources": null,
+            "what_each_contributes": null,
+            "method": null
+          },
+          "data_gap": false
+        }
+      ],
+      "steps": [
+        {
+          "step_number": 1,
+          "operation_type": "statistical",
+          "operation": "hotspot_analysis",
+          "input_nodes": [
+            "final_analysis_dataset.gpkg"
+          ],
+          "output_node": "risk_hotspots.gpkg",
+          "description": "Calculate Gi* statistics for combined variables hazard_meters and asthma_prevalence_rate",
+          "expected_output": "Geospatial analysis showing Gi* scores and p-values for significant hotspots"
+        },
+        {
+          "step_number": 2,
+          "operation_type": "statistical",
+          "operation": "kruskal_wallis_test",
+          "input_nodes": [
+            "risk_hotspots.gpkg"
+          ],
+          "output_node": "hotspot_characterization.csv",
+          "description": "Compare median minority_pct between hotspot and non-hotspot tracts using Kruskal-Wallis H-test",
+          "expected_output": "Test results showing significant differences in minority composition across risk groups"
+        }
+      ]
+    }
+  ],
+  "timestamp": "2026-04-27 13:08:53",
+  "time_taken_seconds": 316.95,
+  "time_taken_formatted": "5m 16s"
+}

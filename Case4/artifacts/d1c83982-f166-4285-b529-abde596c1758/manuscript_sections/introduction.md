@@ -1,0 +1,27 @@
+## 1. Introduction
+
+### [Paragraph 1: Opening Hook & Context]  
+The spatial distribution of environmental hazards and their health consequences remain central to understanding public health inequities. Spatial epidemiology has long emphasized the importance of geographic contexts in shaping disease patterns, particularly in relation to environmental exposures (Elliott and Wartenberg, 2004) [REF_1]. In the United States, hazardous waste facilities have been a focal point of environmental justice debates, as marginalized communities often bear disproportionate health risks from proximity to such sites (Association, 2001) [REF_5]. Asthma, a respiratory condition with well-documented environmental triggers, serves as a critical case study for exploring how spatial relationships between pollutants and vulnerable populations exacerbate health disparities. North Carolina, with its diverse geography and history of industrial activity, provides a compelling setting for analyzing these dynamics at fine spatial scales.  
+
+### [Paragraph 2: Literature Background]  
+Research on environmental health has increasingly integrated geographic information systems (GIS) to model spatial relationships between pollution sources and health outcomes. For instance, Boulos (2004) [REF_2] highlighted GIS’s potential to enhance national health surveillance, while Casey et al. (2023) [REF_3] identified gaps in methodological standardization for environmental justice (EJ) studies. Most empirical work on hazardous waste and health has relied on county- or state-level aggregations, limiting insights into local heterogeneity. North Carolina-specific studies have explored sectoral risks, such as swine farming’s health impacts (Cole et al., 2000) [REF_17], but few have combined high-resolution spatial data with socioeconomic modifiers. Methodologically, studies often employ ordinary least squares regression or global models that assume spatial homogeneity, potentially obscuring local variations in exposure-response relationships (Driver et al., 2019) [REF_7].  
+
+### [Paragraph 3: Research Gap — EVIDENCE-ANCHORED]  
+Prior evidence reveals critical limitations in understanding environmental health at census-tract resolution. For example, Rigolon et al. (2021) [REF_11] examined green space equity but constrained their analysis to regional scales, leaving within-region disparities underexplored. Similarly, Lim et al. (2012) [REF_13] provided global burden-of-disease estimates but excluded granular socioeconomic interactions that could inform localized interventions. In North Carolina, existing literature has not rigorously tested how racial composition and income moderate the relationship between hazardous waste proximity and asthma (Roth et al., 2018) [REF_14]. These gaps highlight a need for spatial methods that disentangle heterogeneity in environmental health relationships, particularly in regions with uneven industrial and demographic geographies.  
+
+### [Paragraph 4: Study Objective & Contribution]  
+This study addresses these limitations by analyzing how proximity to hazardous waste facilities correlates with census-tract asthma prevalence in North Carolina and how socioeconomic contexts modulate this relationship. The research objectives are:  
+1. Quantify spatial associations between hazardous waste facility distances and asthma prevalence using geographically weighted regression (GWR).  
+2. Test whether median household income and racial composition modify these relationships, leveraging GWR’s ability to detect local heterogeneity.  
+3. Identify high-risk clusters using hotspot analysis to inform targeted public health strategies.  
+
+The study contributes methodologically by demonstrating GWR’s utility for environmental justice research and empirically by mapping how demographic variables intersect with physical proximity to create compounded risks. It also advances regional scholarship by focusing on North Carolina’s tract-level dynamics, a resolution often lacking in broader-scale analyses.  
+
+### [Paragraph 5: Hypotheses]  
+Hypotheses are derived from established mechanisms linking environmental exposure and health disparities:  
+- **H1**: Census tracts with closer proximity to hazardous waste facilities exhibit higher asthma prevalence rates, controlling for demographic covariates. This reflects direct exposure effects, as documented in spatial epidemiology (Association, 2001) [REF_5].  
+- **H2**: The association between hazardous waste proximity and asthma varies by median income and racial composition. This follows environmental justice theory, which posits that socially vulnerable groups experience amplified health risks (Roux and Mair, 2010) [REF_8].  
+- **H3**: Tracts with <20% minority populations will show stronger clustering of high-risk exposure-outcome combinations. This hypothesis draws from EJ literature highlighting uneven pollution burdens (Banzhaf et al., 2019) [REF_21], but contrasts with findings of disproportionate harm to minority communities, suggesting non-linear interactions.  
+
+### [Paragraph 6: Paper Structure]  
+The remainder of this paper is structured as follows: Section 2 describes data sources, geospatial methods, and analytical techniques. Section 3 presents results on spatial relationships, regression outputs, and hotspot patterns. Section 4 discusses findings in the context of existing literature, emphasizing policy implications for environmental justice. Finally, Section 5 outlines study limitations and directions for future research.

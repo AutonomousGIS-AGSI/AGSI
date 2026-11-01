@@ -69,6 +69,16 @@
         if (p === '/api/graph/' + TASK)
             return { file: 'artifacts/' + TASK + '/graphfiles/' + TASK + '.html' };
 
+        // Manuscript / report downloads: /api/report-download/<type>/<fmt>?task_id=<id>
+        var rd = p.indexOf('/api/report-download/');
+        if (rd !== -1) {
+            var parts = p.slice(rd + '/api/report-download/'.length).split('/');
+            var tid = TASK;
+            try { tid = new URL(rawPath, location.href).searchParams.get('task_id') || TASK; } catch (_) {}
+            var base = parts[0] === 'manuscript' ? 'manuscript' : 'result_' + parts[0];
+            return { file: resolveArtifact(tid + '/' + base + '.' + parts[1]) };
+        }
+
         var a = p.indexOf('/api/artifacts/');
         if (a !== -1) return { file: resolveArtifact(p.slice(a + '/api/artifacts/'.length)) };
         var u = p.indexOf('/api/uploads/');
@@ -100,6 +110,18 @@
         if (url.indexOf('/api/') === -1) return _nativeFetch(input, init);
 
         var method = ((init && init.method) || 'GET').toUpperCase();
+
+        // Attribute tables are read server-side from an uploaded file; the
+        // bundle carries the precomputed response for each upload.
+        if (method === 'POST' && stripQ(pathOf(url)).slice(-'/api/read-attributes'.length) === '/api/read-attributes') {
+            var sent = init && init.body && init.body.getAll ? init.body.getAll('files') : [];
+            var primary = sent.filter(function (f) { return /\.(gpkg|shp|geojson|json|zip)$/i.test(f.name || ''); })[0] || sent[0];
+            if (!primary || !primary.name) return Promise.resolve(jsonResp({ error: 'No file to read' }, 400));
+            return _nativeFetch('data/attributes/' + encodeURIComponent(primary.name) + '.json').then(function (r) {
+                return r.ok ? r : jsonResp({ error: 'Attribute table not available in this snapshot' }, 404);
+            });
+        }
+
         if (method !== 'GET' && method !== 'HEAD') {
             // No backend in offline mode — silently succeed without doing anything.
             return Promise.resolve(jsonResp({
