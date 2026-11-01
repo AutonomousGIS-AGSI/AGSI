@@ -12977,6 +12977,23 @@ function loadAllLayersToMap() {
         console.log(`[DEBUG] Processing layer: ${layerName}, type: ${fileExtension}`);
         addLog(`[Map] Processing layer: ${layerName} (${fileExtension})`, 'info');
 
+        // Server-backed layers (downloaded data, restored conversations) have
+        // no in-memory File object, so every FileReader branch below would
+        // throw ("parameter 1 is not of type 'Blob'"). Route them through the
+        // server-fetch loader instead.
+        if (!file && layerData.serverBacked && layerData.conversationId && layerData.fileName) {
+            if (['geojson', 'json', 'gpkg', 'shp', 'zip', 'tif', 'tiff'].includes(fileExtension)) {
+                loadServerBackedGeospatialFile(
+                    layerData.conversationId, layerData.fileName, layerName, fileExtension
+                );
+            }
+            return;
+        }
+        if (!file) {
+            addLog(`[Map] Skipping ${layerName}: no file data available`, 'warning');
+            return;
+        }
+
         // Determine file type and load accordingly
         // Check if it's a GeoJSON file
         if (fileExtension === 'geojson' || fileExtension === 'json' || fileExtension === 'application/json') {
