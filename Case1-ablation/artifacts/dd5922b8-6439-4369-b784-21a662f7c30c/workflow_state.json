@@ -4763,8 +4763,8 @@
       "ablation": "no_planning"
     },
     "_data_source_keys": {
-      "FIRMS_MAP_KEY": "52d12510686a0adc16a1e0c5f217083d",
-      "CENSUS_API_KEY": "918876e93cf30566c02b367fcad29644d861817e"
+      "FIRMS_MAP_KEY": "YOUR_FIRMS_MAP_KEY",
+      "CENSUS_API_KEY": "YOUR_CENSUS_API_KEY"
     },
     "_user_handbook_dirs": [
       "C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\agents\\data_agent\\DataRetriever_Handbooks\\Handbooks_user\\71fd3c1337847b51"
