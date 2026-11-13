@@ -733,27 +733,77 @@
         <p>Research mode is the most comprehensive mode. Give it a research question and (optionally) data, and it works through the
         entire scientific process, pausing for human approval at each major checkpoint (unless Autonomous is on).</p>
 
+        <h3 id="rs-start">Starting a research run</h3>
+        <ol>
+            <li>Select <strong>Research</strong> in the mode dropdown.</li>
+            <li>Provide data in one of two ways: add your files as <a href="#datalayers">data layers</a>, or turn on
+                <strong>Auto Data</strong> in the mode dropdown so the system downloads what is missing. If you provide no data and
+                Auto Data is off, the system asks you to do one or the other.</li>
+            <li>Decide whether to turn on <strong>Autonomous</strong>. With it off (the default), the run stops at each checkpoint below.
+                With it on, the run approves its own checkpoints and continues to the manuscript. It still stops if a data source needs
+                an API key it does not have.</li>
+            <li>Type your research question and send it.</li>
+        </ol>
+
         <h3 id="rs-stages">The workflow stages</h3>
+        <p>A research run passes through the stages below in order. Each stage appears in the chat as its own card with live progress.</p>
 
-        
-        <div class="step"><div class="num">1</div><div class="body"><strong>Question understanding and breakdown</strong> - the
-        system parses and interprets the research question provided by human. At this stage, a structured research specification encoding the research intent, 
-        and data required to answer the question is generated.</div></div>
+        <div class="step"><div class="num">1</div><div class="body"><strong>Data audit</strong> - every data layer is opened and
+            checked: its format, coordinate reference system, size, and columns. Files that open correctly are added to the run's
+            <em>data registry</em>, the list of data that every later stage works from.</div></div>
 
-        <div class="step"><div class="num">2</div><div class="body"><strong>Data acquisition</strong> - required datasets are
-            retrieved (subject to the Auto Data setting) or taken from data layer uploads.</div></div>
-        
+        <div class="step"><div class="num">2</div><div class="body"><strong>Question understanding and breakdown</strong> - the
+            <strong>Research Question Understanding Agent</strong> reads your question with the data registry and produces a structured
+            breakdown: a working title, the research intent, the question category, the spatial and temporal scale, the data
+            required, whether the data you supplied is sufficient, and a list of <em>data requests</em> for anything missing.
+            The run then stops at <a href="#rs-cp1">Checkpoint 1</a>.</div></div>
 
-        <div class="step"><div class="num">3</div><div class="body"><strong>Research plan generation</strong> - a step-by-step plan
-            (data, methods, analyses) is drafted, organized by objective, and shown alongside its
-            <strong>geoprocessing workflow</strong> (see <a href="#geoprocessing">Section 13</a>). Approve or revise it.</div></div>
-        
-        <div class="step"><div class="num">4</div><div class="body"><strong>Code generation and execution</strong> - each analysis
-            step is implemented in code and run; intermediate outputs are shown in tiles within the execution panel.</div></div>
-        <div class="step"><div class="num">5</div><div class="body"><strong>Result analysis</strong> - outputs are interpreted: a
-            <em>presentation</em> of rendered figures.</div></div>
-        <div class="step"><div class="num">6</div><div class="body"><strong>Manuscript drafting</strong> - a full paper is written
-            section by section.</div></div>
+        <div class="step"><div class="num">3</div><div class="body"><strong>Data acquisition</strong> (only with Auto Data on, and only if
+            data is missing) - the <strong>Geospatial Data Retrieval Agent</strong> handles each data request in turn. It chooses a
+            source from its data-source handbooks (<a href="#rs-cp2">Checkpoint 2</a>), writes and runs the download code, and shows the
+            files it delivered. If no handbook fits the request, it can create one for a new source. Downloaded datasets are checked,
+            added to the data registry, and shown in the Data Layers panel like your own uploads.</div></div>
+
+        <div class="step"><div class="num">4</div><div class="body"><strong>Research plan generation</strong> - the
+            <strong>Planning Agent</strong> works in three passes:
+            <ul>
+                <li><em>Generate:</em> it inspects the datasets with its tools and drafts the plan as objectives, each with a hypothesis and
+                    a sequence of analysis steps.</li>
+                <li><em>Review:</em> a second pass checks the draft against the actual data (column names, join keys, and whether each
+                    step's inputs are produced by an earlier step) and corrects it.</li>
+                <li><em>Finalize:</em> every step's inputs are linked to a dataset or to an earlier step's output, and every output is
+                    given a file location.</li>
+            </ul>
+            The plan is shown with its <a href="#geoprocessing">geoprocessing workflow</a>, and the run stops at
+            <a href="#rs-cp3">Checkpoint 3</a>.</div></div>
+
+        <div class="step"><div class="num">5</div><div class="body"><strong>Code generation and execution</strong> - objectives run one
+            after another. Within each objective:
+            <ul>
+                <li>Each step is assigned to the agent best suited to it (for example, the <strong>Data Agent</strong> for joins and
+                    cleaning, the <strong>Modeling Agent</strong> for statistical and spatial models).</li>
+                <li>The agent writes Python code for the step and runs it. Code, console output, and produced files appear in a tile
+                    for that step.</li>
+                <li>If the code fails, a <strong>debugger</strong> investigates the error (checking columns, file paths, coordinate
+                    systems, and earlier outputs), repairs the code, and runs it again, up to two repair attempts per step.</li>
+                <li>If a step still fails or produces empty data, any later step that depends on its output is <em>skipped</em> rather
+                    than run on missing input. You can fix and re-run these steps at <a href="#rs-cp4">Checkpoint 4</a>.</li>
+            </ul>
+            Progress is saved after every step, so a reload does not lose completed work.</div></div>
+
+        <div class="step"><div class="num">6</div><div class="body"><strong>Result analysis</strong> - the <strong>Result Analysis
+            Agent</strong> collects the outputs of every step, by objective, and builds a <strong>figures and tables catalog</strong>:
+            the maps, charts, and result tables that will go into the paper, each with a caption. The catalog is shown as thumbnails
+            in the chat.</div></div>
+
+        <div class="step"><div class="num">7</div><div class="body"><strong>Manuscript drafting</strong> - the <strong>Reporting
+            Agent</strong> searches the literature (Semantic Scholar) for papers related to your question and objectives, then writes
+            the paper one section at a time, in order: Title &amp; Abstract, Introduction, Methodology, Results, Discussion, Conclusion,
+            and References. Each section appears in the chat as soon as it is written. See
+            <a href="#rs-manuscript">The manuscript deliverable</a>.</div></div>
+
+        <div class="step"><div class="num">8</div><div class="body"><strong>Execution flowchart</strong> - finally, a flowchart of the
+            steps that actually ran is generated. Click any step in it to see that step's code and outputs.</div></div>
 
 
         <h3 id="human-ai-collaboration">Human-AI collaboration in the research mode</h3>
@@ -763,47 +813,71 @@
         proceed, or provide feedback that re-prompts the responsible agent with targeted revisions - all before any external
         code is generated or executed.</p>
 
-        <h3>Checkpoint 1 - Task breakdown and data requirements</h3>
-        <p>The first checkpoint follows the <strong>research question understanding</strong> stage, where the <strong>data requirements</strong> are surfaced. Two options are given:</p>
+        <table>
+            <tr><th>Checkpoint</th><th>When it appears</th><th>With Autonomous on</th></tr>
+            <tr><td><a href="#rs-cp1">1 - Task breakdown</a></td><td>After question understanding</td><td>Proceeds automatically</td></tr>
+            <tr><td><a href="#rs-cp2">2 - Data source selection</a></td><td>For each data request, with Auto Data on</td><td>Proceeds automatically, but still stops for a missing or rejected API key</td></tr>
+            <tr><td><a href="#rs-cp3">3 - Research plan review</a></td><td>After plan generation</td><td>Plan is approved automatically</td></tr>
+            <tr><td><a href="#rs-cp4">4 - Execution review</a></td><td>After all objectives have run</td><td>Skipped</td></tr>
+        </table>
+
+        <h3 id="rs-cp1">Checkpoint 1 - Task breakdown and data requirements</h3>
+        <p>The first checkpoint follows the <strong>research question understanding</strong> stage, where the breakdown and the
+        <strong>data requirements</strong> are shown, along with whether the data you supplied is sufficient. Two options are given:</p>
             <ul>
                 <li><strong>Proceed</strong> - instructs the system to move on to retrieval and planning.</li>
-                <li><strong>Provide feedback</strong> - you can give feedback in natural language describing what's missing or wrong. Then the data requirements are regenerated based on your input, 
-                    and you can review again.</li>  
+                <li><strong>Provide feedback</strong> - you can give feedback in natural language describing what's missing or wrong.
+                    Only the parts your feedback asks about are revised, and you can review again.</li>
             </ul>
-        
+        <p>If data is missing and Auto Data is off, the card offers to turn Auto Data on for this run, or to continue with only the data you have.</p>
+
         <!-- [insert DataRequirements image] -->
 
-        <h3>Checkpoint 2 - Data source selection (optional)</h3>
-        <p>A second, checkpoint is triggered by the <strong>Geospatial Data Retrieval Agent</strong> once it has
-        selected an appropriate data source for each unmet data requirement. The chosen source, together with the rationale for
-        its selection, is presented to you; you may authorize retrieval or provide feedback to redirect the agent toward an
-        alternative source or refine the request before external code is generated.</p>
-        
+        <h3 id="rs-cp2">Checkpoint 2 - Data source selection (optional)</h3>
+        <p>A second checkpoint is triggered by the <strong>Geospatial Data Retrieval Agent</strong> once it has
+        selected an appropriate data source for each unmet data requirement. The chosen source is shown with the rationale for
+        its selection and a confidence score. Before any download code is generated, you can:</p>
+            <ul>
+                <li><strong>Proceed</strong> with the suggested source, or <strong>Always Proceed</strong> to accept the agent's choice
+                    for the remaining requests in this run.</li>
+                <li><strong>Change the source</strong> to another one from the list, or <strong>generate a new skill</strong> (handbook)
+                    for a source the system does not know yet.</li>
+                <li>Enter an <strong>API key</strong> if the source needs one. Keys you enter are reused for later requests to the same
+                    source. See also <a href="#dsm-credentials">Sources that need an API key</a>.</li>
+                <li><strong>Retry</strong> or <strong>abort</strong> the request.</li>
+            </ul>
+        <p>After the download, you can review the files that were delivered before the run continues. If a request fails, you can
+        retry it, skip it and continue with the data you have, or stop the run.</p>
+
         <!-- [insert DataSourceConfirmation image] -->
 
-        <h3>Checkpoint 3 - Research plan review</h3>
+        <h3 id="rs-cp3">Checkpoint 3 - Research plan review</h3>
         <p>The third checkpoint occurs during <strong>research plan generation</strong>. Through a dedicated revision interface
-        you can operate on the finalized plan before approving it for execution: 
-        <ui>
-            <li><strong>Edit the plan directly</strong> - make changes to the plan's text, structure, or content; the system then regenerates the geoprocessing workflow and downstream code to align with the revised plan.</li>
+        you can operate on the finalized plan before approving it for execution:</p>
+        <ul>
+            <li><strong>Edit the plan directly</strong> - change an objective's title or hypothesis, edit step descriptions, and add or
+                delete steps. When you delete a step, the system re-links the remaining steps so that none of them depends on the
+                deleted step's output. The geoprocessing workflow is redrawn to match.</li>
             <li><strong>Provide feedback</strong> - give natural-language feedback describing the desired changes to the plan, and the system regenerates a revised plan based on your input.</li>
+            <li><strong>Approve Plan</strong> - starts code generation and execution.</li>
+        </ul>
 
-        </ui>
-        
         <!-- [insert ResearchPlanReview image] -->
 
-        <h3>Checkpoint 4 - Execution review</h3>
+        <h3 id="rs-cp4">Checkpoint 4 - Execution review</h3>
         <p>The fourth checkpoint occurs immediately after objective execution. An <strong>execution checkpoint</strong> surfaces
-        a per-step summary of statuses, errors, and produced artifacts; you may proceed to result analysis and manuscript
-        drafting, or re-run selected steps.</p> 
-        <p> In each steps, you can do any of the following: </p>
+        a per-step summary of statuses (completed, error, or skipped), errors, and produced artifacts. In each step, you can do
+        any of the following:</p>
+        <ul>
             <li><strong>Edit code</strong> - you can edit the code by editing the text directly.</li>
             <li><strong>Re-run the step</strong> - if a step failed or produced unsatisfactory output, you can re-run it without affecting other steps.</li>
-            <li><strong>Provide feedback</strong> - you can give natural-language feedback describing any desired change to the code; the system regenerates 
+            <li><strong>Provide feedback</strong> - you can give natural-language feedback describing any desired change to the code; the system regenerates
                 the code for that step based on your input, and you can re-run it - without affecting other steps in the workflow.</li>
             <li><strong>Re-execute Step</strong> - you can re-execute a step to refresh its output or apply changes.</li>
+        </ul>
+        <p>After re-running steps, click <strong>Update Status</strong> to refresh the summary. Click <strong>Proceed</strong> to
+        continue to result analysis and manuscript drafting.</p>
 
-            
         <!-- [insert ExecutionCheckpoint image] -->
 
         <!-- <h4>Checkpoint 5 - Figures and tables catalog</h4>
@@ -811,14 +885,14 @@
         <strong>Result Analysis Agent</strong> before it is passed to the <strong>Reporting Agent</strong>.</p>
         [insert FiguresTablesCatalog image] -->
 
-        <h3>Post-hoc step revisitation</h3>
+        <h3 id="rs-posthoc">Post-hoc step revisitation</h3>
         <p>At any point after execution you may return to an individual step and supply natural-language feedback describing the desired
         modification - a methodological refinement, a parameter adjustment, an alternative model specification, or a corrected
         interpretation. You may then choose to propagate the revised outputs into the manuscript, at which point the Reporting
         Agent selectively regenerates only the sections whose input has changed - preserving editorial continuity while keeping
         the final document faithful to the most recent analytical state.</p>
 
-        <h3>Research mode examples</h3>
+        <h3 id="rs-examples">Research mode examples</h3>
       
 
 
@@ -857,7 +931,7 @@
             <figcaption>Step-level code generation and execution.</figcaption>
         </figure>
         <figure>
-            <img src="Figures\Figure 9.jpg" alt="Step-level code generation and execution." />
+            <img src="Figures\Figure 9.jpg" alt="Execution flowchart of the completed pipeline and a sample step-detail popup." />
             <figcaption>Execution flowchart of the completed pipeline and a sample step-detail popup.</figcaption>
         </figure>
 
@@ -866,7 +940,6 @@
 
         <div class="tip">The full session of the above example is available at
                 <a href="https://www.gis-coscientist.online/?conversation=a4c5a1b9-449e-440c-a2cf-003513b58787" target="_blank" rel="noopener">here</a>.</div>
-    </section>
 
 
 
@@ -874,8 +947,8 @@
         <p><strong>Request:</strong> <em>"How do spatial patterns of mobility (place visitation) mediate the relationship between neighborhood social economic status and
              depression prevalence across the counties of South Carolina"</em></p>
         <figure>
-            <img src="Figures\Figure 10.jpg" alt="Research plan for proximity-based asthma analysis" />
-            <figcaption>Research plan for proximity-based asthma analysis.</figcaption>
+            <img src="Figures\Figure 10.jpg" alt="Research plan for mobility-mediated mediation analysis" />
+            <figcaption>Research plan for mobility-mediated mediation analysis.</figcaption>
         </figure>
                 
         
@@ -889,9 +962,9 @@
     
 
 
-        <h4>Example 2 - Mobility-mediated socioeconomic and mental health analysis</h4>
-            <p><strong>Request:</strong> <em>"How do spatial patterns of mobility (place visitation) mediate the relationship between neighborhood social economic status and
-                depression prevalence across the counties of South Carolina"</em></p>
+        <h4>Example 3 - Proximity to hazardous waste facilities and asthma prevalence in North Carolina</h4>
+            <p><strong>Request:</strong> <em>"How does proximity to hazardous waste facilities influence spatial patterns of asthma prevalence across census tracts of North Carolina,
+                and how do these relationships vary spatially by socioeconomic and demographic context?"</em></p>
             <figure>
                 <img src="Figures\Figure 12.jpg" alt="Research plan for proximity-based asthma analysis" />
                 <figcaption>Research plan for proximity-based asthma analysis.</figcaption>
@@ -914,20 +987,24 @@
         <p>The reporting pipeline produces a structured research paper with standard academic sections:</p>
         <ul>
             <li><strong>Title and Abstract</strong> - including structured Background / Methods / Results / Conclusions and keywords.</li>
-            <li><strong>Introduction</strong> - framed with literature and study objectives.</li>
-            <li><strong>Methods</strong> - data sources, study area, and analytical methods.</li>
-            <li><strong>Results</strong> - quantitative findings with figures and tables.</li>
-            <li><strong>Discussion</strong> and <strong>Conclusion</strong> - interpretation, significance, and implications.</li>
+            <li><strong>Introduction</strong> - framed with literature and study objectives, including the gap in prior work that the study addresses.</li>
+            <li><strong>Methods</strong> - data sources, study area, and analytical methods, following the approved research plan.</li>
+            <li><strong>Results</strong> - quantitative findings, written from the actual step outputs, with the figures and tables from the catalog.</li>
+            <li><strong>Discussion</strong> and <strong>Conclusion</strong> - interpretation, comparison with prior studies, significance, and implications.</li>
+            <li><strong>References</strong> - compiled from the papers cited in the text.</li>
         </ul>
-        <p>The finished Manuscript can be downloaded. Individual stages - analysis, manuscript, specific steps - can be re-run or refined without
-        starting over.</p>
+        <p>Before drafting, the Reporting Agent searches Semantic Scholar using your question and the objective titles, and sorts the papers it
+        finds into foundational, methodological, regional, and gap-evidence studies. The Introduction and Discussion cite from this set.
+        Figures and tables are renumbered in the order they appear in the text.</p>
+        <p>If one section fails to generate, a placeholder is inserted and the remaining sections are still written. You can regenerate the
+        failed section later.</p>
+        <p>The finished manuscript can be downloaded as <strong>Markdown</strong>, <strong>Word (.docx)</strong>, or <strong>PDF</strong>.
+        Individual stages - analysis, manuscript, specific steps - can be re-run or refined without starting over. When you re-run the
+        manuscript after changing steps, only the sections whose inputs changed are rewritten: changes to the plan update the Title &amp;
+        Abstract, Introduction, and Methodology, and changes to execution results update the Title &amp; Abstract, Results, Discussion, and Conclusion.</p>
 
         <h3 id="rs-demo">Video Demonstration</h3>
-        Video demonstration of a selected cases are available <a href="https://nam10.safelinks.protection.outlook.com/?url=https%3A%2F%2Fwww.youtube.com%2Fwatch%3Fv%3Doyf4I1VRlLU%26list%3DPL6ON3gdLloDEY4YKHyEIgMhfpMwNRs0a7%26index%3D1&data=05%7C02%7Ctakinboyewa%40psu.edu%7C0278ef8a17604e6855cc08dec4ecdd20%7C7cf48d453ddb4389a9c1c115526eb52e%7C0%7C0%7C639164718813963080%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=6bCHdtPsQdOZ%2FIxEqThUxqDIOCiq%2FE20X04AagDHmrc%3D&reserved=0" target="_blank" rel="noopener">here</a>.
-
-
-
-        
+        <p>Video demonstrations of selected cases are available <a href="https://www.youtube.com/watch?v=oyf4I1VRlLU&amp;list=PL6ON3gdLloDEY4YKHyEIgMhfpMwNRs0a7&amp;index=1" target="_blank" rel="noopener">here</a>.</p>
     </section>
 
     <!-- ═══════════════════ 12. CHAT ═══════════════════ -->
@@ -1074,7 +1151,11 @@
             { label:'Research Mode',
               sections:['research-mode'],
               items:[
+                { id:'rs-start',      label:'Starting a run' },
                 { id:'rs-stages',     label:'The workflow stages' },
+                { id:'human-ai-collaboration', label:'Checkpoints' },
+                { id:'rs-posthoc',    label:'Revisiting steps' },
+                { id:'rs-examples',   label:'Examples' },
                 { id:'rs-manuscript', label:'The manuscript deliverable' },
                 { id:'rs-demo',       label:'Demo' },
               ]},
