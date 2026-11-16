@@ -475,7 +475,7 @@
         
 
         <h4>Writing a good handbook</h4>
-        <p>A handhook consists of three required parts: data_source_name, brief_description, and handbook.</p>
+        <p>A handbook consists of three required parts: data_source_name, brief_description, and handbook.</p>
         <table>
             <tr><th>Field</th><th>Description</th></tr>
             <tr><td><strong><code>data_source_name</code></strong></td><td>A short, meaningful, human-readable name - for example
@@ -486,7 +486,7 @@
                 it. Include the critical scope - geographic <em>extent</em> and time <em>period</em>. E.g. for
                 <code>COVID_NYT</code>: <em>"US COVID-19 data by the New York Times. Cumulative counts of COVID-19 cases and deaths
                 in the United States, at the state and county level, from 2020-01-21 to 2023-03-23."</em></td></tr>
-            <tr><td><strong><code>handbook</code></strong></td><td>This is the most critical section of the handbook. This includ the technical requirements for downloading from the data source -
+            <tr><td><strong><code>handbook</code></strong></td><td>This is the most critical section of the handbook. This includes the technical requirements for downloading from the data source -
                 one requirement per line. Cover the access URL and endpoints, the parameters and their allowed values,
                 the column/attribute names.</td></tr>
         </table>
@@ -499,7 +499,7 @@
                 a verified template, so keep it self-contained: put the logic in a <code>download_data()</code> function with a final line that calls it, use
                 <code>{KEY_NAME}</code> placeholders for any credentials, and save to a plain relative filename. See example </td></tr>
 
-            <tr><td><code>Websitee</code></td><td>  The data source's official homepage. It's shown in the source's details for reference and lets users quickly verify or
+            <tr><td><code>website</code></td><td>  The data source's official homepage. It's shown in the source's details for reference and lets users quickly verify or
                 learn more about the provider.</td></tr>
 
         </table>
