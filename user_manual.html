@@ -101,11 +101,11 @@
             choose <em style="color: black;">Data Retrieval</em>, <em style="color: black;">Spatial Analysis</em>, <em style="color: black;">Research</em>, or <em style="color: black;">Chat</em>.</div></div>
 
         <div class="step"><div class="num">3</div><div class="body">
-            <strong>Upload data (Optional):</strong> Click the <span class="ui">＋</span> button (or <em>Data layers → Add Data Layer</em>)
+            <strong>Upload data (Optional):</strong> Click the <span class="ui">＋</span> button (or the <img src="doc/folder-plus.svg" alt="folder plus" class="ui-icon" /> button in <em>Data Layers</em>, top of the right panel)
             to load your own shapefile, GeoPackage, GeoJSON, CSV, or raster. If you don't have data, the Data Retriever can fetch it.</div></div>
 
         <div class="step"><div class="num">4</div><div class="body">
-            <strong>Set Auto Data (Optional):</strong> Use the <span class="ui">Auto Data</span> toggle in the input toolbar to control how
+            <strong>Set Auto Data (Optional):</strong> Use the <span class="ui">Auto Data</span> switch in the mode dropdown (on by default) to control how
             datasets are fetched. When <em>on</em>, the system automatically downloads any data your request needs; when <em>off</em>, it
             works with the data already uploaded instead of fetching new datasets. (In <it>Data Retrieval</it> mode, data is always fetched.)
             See <a href="#data-mode">Section 9</a> for details.</div></div>
@@ -162,29 +162,39 @@
         <h3>Left sidebar</h3>
 
         <ul>
-            <li><strong>Data layers:</strong> contains every dataset uploaded or downloaded. The
-                <img src="doc/folder-plus.svg" alt="folder plus" class="ui-icon" /> button adds a new layer. Each layer has its own drop-down menu
-                (see <a href="#datalayers">Section 6</a>).</li>
-            <li><strong>Conversation History:</strong> contains saved conversations/chats. <span class="ui">New chat</span> starts a fresh
-                conversation (see <a href="#conversations">Section 7</a>).</li>
+            <li><strong>Top row:</strong> <span class="ui">New chat</span> starts a fresh conversation (see
+                <a href="#conversations">Section 7</a>), and the <span class="kbd">◧</span> button collapses the sidebar.</li>
+            <li><strong>Conversations:</strong> your saved conversations under <em>Recent</em>, with filter and sort controls.</li>
+            <li><strong>Data Sources:</strong> a second tab listing the data sources the assistant can retrieve from (see
+                <a href="#data-sources-manual">Adding a New Data Source</a>).</li>
         </ul>
 
         <h3>Center (Chat area)</h3>
         <p>The middle panel is the conversation itself: the assistant's messages and a multi-line <strong>input box</strong> at the
         bottom. Below the input box is a <strong>toolbar</strong>:</p>
         <ul>
-            <li><span class="ui">＋ Add data</span> - upload a dataset (same as the sidebar button).</li>
-            <li><span class="ui">Auto Data</span> - toggles automatic data downloading on/off (see <a href="#data-mode">Section 9</a>).</li>
-            <li><span class="ui">Mode selector</span> - choose the working mode and the <strong>Autonomous</strong> toggle.</li>
+            <li><span class="ui">＋ Add data</span> - upload a dataset (same as the <img src="doc/folder-plus.svg" alt="folder plus" class="ui-icon" /> button in Data Layers).</li>
+            <li><span class="ui">Mode selector</span> - choose the working mode, and switch <strong>Autonomous</strong> and
+                <strong>Auto Data</strong> on or off (see <a href="#modes-models">Section 8</a>).</li>
+            <li><span class="ui">Model selector</span> - see the note under <a href="#modes-models">Models used</a>.</li>
             <li><span class="ui">Send</span> - submit your request (also doubles as a Stop button while running).</li>
         </ul>
+        <p>Each stage of a run appears in the chat as a card. Its <span class="ui">Tokens</span> chip shows how many tokens the
+        stage's language-model calls have used so far, and it keeps counting through re-runs, revisions, result analysis and
+        manuscript drafting. Click the chip to see the stage's input, output and total tokens, the number of calls, and a
+        per-call table naming the model used. The totals are saved with the conversation.</p>
 
-        <h3>Right (map and results)</h3>
-        <p>The right region is split top/bottom and can be collapsed with the <span class="kbd">◨</span> button:</p>
+        <h3>Right (layers, map and results)</h3>
+        <p>The right region is stacked top to bottom. The <span class="kbd">◨</span> button in the Data Layers header collapses
+        the whole right panel.</p>
         <ul>
-            <li><span class="ui">Map Viewer</span> (top) - an interactive map that renders data layers.</li>
+            <li><span class="ui">Data Layers</span> (top) - every dataset uploaded, downloaded, or produced in this conversation.
+                The <img src="doc/folder-plus.svg" alt="folder plus" class="ui-icon" /> button adds a layer, and clicking the
+                <em>Data Layers</em> title collapses or expands the list (see <a href="#datalayers">Section 6</a>).</li>
+            <li><span class="ui">Map Viewer</span> (middle) - an interactive map that renders data layers.</li>
             <li><span class="ui">Results and Artifacts</span> (bottom) - analysis outputs, tables, figures, statistics, and report
-                downloads. Clear it with the <span class="ui">×</span> button.</li>
+                downloads. Clear it with the <span class="ui">×</span> button. Drag the divider between the map and this panel
+                to resize them.</li>
         </ul>
     </section>
 
@@ -215,7 +225,7 @@
 
         <h3>Adding a data layer</h3>
         <p>Click the 
-            <img src="doc/folder-plus.svg" alt="folder plus" class="ui-icon" /> button (sidebar) or the <span class="ui">＋</span> in the chat toolbar to open the
+            <img src="doc/folder-plus.svg" alt="folder plus" class="ui-icon" /> button (Data Layers header, top of the right panel) or the <span class="ui">＋</span> in the chat toolbar to open the
         <em>Add Data Layer</em> dialog. Browse for the file(s), and click <span class="ui">Add Layer</span>.</p>
 
         <h4>Supported formats</h4>
@@ -232,7 +242,7 @@
         <code>.shp</code>, <code>.shx</code>, <code>.dbf</code> and <code>.prj</code> together in the file picker.</div>
 
         <h3>The layer drop-down menu</h3>
-        <p>Each layer in the sidebar has a context menu (click the layer / its menu control) with these actions:</p>
+        <p>Each layer in the Data Layers list has a context menu (click the layer / its menu control) with these actions:</p>
         <div class="menu-demo">
             <div>ℹ&nbsp;&nbsp;Details</div>
             <div>☰&nbsp;&nbsp;Show Attribute Table</div>
@@ -251,6 +261,20 @@
             <li><span class="ui">Remove Layer</span> - delete it from this conversation.</li>
         </ul>
         <p>A visibility checkbox on each layer toggles whether it's drawn on the map.</p>
+
+        <h3 id="dl-results">Result layers and reloads</h3>
+        <ul>
+            <li><strong>Results go to the map.</strong> When a Spatial Analysis run finishes, its vector outputs are added to Data
+                Layers and drawn on the Map Viewer, and the run's main output opens in <em>Results and Artifacts</em>.</li>
+            <li><strong>Layers survive a reload.</strong> A layer you add from your computer is saved to the conversation right away,
+                and a Spatial Analysis run's map outputs are saved as conversation files. Reloading the page or reopening the
+                conversation brings them back. A layer you remove stays removed, until you add it again, for example by clicking
+                its download tile or using <span class="ui">Add to Map</span> on a result.</li>
+            <li><strong>Follow-up requests can use result layers.</strong> Layers in the list, including results added with
+                <span class="ui">Add to Map</span>, are sent with your next message. For example, after a run that creates county
+                centroids you can ask for "100 m buffers around the centroids" and the system reuses that layer instead of
+                computing it again.</li>
+        </ul>
     </section>
 
     <!-- ═══════════════════ 7. CONVERSATIONS ═══════════════════ -->
@@ -307,72 +331,61 @@
 
         <h3>Models used</h3>
         <p>GIS Co-Scientist is a multi-agent system, so a single run is handled by more than one language model -
-        each step is assigned the model best suited to it. In the current release these models are fixed in the
-        application. The table below shows what each mode actually uses.</p>
+        each step makes its own model call. In the current release every one of those calls uses <strong>GPT-6 Luna</strong>.
+        Each call's model and reasoning effort are set individually in the application's configuration, so
+        a single step can be moved to a different model without affecting the rest.</p>
         <table>
             <tr><th>Mode</th><th>Operations / Stages</th><th>Model</th></tr>
             <tr>
-                <td rowspan="2"><strong>Data Retriever</strong></td>
+                <td><strong>Data Retriever</strong></td>
                 <td>
                     <ul class="cell-list">
                         <li>User request interpretation</li>
+                        <li>Data source identification</li>
                         <li>Data download / query code generation</li>
                     </ul>
                 </td>
-                <td><strong>GPT-4o</strong></td>
+                <td><strong>GPT-6 Luna</strong></td>
             </tr>
             <tr>
-                <td><ul class="cell-list"><li>Data source identification</li></ul></td>
-                <td><strong>GPT-5.2</strong></td>
-            </tr>
-            <tr>
-                <td rowspan="2"><strong>Spatial Analysis</strong></td>
+                <td><strong>Spatial Analysis</strong></td>
                 <td>
                     <ul class="cell-list">
                         <li>User request interpretation</li>
                         <li>Geoprocessing workflow construction</li>
-                        <li>Operation execution</li>
+                        <li>Operation and analysis code generation, debugging</li>
                     </ul>
                 </td>
-                <td><strong>GPT-4o</strong></td>
+                <td><strong>GPT-6 Luna</strong></td>
             </tr>
             <tr>
-                <td><ul class="cell-list"><li>Analysis code generation and debugging</li></ul></td>
-                <td><strong>GPT-5.2</strong></td>
-            </tr>
-            <tr>
-                <td rowspan="2"><strong>Research</strong></td>
+                <td><strong>Research</strong></td>
                 <td>
                     <ul class="cell-list">
                         <li>Question understanding</li>
                         <li>Data retrieval</li>
-                        <li>Workflow diagram generation</li>
-                    </ul>
-                </td>
-                <td><strong>GPT-4o</strong></td>
-            </tr>
-            <tr>
-                <td>
-                    <ul class="cell-list">
-                        <li>Research plan generation</li>
+                        <li>Research plan generation and review</li>
                         <li>Code generation and debugging</li>
                         <li>Result analysis and interpretation</li>
                         <li>Manuscript drafting</li>
                     </ul>
                 </td>
-                <td><strong>GPT-5.2</strong></td>
+                <td><strong>GPT-6 Luna</strong></td>
             </tr>
             <tr>
                 <td><strong>Chat</strong></td>
                 <td><ul class="cell-list"><li>Conversational response generation</li></ul></td>
-                <td><strong>GPT-5.2</strong></td>
+                <td><strong>GPT-6 Luna</strong></td>
             </tr>
         </table>
-        <p>All <strong>GPT-5.2</strong> calls run at <em>low</em> reasoning effort.</p>
+        <p>Most calls run at <em>low</em> reasoning effort; the rest use the model's default. Calls that use tools are sent
+        with reasoning turned off, because GPT-6 Luna does not accept tools and reasoning together. Click a stage card's
+        <span class="ui">Tokens</span> chip to see which model each of its calls used.</p>
 
         <div class="note"><strong>NOTE:</strong>&nbsp; The <span class="ui">Model</span> and <span class="ui">Reasoning Effort</span>
-        selectors in the input toolbar are reserved for a future update. For now the models above are fixed in the
-        application, so changing those selectors does not change the model that runs.</div>
+        selectors in the input toolbar are reserved for a future update. For now the models are fixed in the
+        application, so changing those selectors does not change the model that runs. <span class="ui">Handbook Studio</span>
+        is the exception: it has its own model picker (see <a href="#dsm-studio">Handbook Studio</a>).</div>
     </section>
 
     
@@ -510,6 +523,31 @@
         <span class="ui">Import from file…</span>.</div>
 
 
+        <h3 id="dsm-studio">Generating a handbook with Handbook Studio</h3>
+        <p>Rather than writing a handbook by hand, you can have one generated and tested. Click
+        <span class="ui">Handbook Studio</span> in the header to open it. It works through one source at a time, in three sections:</p>
+        <div class="step"><div class="num">1</div><div class="body"><strong>Setup</strong> - give the data source name, its
+            documentation URL, or both, and optionally the retrieval task to test with. You can also choose the
+            <em>service type</em> (REST API, STAC, OGC Service, ArcGIS FeatureServer, bulk or HTTP file download, SQL, or your own),
+            or leave it on <em>Auto-select</em>. Pick the provider (OpenAI, or the Claude Agent SDK if the server supports it), the
+            model used to generate the handbook, the model that writes and debugs the retrieval code, and, for OpenAI models, the
+            reasoning effort. The default is GPT-6 Luna at low effort for both.</div></div>
+        <div class="step"><div class="num">2</div><div class="body"><strong>Generate &amp; retrieve</strong> - the model researches
+            the source on the web, drafts the handbook and checks it, then pauses so you can review and edit it. Once you continue,
+            it writes retrieval code from the handbook, runs it, and reports whether the run passed, failed, or produced the wrong
+            output.</div></div>
+        <div class="step"><div class="num">3</div><div class="body"><strong>Session report</strong> - every run in the session,
+            with exports.</div></div>
+        <p>The handbook review card has two buttons. One <strong>downloads</strong> the handbook as a <code>.toml</code> you can
+        re-import later. The other <strong>adds it to My Sources</strong> as a private data source, and asks first if a source with
+        the same name already exists. Sessions can be saved, shared by link, and duplicated from the Studio's header.</p>
+        <div class="note"><strong>NOTE:</strong>&nbsp; Handbook Studio needs an <strong>OpenAI API key</strong>. Its web research uses
+        OpenAI's hosted web search, which a GIBD key cannot reach. With a GIBD key saved, an <em>"OpenAI API key needed"</em>
+        dialog opens instead, with a button that takes you to Settings. Saving a GIBD key while the Studio is open closes it
+        once any running step finishes. The Claude Agent SDK provider also needs an Anthropic API key, entered in Settings or
+        in the Studio's provider picker.</div>
+
+
         <h3 id="dsm-credentials">Sources that need an API key or credentials</h3>
         <p>Turn on <span class="ui">This source needs an API key or credentials</span> and list the credential name(s),
         comma-separated (e.g. <code>EPA_AQS_email, EPA_AQS_key</code>).</p>
@@ -560,10 +598,11 @@
             source</strong>, fetches the data, and adds it as a new <strong>data layer</strong> you can map and download.</div></div>
 
         <h4>The "Auto Data" toggle</h4>
-        <p>The <span class="ui">Auto Data</span> button in the input toolbar controls whether data needed for a request is downloaded
-        automatically. With it <strong>on</strong>, the system pulls required datasets without asking each time; with it
-        <strong>off</strong>, it pauses for human confirmation before downloading. This toggle is also respected by <em>Spatial Analysis
-        </em> and <em>Research</em> modes when they need extra data.</p>
+        <p>The <span class="ui">Auto Data</span> switch, in the mode dropdown under <strong>Autonomous</strong>, controls whether data
+        needed for a request is downloaded automatically. It is <strong>on</strong> by default. With it on, the system pulls required
+        datasets without asking each time; with it <strong>off</strong>, it pauses for human confirmation before downloading. The
+        switch appears only for <em>Spatial Analysis</em> and <em>Research</em>, the modes that may need extra data.
+        <em>Data Retrieval</em> mode always downloads, so the switch is hidden there.</p>
 
         <h3 id="dr-sources">Available data sources</h3>
         <p>These public sources are built in. The system picks the right one from your request, but you can name a source explicitly.
@@ -674,11 +713,19 @@
         <div class="step"><div class="num">3</div><div class="body">State the analysis you want (See examples).
             
            </div></div>
-        <div class="step"><div class="num">4</div><div class="body">Review the proposed <strong>geoprocessing workflow</strong>
+        <div class="step"><div class="num">4</div><div class="body">Review the <strong>task breakdown</strong>. It says what data the
+            analysis needs and whether the data you already have is sufficient. If it is, nothing is downloaded, even with
+            <span class="ui">Auto Data</span> on, and the chat says which requests were skipped.</div></div>
+        <div class="step"><div class="num">5</div><div class="body">Review the proposed <strong>geoprocessing workflow</strong>
             (the spatial input &rarr; operation &rarr; output graph described in <a href="#geoprocessing">Section 13</a>).
-            You can <strong>approve</strong> it, or send feedback to <strong>revise</strong> it before anything runs.</div></div>
-        <div class="step"><div class="num">5</div><div class="body">The system generates the <strong>code</strong>, executes it, and
-            returns maps, tables, statistics, and figures in the <em>Results</em> panel.</div></div>
+            Every dataset in the conversation is treated as a <em>candidate</em>. The workflow designer checks each one's area,
+            time period, units and content against the question, and builds only the ones that fit into the graph. It lists
+            every candidate as used or not used, with a reason. For example, a Pennsylvania county layer left over from an
+            earlier request is left out of a California analysis.
+            You can <strong>approve</strong> the workflow, or send feedback to <strong>revise</strong> it before anything runs.</div></div>
+        <div class="step"><div class="num">6</div><div class="body">The system generates the <strong>code</strong>, executes it, and
+            returns maps, tables, statistics, and figures in the <em>Results</em> panel. Vector outputs are added to Data Layers
+            and the Map Viewer automatically (see <a href="#dl-results">Result layers and reloads</a>).</div></div>
 
         <figure>
             <img src="doc/generated-code.jpg" alt="A completed analysis step showing the execution log with output tiles, the generated Python code, and Edit Code / Re-run / Provide Feedback / Re-execute Step controls" />
@@ -692,6 +739,8 @@
             <li><strong>Inspect</strong> - every step shows the exact geoprocessing operation and the code that implements it.</li>
             <li><strong>Revise</strong> - give feedback in plain language and the workflow or code is regenerated.</li>
             <li><strong>Re-run steps</strong> - individual steps can be re-executed without restarting the whole analysis.</li>
+            <li><strong>Build on the result</strong> - send a follow-up request in the same conversation. The result layers on the
+                map are sent with it, so the next analysis can start from them.</li>
         </ul>
 
         <h3 id="sa-examples">Examples - Spatial Analysis</h3>
@@ -829,7 +878,9 @@
                 <li><strong>Provide feedback</strong> - you can give feedback in natural language describing what's missing or wrong.
                     Only the parts your feedback asks about are revised, and you can review again.</li>
             </ul>
-        <p>If data is missing and Auto Data is off, the card offers to turn Auto Data on for this run, or to continue with only the data you have.</p>
+        <p>If data is missing and Auto Data is off, the card offers to turn Auto Data on for this run, or to continue with only the data you have.
+        If the breakdown judges your data sufficient, nothing is downloaded, even with Auto Data on, and the chat notes which
+        requests were skipped.</p>
 
         <!-- [insert DataRequirements image] -->
 
@@ -853,7 +904,11 @@
 
         <h3 id="rs-cp3">Checkpoint 3 - Research plan review</h3>
         <p>The third checkpoint occurs during <strong>research plan generation</strong>. Through a dedicated revision interface
-        you can operate on the finalized plan before approving it for execution:</p>
+        you can operate on the finalized plan before approving it for execution.</p>
+        <p>The planner treats every dataset in the conversation as a candidate. It checks each one's area, time period, units and
+        content against the question, and plans only with the datasets that fit. Where nothing fits, it flags a data gap rather
+        than stretching an unfit dataset. It records every candidate as used or not used, with a reason, and the plan reviewer
+        checks this data fitness first. In the plan review you can:</p>
         <ul>
             <li><strong>Edit the plan directly</strong> - change an objective's title or hypothesis, edit step descriptions, and add or
                 delete steps. When you delete a step, the system re-links the remaining steps so that none of them depends on the
@@ -891,6 +946,11 @@
         interpretation. You may then choose to propagate the revised outputs into the manuscript, at which point the Reporting
         Agent selectively regenerates only the sections whose input has changed - preserving editorial continuity while keeping
         the final document faithful to the most recent analytical state.</p>
+        <div class="note"><strong>Returning to a Task Breakdown card:</strong>&nbsp; <span class="ui">Proceed</span> and
+        <span class="ui">Provide feedback</span> on a Task Breakdown card always resume that card's own turn, in Research and
+        Spatial Analysis alike, never an earlier or later turn of the conversation. A card works only while its turn is still
+        waiting. Once a newer request in the conversation has replaced it, clicking it shows <em>"This Task Breakdown is no
+        longer waiting"</em>. Send your request again to continue.</div>
 
         <h3 id="rs-examples">Research mode examples</h3>
       
@@ -1126,6 +1186,7 @@
                 { id:'dsm-tabs',        label:'The two tabs' },
                 { id:'dsm-add',         label:'Adding a source' },
                 { id:'dsm-handbook',    label:'Creating a handbook' },
+                { id:'dsm-studio',      label:'Handbook Studio' },
                 { id:'dsm-credentials', label:'API keys & credentials' },
                 { id:'dsm-status',      label:'Status & sharing' },
                 { id:'dsm-manage',      label:'Edit, download, delete' },
