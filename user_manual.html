@@ -107,7 +107,7 @@
         <div class="step"><div class="num">4</div><div class="body">
             <strong>Set Auto Data (Optional):</strong> Use the <span class="ui">Auto Data</span> switch in the mode dropdown (on by default) to control how
             datasets are fetched. When <em>on</em>, the system automatically downloads any data your request needs; when <em>off</em>, it
-            works with the data already uploaded instead of fetching new datasets. (In <it>Data Retrieval</it> mode, data is always fetched.)
+            works with the data already uploaded instead of fetching new datasets. (In <em>Data Retrieval</em> mode, data is always fetched.)
             See <a href="#data-mode">Section 9</a> for details.</div></div>
 
         <div class="step"><div class="num">5</div><div class="body">
@@ -116,9 +116,9 @@
 
         <div class="step"><div class="num">6</div><div class="body">
             <strong>Review and approve.</strong> The system streams its plan, asks for your approval at key checkpoints, then runs.
-            Outputs appear in the <it>Map Viewer</it> and <it>Results and Artifacts</it> panels on the right.</div></div>
+            Outputs appear in the <em>Map Viewer</em> and <em>Results and Artifacts</em> panels on the right.</div></div>
 
-        <div class="tip"><strong>NOTE:</strong>&nbsp; Turn on <em><strong>Autonomous</em></strong> mode (in the mode dropdown) if you want the
+        <div class="tip"><strong>NOTE:</strong>&nbsp; Turn on <em><strong>Autonomous</strong></em> mode (in the mode dropdown) if you want the
         system to auto-approve its own plans and run end-to-end with minimal interruption (see <a href="#modes-models">Section 8</a>).</div>
     </section>
 
@@ -468,7 +468,7 @@
 
         <h3 id="dsm-handbook">Creating a data source handbook</h3>
         <p>A <strong>handbook</strong> is a complete data source definition which provides the technical information that GIS Co-Scientist needs to retrieve data from one specific source.</p>
-        <p>A handbook serves a single data source and is maintained on its own, so adding, updating, or removing a source is plug-and-play. It is normally saved in a structured file format (<code>.toml</code>).
+        <p>A handbook serves a single data source and is maintained on its own, so adding, updating, or removing a source is plug-and-play. It is normally saved in a structured file format (<code>.toml</code>).</p>
         <!-- <p> All the fields contained in a handbook are described in the table under
         <a href="#dsm-add">Adding a data source</a></p> -->
         
@@ -497,7 +497,7 @@
             <tr><th>Optional field</th><th>Description</th></tr>
             <tr><td><code>code_example</code></td><td>  A short, working Python snippet that downloads data from this source and saves it to a file. The assistant uses it as
                 a verified template, so keep it self-contained: put the logic in a <code>download_data()</code> function with a final line that calls it, use
-                <code>{KEY_NAME}</code> placeholders for any credentials, and save to a plain relative filename. See example</p> </td></tr>
+                <code>{KEY_NAME}</code> placeholders for any credentials, and save to a plain relative filename. See example </td></tr>
 
             <tr><td><code>Websitee</code></td><td>  The data source's official homepage. It's shown in the source's details for reference and lets users quickly verify or
                 learn more about the provider.</td></tr>
