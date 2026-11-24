@@ -1,0 +1,23 @@
+{
+  "title": "Impact of Hazardous Waste Proximity on Asthma Prevalence in North Carolina",
+  "intent": "To quantify and interpret how proximity to hazardous waste facilities affects asthma prevalence while accounting for demographic and socioeconomic variability across North Carolina census tracts",
+  "category": "explanatory",
+  "scale": {
+    "temporal_scale": null,
+    "spatial_scale": "census tracts of North Carolina"
+  },
+  "data_requirement": [
+    "Census tract-level asthma prevalence data",
+    "Geospatial coordinates of hazardous waste facilities",
+    "Demographic (race/ethnicity, gender) and socioeconomic (poverty, unemployment, insurance status, median income) census tract data",
+    "Census tract boundary geometries for spatial analysis"
+  ],
+  "data_available_sufficiency": "Sufficient. All required datasets (census tract asthma data, hazardous waste facility locations, demographic/socioeconomic variables, and tract geometries) are provided at the census tract scale with overlapping geographic identifiers (GEOID).",
+  "data_available": [
+    "NC_PLACES.csv (asthma prevalence with tract geometries)",
+    "NC_HW_sites.gpkg (hazardous waste facility locations)",
+    "NC_ACS_data.csv (demographic and socioeconomic census data)",
+    "NC_tract.gpkg (census tract boundary geometries)"
+  ],
+  "data_requests": null
+}

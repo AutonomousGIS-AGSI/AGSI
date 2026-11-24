@@ -1,0 +1,59 @@
+{
+  "title": "Impact of Proximity to Hazardous Waste Facilities on Asthma Prevalence by Census Tract in North Carolina",
+  "research_question": "How does proximity to hazardous waste facilities influence spatial patterns of asthma prevalence across census tracts of North Carolina, and how do these relationships vary spatially by socioeconomic and demographic context?",
+  "research_intent": "To assess the influence of proximity to hazardous waste facilities on the spatial distribution of asthma prevalence across census tracts in North Carolina, considering variations based on socioeconomic and demographic factors.",
+  "ablation": "no_planning",
+  "objectives": [
+    {
+      "number": 1,
+      "title": "How does proximity to hazardous waste facilities influence spatial patterns of asthma prevalence across census tracts of North Carolina, and how do these relationships vary spatially by socioeconomic and demographic context?",
+      "hypothesis": "",
+      "data_requirements": [
+        {
+          "source_id": "NC_tract",
+          "description": "Uploaded dataset",
+          "data_gap": false
+        },
+        {
+          "source_id": "NC_PLACES",
+          "description": "Uploaded dataset",
+          "data_gap": false
+        },
+        {
+          "source_id": "NC_HW_sites",
+          "description": "Uploaded dataset",
+          "data_gap": false
+        },
+        {
+          "source_id": "NC_ACS_data",
+          "description": "Uploaded dataset",
+          "data_gap": false
+        }
+      ],
+      "steps": [
+        {
+          "step_number": 1,
+          "operation_type": "statistical",
+          "operation": "Direct code generation for the full research question (no plan)",
+          "input_nodes": [
+            "NC_tract",
+            "NC_PLACES",
+            "NC_HW_sites",
+            "NC_ACS_data"
+          ],
+          "output_node": "analysis_results.csv",
+          "description": "Answer the research question end to end: How does proximity to hazardous waste facilities influence spatial patterns of asthma prevalence across census tracts of North Carolina, and how do these relationships vary spatially by socioeconomic and demographic context?\n\nResearch question breakdown:\n- Intent: To assess the influence of proximity to hazardous waste facilities on the spatial distribution of asthma prevalence across census tracts in North Carolina, considering variations based on socioeconomic and demographic factors.\n- Brief description: This research aims to explore if living near hazardous waste sites is associated with higher asthma prevalence in North Carolina's census tracts, and examine how this association varies with socioeconomic and demographic variables.\n- Category: explanatory\n- Spatial scale: Census Tract\n- Data requirement: [\"Georeferenced locations of hazardous waste facilities\", \"Asthma prevalence rates per census tract\", \"Socioeconomic and demographic data per census tract\"]\n\nDo all data preparation, analysis, and visualization this requires in one script, and save the key quantitative results to analysis_results.csv.",
+          "expected_output": "The analyses, tables, and figures needed to answer the research question.",
+          "output_node_path": "C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\9a0ef1c1-f819-4f4a-98ec-df6aceaa15b2\\analysis_results.csv",
+          "input_node_paths": {
+            "NC_tract": "C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\WebUI\\uploads\\9a0ef1c1-f819-4f4a-98ec-df6aceaa15b2\\NC_tract.gpkg",
+            "NC_PLACES": "C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\WebUI\\uploads\\9a0ef1c1-f819-4f4a-98ec-df6aceaa15b2\\NC_PLACES.csv",
+            "NC_HW_sites": "C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\WebUI\\uploads\\9a0ef1c1-f819-4f4a-98ec-df6aceaa15b2\\NC_HW_sites.gpkg",
+            "NC_ACS_data": "C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\WebUI\\uploads\\9a0ef1c1-f819-4f4a-98ec-df6aceaa15b2\\NC_ACS_data.csv"
+          }
+        }
+      ]
+    }
+  ],
+  "timestamp": "2026-10-04 21:47:22"
+}

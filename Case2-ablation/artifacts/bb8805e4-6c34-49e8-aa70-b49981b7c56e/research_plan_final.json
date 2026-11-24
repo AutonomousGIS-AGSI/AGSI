@@ -1,0 +1,59 @@
+{
+  "title": "Mediation of Neighborhood Socioeconomic Status on Depression by Mobility Patterns",
+  "research_question": "How do spatial patterns of mobility (place visitation) mediate the relationship between neighborhood socioeconomic status and depression prevalence across the counties of South Carolina?",
+  "research_intent": "The intent is to examine how spatial patterns of mobility, specifically place visitation, influence the connection between neighborhood socioeconomic status and depression prevalence within the counties of South Carolina.",
+  "ablation": "no_planning",
+  "objectives": [
+    {
+      "number": 1,
+      "title": "How do spatial patterns of mobility (place visitation) mediate the relationship between neighborhood socioeconomic status and depression prevalence across the counties of South Carolina?",
+      "hypothesis": "",
+      "data_requirements": [
+        {
+          "source_id": "SC_Visitor_POI",
+          "description": "Uploaded dataset",
+          "data_gap": false
+        },
+        {
+          "source_id": "SC_PLACES_depression",
+          "description": "Uploaded dataset",
+          "data_gap": false
+        },
+        {
+          "source_id": "SC_counties",
+          "description": "Uploaded dataset",
+          "data_gap": false
+        },
+        {
+          "source_id": "SC_ACS_data",
+          "description": "Uploaded dataset",
+          "data_gap": false
+        }
+      ],
+      "steps": [
+        {
+          "step_number": 1,
+          "operation_type": "statistical",
+          "operation": "Direct code generation for the full research question (no plan)",
+          "input_nodes": [
+            "SC_Visitor_POI",
+            "SC_PLACES_depression",
+            "SC_counties",
+            "SC_ACS_data"
+          ],
+          "output_node": "analysis_results.csv",
+          "description": "Answer the research question end to end: How do spatial patterns of mobility (place visitation) mediate the relationship between neighborhood socioeconomic status and depression prevalence across the counties of South Carolina?\n\nResearch question breakdown:\n- Intent: The intent is to examine how spatial patterns of mobility, specifically place visitation, influence the connection between neighborhood socioeconomic status and depression prevalence within the counties of South Carolina.\n- Brief description: This study explores the mediation role of place visitation patterns in the relationship between neighborhood socioeconomic status and depression prevalence across different counties in South Carolina. It involves assessing how the frequency and types of places visited within counties relate to socioeconomic conditions and how these factors together impact depression rates.\n- Category: Explanatory\n- Spatial scale: County\n- Data requirement: [\"Visitor data to places of interest within counties\", \"Depression prevalence rates across counties\", \"Socioeconomic data including income, education, and employment across counties\", \"Geospatial boundary data for counties in South Carolina\"]\n\nDo all data preparation, analysis, and visualization this requires in one script, and save the key quantitative results to analysis_results.csv.",
+          "expected_output": "The analyses, tables, and figures needed to answer the research question.",
+          "output_node_path": "C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\bb8805e4-6c34-49e8-aa70-b49981b7c56e\\analysis_results.csv",
+          "input_node_paths": {
+            "SC_Visitor_POI": "C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\WebUI\\uploads\\bb8805e4-6c34-49e8-aa70-b49981b7c56e\\SC_Visitor_POI.csv",
+            "SC_PLACES_depression": "C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\WebUI\\uploads\\bb8805e4-6c34-49e8-aa70-b49981b7c56e\\SC_PLACES_depression.csv",
+            "SC_counties": "C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\WebUI\\uploads\\bb8805e4-6c34-49e8-aa70-b49981b7c56e\\SC_counties.gpkg",
+            "SC_ACS_data": "C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\WebUI\\uploads\\bb8805e4-6c34-49e8-aa70-b49981b7c56e\\SC_ACS_data.csv"
+          }
+        }
+      ]
+    }
+  ],
+  "timestamp": "2026-10-04 21:32:40"
+}

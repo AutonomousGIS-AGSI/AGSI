@@ -1,0 +1,95 @@
+{
+  "figures": [
+    {
+      "path": "tables/vif_MobilityTotalVisits_log1p.csv",
+      "caption": "Variance inflation factors (VIF) for predictors in the MobilityTotalVisits_log1p mediation outcome model.",
+      "role": "promoted",
+      "kind": "table",
+      "columns": [
+        "variable",
+        "VIF"
+      ]
+    },
+    {
+      "path": "tables/vif_MobilityDiversity_entropy.csv",
+      "caption": "Variance inflation factors (VIF) for predictors in the MobilityDiversity_entropy mediation outcome model.",
+      "role": "promoted",
+      "kind": "table",
+      "columns": [
+        "variable",
+        "VIF"
+      ]
+    },
+    {
+      "path": "tables/mediation_ols_coefficients_robustHC1.csv",
+      "caption": "OLS coefficient tables (HC1 robust standard errors) for mediation models: total effect, mediator model, and direct+mediator outcome model.",
+      "role": "promoted",
+      "kind": "table",
+      "columns": [
+        "model",
+        "variable",
+        "beta",
+        "std_err",
+        "t",
+        "p_value",
+        "ci_low",
+        "ci_high"
+      ]
+    },
+    {
+      "path": "tables/model_fit_stats.csv",
+      "caption": "Model fit statistics (non-robust OLS) for total, mediator, and direct+mediator models.",
+      "role": "promoted",
+      "kind": "table"
+    },
+    {
+      "path": "tables/analysis_results_key_quantitative.csv",
+      "caption": "Key quantitative results: mediation estimates (a, b, c, c', indirect effect with Sobel test) and Moran's I residual autocorrelation diagnostics.",
+      "role": "promoted",
+      "kind": "table"
+    },
+    {
+      "path": "choropleth_depression_prev.png",
+      "caption": "County-level depression prevalence (PLACES) across South Carolina",
+      "role": "final",
+      "kind": "figure",
+      "objective_key": "objective_1",
+      "step_index": 1
+    },
+    {
+      "path": "choropleth_SES_index.png",
+      "caption": "County-level socioeconomic status (SES) index across South Carolina (higher = higher SES)",
+      "role": "promoted",
+      "kind": "figure",
+      "objective_key": "objective_1",
+      "step_index": 2
+    },
+    {
+      "path": "choropleth_mobility_log_total_visits.png",
+      "caption": "County-level mobility intensity: log(1 + total place visitation) across South Carolina",
+      "role": "promoted",
+      "kind": "figure",
+      "objective_key": "objective_1",
+      "step_index": 3
+    },
+    {
+      "path": "scatter_SES_vs_depression_colored_by_mobility.png",
+      "caption": "Scatterplot of county SES index versus depression prevalence; point color indicates mobility intensity (log total visits).",
+      "role": "promoted",
+      "kind": "figure",
+      "objective_key": "objective_1",
+      "step_index": 4
+    },
+    {
+      "path": "county_analysis_with_SES_mobility_depression.gpkg",
+      "caption": "County-level analysis layer containing depression prevalence, SES index, and mobility metrics for South Carolina.",
+      "role": "intermediate",
+      "kind": "data_to_viz",
+      "viz_hint": {
+        "type": "choropleth",
+        "column": "Depression_prev",
+        "cmap": "Reds"
+      }
+    }
+  ]
+}

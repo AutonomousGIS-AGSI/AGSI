@@ -1,0 +1,27 @@
+metric,value,notes
+n_tracts_model,2169.0,Number of census tracts with complete data for full model.
+ols_reduced_r2,0.8217521440167712,"R-squared for reduced OLS (no interactions), HC1 robust SEs."
+ols_full_r2,0.8243970099748903,"R-squared for full OLS (with interactions), HC1 robust SEs."
+partial_r2_interactions,0.01483813616455476,Partial R2 improvement when adding proximity×context interactions (full vs reduced).
+ols_reduced_coef_ln_dist,0.147581940146206,Standardized coefficient for ln(distance_km+1). Negative implies higher asthma closer to sites.
+ols_reduced_p_ln_dist,1.4168846333244067e-28,P-value for standardized ln(distance_km+1) coefficient in reduced model.
+ols_full_coef_ln_dist,0.15579577710202605,Standardized coefficient for ln(distance_km+1) in full interaction model.
+ols_full_p_ln_dist,3.118886847169301e-31,P-value for standardized ln(distance_km+1) coefficient in full interaction model.
+morans_I_asthma,0.5836075776554971,"Global Moran's I for asthma prevalence (KNN k=8), permutations=999; p_sim=0.001."
+morans_p_asthma,0.001,Permutation p-value for Global Moran's I (asthma).
+morans_I_ols_full_residuals,0.3222876564660511,"Global Moran's I for full-model residuals (KNN k=8), permutations=999; p_sim=0.001."
+morans_p_ols_full_residuals,0.001,Permutation p-value for Global Moran's I (full-model residuals).
+ols_full_coef_ln_dist_x_poverty,-0.059460655459975566,Standardized interaction coefficient for ln_dist_x_poverty (proximity×context).
+ols_full_p_ln_dist_x_poverty,0.10409668675173092,P-value for interaction term ln_dist_x_poverty in full model.
+ols_full_coef_ln_dist_x_black,-0.030257188040742115,Standardized interaction coefficient for ln_dist_x_black (proximity×context).
+ols_full_p_ln_dist_x_black,0.08342982274016181,P-value for interaction term ln_dist_x_black in full model.
+ols_full_coef_ln_dist_x_hispanic,0.009609652718627524,Standardized interaction coefficient for ln_dist_x_hispanic (proximity×context).
+ols_full_p_ln_dist_x_hispanic,0.5880973267428362,P-value for interaction term ln_dist_x_hispanic in full model.
+ols_full_coef_ln_dist_x_uninsured,0.019322872901841565,Standardized interaction coefficient for ln_dist_x_uninsured (proximity×context).
+ols_full_p_ln_dist_x_uninsured,0.60430508534787,P-value for interaction term ln_dist_x_uninsured in full model.
+ols_full_coef_ln_dist_x_income,0.011138290133106129,Standardized interaction coefficient for ln_dist_x_income (proximity×context).
+ols_full_p_ln_dist_x_income,0.7603517255617844,P-value for interaction term ln_dist_x_income in full model.
+strat_poverty_median_split_low_coef_ln_dist,0.11397878522188865,Stratified (median split) standardized ln(distance) coefficient; n=1094; p=4.93749e-12.
+strat_poverty_median_split_high_coef_ln_dist,-0.07810657210063462,Stratified (median split) standardized ln(distance) coefficient; n=1075; p=0.00400681.
+strat_black_share_median_split_low_coef_ln_dist,0.09383323240687122,Stratified (median split) standardized ln(distance) coefficient; n=1085; p=4.56119e-07.
+strat_black_share_median_split_high_coef_ln_dist,0.023900415595062986,Stratified (median split) standardized ln(distance) coefficient; n=1084; p=0.281261.

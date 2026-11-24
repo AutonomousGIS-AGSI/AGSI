@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Spatial Inequalities in PM2.5 Exposure and Income Inequality in California Counties (2019)</title>
+<style>
+  body { margin:0; font-family:Segoe UI, Arial, sans-serif; background:#f8f9fa; display:flex; flex-direction:column; height:100vh; }
+  h1 { text-align:center; padding:12px 0 4px; margin:0; font-size:18px; color:#2C3E50; }
+  .graph-panel { flex:1; overflow:hidden; position:relative; cursor:grab; }
+  svg { display:block; width:100%; height:100%; }
+  .node-box { cursor:pointer; transition:opacity .2s, filter .2s; }
+  .node-box:hover { filter:brightness(1.12) drop-shadow(0 0 4px rgba(0,0,0,.3)); }
+  .node-box.dimmed { opacity:0.25; }
+  .edge-line { stroke-opacity:0.3; transition:stroke-opacity .2s, stroke-width .2s; }
+  .edge-line.highlighted { stroke-opacity:1 !important; stroke-width:3 !important; }
+  .node-tooltip { pointer-events:none; position:absolute; background:#2C3E50; color:#fff; padding:5px 10px; border-radius:5px; font-size:12px; white-space:nowrap; z-index:60; box-shadow:0 2px 8px rgba(0,0,0,.2); display:none; }
+  .zoom-toolbar { position:absolute; top:10px; right:10px; display:flex; flex-direction:column; gap:4px; z-index:50; background:#fff; border-radius:8px; padding:6px; box-shadow:0 2px 8px rgba(0,0,0,.15); border:1px solid #ddd; }
+  .zoom-btn { width:32px; height:32px; border:1px solid #ddd; border-radius:6px; background:#fff; cursor:pointer; font-size:16px; display:flex; align-items:center; justify-content:center; color:#444; transition:all .15s; padding:0; }
+  .zoom-btn:hover { background:#e9ecef; }
+  .zoom-level { font-size:10px; text-align:center; color:#888; padding:2px 0; user-select:none; }
+  .zoom-divider { height:1px; background:#e0e0e0; margin:2px 0; }
+  .legend { position:absolute; bottom:10px; left:10px; background:#fff; border-radius:8px; padding:10px 14px; box-shadow:0 2px 8px rgba(0,0,0,.15); border:1px solid #ddd; font-size:11px; z-index:50; }
+  .legend-item { display:flex; align-items:center; gap:8px; margin:4px 0; }
+  .legend-swatch { width:28px; height:16px; border:1px solid #999; }
+  .popup-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,.35); z-index:100; justify-content:center; align-items:center; }
+  .popup-overlay.visible { display:flex; }
+  .popup-box { background:#fff; border-radius:10px; padding:24px 28px; max-width:580px; width:92%; max-height:75vh; overflow-y:auto; box-shadow:0 8px 32px rgba(0,0,0,.25); position:relative; animation:popIn .18s ease-out; }
+  @keyframes popIn { from{transform:scale(.92);opacity:0} to{transform:scale(1);opacity:1} }
+  .popup-box h3 { margin-top:0; color:#2C3E50; border-bottom:2px solid #4C72B0; padding-bottom:8px; }
+  .popup-box p { line-height:1.6; color:#333; font-size:13px; }
+  .popup-close { position:absolute; top:10px; right:14px; background:none; border:none; font-size:20px; color:#999; cursor:pointer; padding:4px 8px; border-radius:4px; }
+  .popup-close:hover { background:#f0f0f0; color:#333; }
+</style>
+</head>
+<body>
+<h1>Spatial Inequalities in PM2.5 Exposure and Income Inequality in California Counties (2019)</h1>
+<div class="graph-panel" id="graphPanel">
+  <div class="zoom-toolbar">
+    <button class="zoom-btn" onclick="zoomIn()" title="Zoom in">+</button>
+    <button class="zoom-btn" onclick="zoomOut()" title="Zoom out">&minus;</button>
+    <div class="zoom-divider"></div>
+    <span class="zoom-level" id="zoomLevel">100%</span>
+    <div class="zoom-divider"></div>
+    <button class="zoom-btn" onclick="zoomReset()" title="Reset">&#8634;</button>
+    <button class="zoom-btn" onclick="zoomFit()" title="Fit">&#11036;</button>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-swatch" style="background:#6BA3D6;border-radius:8px"></div> Input Data</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#F5D576;border-radius:2px"></div> Operation / Tool</div>
+    <div class="legend-item"><div class="legend-swatch" style="background:#6BB56A;border-radius:8px"></div> Output Data</div>
+    <div class="legend-item"><div class="legend-swatch" style="border:2px dashed #3D8B3D;background:transparent;border-radius:0"></div> Reused (within obj)</div>
+    <div class="legend-item"><div class="legend-swatch" style="border:2px dashed #E67E22;background:transparent;border-radius:0"></div> Reused (cross obj)</div>
+  </div>
+  <svg id="flowchartSvg" viewBox="0 0 5455 1134">
+    <defs>
+      <marker id="mb_arrow" markerWidth="14" markerHeight="12" refX="13" refY="6" orient="auto" markerUnits="userSpaceOnUse">
+        <polygon points="0 0,14 6,0 12" fill="#555"/>
+      </marker>
+      <marker id="mb_arrow_green" markerWidth="14" markerHeight="12" refX="13" refY="6" orient="auto" markerUnits="userSpaceOnUse">
+        <polygon points="0 0,14 6,0 12" fill="#3D8B3D"/>
+      </marker>
+      <marker id="mb_arrow_orange" markerWidth="14" markerHeight="12" refX="13" refY="6" orient="auto" markerUnits="userSpaceOnUse">
+        <polygon points="0 0,14 6,0 12" fill="#E67E22"/>
+      </marker>
+    </defs>
+    <g id="zoomGroup">
+    <rect x="0" y="55" width="5455" height="308" fill="#edf2f9" rx="6"/>
+    <g class="node-box" data-nid="obj_title_1" onclick="showPopup('obj_title_1')" onmouseenter="hlNode('obj_title_1')" onmouseleave="ulNode()">
+      <rect x="220.0" y="188.0" width="120" height="42" rx="6" fill="#34495E" stroke="#2C3E50" stroke-width="2" data-os="#2C3E50"/>
+      <text x="280.0" y="213.0" text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white">Obj 1</text>
+    </g>
+    <rect x="0" y="403" width="5455" height="308" fill="#fdf5e8" rx="6"/>
+    <g class="node-box" data-nid="obj_title_2" onclick="showPopup('obj_title_2')" onmouseenter="hlNode('obj_title_2')" onmouseleave="ulNode()">
+      <rect x="220.0" y="536.0" width="120" height="42" rx="6" fill="#34495E" stroke="#2C3E50" stroke-width="2" data-os="#2C3E50"/>
+      <text x="280.0" y="561.0" text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white">Obj 2</text>
+    </g>
+    <rect x="0" y="751" width="5455" height="308" fill="#edf9ed" rx="6"/>
+    <g class="node-box" data-nid="obj_title_3" onclick="showPopup('obj_title_3')" onmouseenter="hlNode('obj_title_3')" onmouseleave="ulNode()">
+      <rect x="220.0" y="884.0" width="120" height="42" rx="6" fill="#34495E" stroke="#2C3E50" stroke-width="2" data-os="#2C3E50"/>
+      <text x="280.0" y="909.0" text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white">Obj 3</text>
+    </g>
+    <g class="node-box" data-nid="rq_node" onclick="showPopup('rq_node')" onmouseenter="hlNode('rq_node')" onmouseleave="ulNode()">
+      <rect x="10.0" y="529.0" width="130" height="56" rx="8" fill="#2C3E50" stroke="#1A252F" stroke-width="2" data-os="#1A252F"/>
+      <text x="75.0" y="561.0" text-anchor="middle" font-size="15" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white">Research Question</text>
+    </g>
+    <path class="edge-line" data-from="rq_node" data-to="obj_title_1" d="M140.0,557.0 C180.0,557.0 180.0,209.0 220.0,209.0" fill="none" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <path class="edge-line" data-from="rq_node" data-to="obj_title_2" d="M140.0,557.0 C180.0,557.0 180.0,557.0 220.0,557.0" fill="none" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <path class="edge-line" data-from="rq_node" data-to="obj_title_3" d="M140.0,557.0 C180.0,557.0 180.0,905.0 220.0,905.0" fill="none" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="obj_title_1" data-to="o1_s1_i0" x1="340.0" y1="209.0" x2="380" y2="209.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="obj_title_2" data-to="o2_s1_i0" x1="340.0" y1="557.0" x2="380" y2="557.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="obj_title_3" data-to="o3_s1_i0" x1="340.0" y1="905.0" x2="380" y2="905.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o1_s1_i0" data-to="o1_s1_op" x1="550" y1="209.0" x2="610.0" y2="209.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o1_s1_op" data-to="o1_s1_out" x1="790.0" y1="209.0" x2="850.0" y2="209.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o1_s1_out" data-to="o1_s2_op" x1="1020.0" y1="209.0" x2="1080.0" y2="209.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o1_s2_op" data-to="o1_s2_out" x1="1260.0" y1="209.0" x2="1320.0" y2="209.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o1_s2_out" data-to="o1_s3_op" x1="1490.0" y1="209.0" x2="1550.0" y2="209.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o1_s3_op" data-to="o1_s3_out" x1="1730.0" y1="209.0" x2="1790.0" y2="209.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o1_s4_i0" data-to="o1_s4_op" x1="2190.0" y1="209.0" x2="2250.0" y2="209.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o1_s3_out" data-to="o1_s4_op" x1="1960.0" y1="209.0" x2="2250.0" y2="209.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <path class="edge-line" data-from="o1_s3_out" data-to="o1_s4_op" d="M1875.0,177.0 Q2107.5,60.75 2340.0,178.0" fill="none" stroke="#3D8B3D" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#mb_arrow_green)"/>
+    <line class="edge-line" data-from="o1_s4_op" data-to="o1_s4_out" x1="2430.0" y1="209.0" x2="2490.0" y2="209.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o1_s4_out" data-to="o1_s5_op" x1="2660.0" y1="209.0" x2="2720.0" y2="209.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o1_s5_op" data-to="o1_s5_out" x1="2900.0" y1="209.0" x2="2960.0" y2="209.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o1_s5_out" data-to="o1_s6_op" x1="3130.0" y1="209.0" x2="3190.0" y2="209.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o1_s6_op" data-to="o1_s6_out" x1="3370.0" y1="209.0" x2="3430.0" y2="209.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o1_s6_out" data-to="o1_s7_op" x1="3600.0" y1="209.0" x2="3660.0" y2="209.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <path class="edge-line" data-from="o1_s5_out" data-to="o1_s7_op" d="M3045.0,177.0 Q3397.5,0.75 3750.0,178.0" fill="none" stroke="#3D8B3D" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#mb_arrow_green)"/>
+    <line class="edge-line" data-from="o1_s7_op" data-to="o1_s7_out" x1="3840.0" y1="209.0" x2="3900.0" y2="209.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o2_s1_i0" data-to="o2_s1_op" x1="550" y1="557.0" x2="610.0" y2="557.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o2_s1_op" data-to="o2_s1_out" x1="790.0" y1="557.0" x2="850.0" y2="557.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o2_s1_out" data-to="o2_s2_op" x1="1020.0" y1="557.0" x2="1080.0" y2="557.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o2_s2_op" data-to="o2_s2_out" x1="1260.0" y1="557.0" x2="1320.0" y2="557.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o2_s2_out" data-to="o2_s3_op" x1="1490.0" y1="557.0" x2="1550.0" y2="557.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o2_s3_op" data-to="o2_s3_out" x1="1730.0" y1="557.0" x2="1790.0" y2="557.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o2_s3_out" data-to="o2_s4_op" x1="1960.0" y1="557.0" x2="2020.0" y2="557.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o2_s4_op" data-to="o2_s4_out" x1="2200.0" y1="557.0" x2="2260.0" y2="557.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o2_s4_out" data-to="o2_s5_op" x1="2430.0" y1="557.0" x2="2490.0" y2="557.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o2_s5_op" data-to="o2_s5_out" x1="2670.0" y1="557.0" x2="2730.0" y2="557.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o2_s5_out" data-to="o2_s6_op" x1="2900.0" y1="557.0" x2="2960.0" y2="557.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <path class="edge-line" data-from="o2_s3_out" data-to="o2_s6_op" d="M1875.0,525.0 Q2462.5,231.25 3050.0,526.0" fill="none" stroke="#3D8B3D" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#mb_arrow_green)"/>
+    <line class="edge-line" data-from="o2_s6_op" data-to="o2_s6_out" x1="3140.0" y1="557.0" x2="3200.0" y2="557.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o2_s6_out" data-to="o2_s7_op" x1="3370.0" y1="557.0" x2="3430.0" y2="557.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <path class="edge-line" data-from="o2_s3_out" data-to="o2_s7_op" d="M1875.0,525.0 Q2697.5,113.75 3520.0,526.0" fill="none" stroke="#3D8B3D" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#mb_arrow_green)"/>
+    <line class="edge-line" data-from="o2_s7_op" data-to="o2_s7_out" x1="3610.0" y1="557.0" x2="3670.0" y2="557.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o2_s7_out" data-to="o2_s8_op" x1="3840.0" y1="557.0" x2="3900.0" y2="557.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <path class="edge-line" data-from="o2_s3_out" data-to="o2_s8_op" d="M1875.0,525.0 Q2932.5,-3.75 3990.0,526.0" fill="none" stroke="#3D8B3D" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#mb_arrow_green)"/>
+    <line class="edge-line" data-from="o2_s8_op" data-to="o2_s8_out" x1="4080.0" y1="557.0" x2="4140.0" y2="557.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o3_s1_i0" data-to="o3_s1_op" x1="550" y1="905.0" x2="610.0" y2="905.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o3_s1_op" data-to="o3_s1_out" x1="790.0" y1="905.0" x2="850.0" y2="905.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o3_s1_out" data-to="o3_s2_op" x1="1020.0" y1="905.0" x2="1080.0" y2="905.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o3_s2_op" data-to="o3_s2_out" x1="1260.0" y1="905.0" x2="1320.0" y2="905.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o3_s2_out" data-to="o3_s3_op" x1="1490.0" y1="905.0" x2="1550.0" y2="905.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o3_s3_op" data-to="o3_s3_out" x1="1730.0" y1="905.0" x2="1790.0" y2="905.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o3_s3_out" data-to="o3_s4_op" x1="1960.0" y1="905.0" x2="2020.0" y2="905.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o3_s4_op" data-to="o3_s4_out" x1="2200.0" y1="905.0" x2="2260.0" y2="905.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o3_s4_out" data-to="o3_s5_op" x1="2430.0" y1="905.0" x2="2490.0" y2="905.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <path class="edge-line" data-from="o3_s3_out" data-to="o3_s5_op" d="M1875.0,873.0 Q2227.5,696.75 2580.0,874.0" fill="none" stroke="#3D8B3D" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#mb_arrow_green)"/>
+    <line class="edge-line" data-from="o3_s5_op" data-to="o3_s5_out" x1="2670.0" y1="905.0" x2="2730.0" y2="905.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o3_s5_out" data-to="o3_s6_op" x1="2900.0" y1="905.0" x2="2960.0" y2="905.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <path class="edge-line" data-from="o3_s2_out" data-to="o3_s6_op" d="M1405.0,873.0 Q2227.5,461.75 3050.0,874.0" fill="none" stroke="#3D8B3D" stroke-width="2" stroke-dasharray="6,3" marker-end="url(#mb_arrow_green)"/>
+    <line class="edge-line" data-from="o3_s6_op" data-to="o3_s6_out" x1="3140.0" y1="905.0" x2="3200.0" y2="905.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <g class="node-box" data-nid="o1_s1_i0" onclick="showPopup('o1_s1_i0')" onmouseenter="hlNode('o1_s1_i0')" onmouseleave="ulNode()">
+      <ellipse cx="465" cy="209.0" rx="85" ry="32" fill="#6BA3D6" stroke="#2F74B5" stroke-width="1.5" data-os="#2F74B5"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="465" y="202.6">PM2.5_Annual_C</tspan><tspan x="465" y="219.4">alifornia_2019</tspan></text>
+    </g>
+    <g class="node-box" data-nid="o1_s1_op" onclick="showPopup('o1_s1_op')" onmouseenter="hlNode('o1_s1_op')" onmouseleave="ulNode()">
+      <rect x="610.0" y="178.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2" data-os="#C4A030"/>
+      <text x="700.0" y="213.0" text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333">row_filter</text>
+    </g>
+    <g class="node-box" data-nid="o1_s1_out" onclick="showPopup('o1_s1_out')" onmouseenter="hlNode('o1_s1_out')" onmouseleave="ulNode()">
+      <ellipse cx="935.0" cy="209.0" rx="85" ry="32" fill="#6BB56A" stroke="#3D8B3D" stroke-width="1.5" data-os="#3D8B3D"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="935.0" y="202.6">pm25_2019_annu</tspan><tspan x="935.0" y="219.4">al_records.csv</tspan></text>
+    </g>
+    <g class="node-box" data-nid="o1_s2_op" onclick="showPopup('o1_s2_op')" onmouseenter="hlNode('o1_s2_op')" onmouseleave="ulNode()">
+      <rect x="1080.0" y="178.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2" data-os="#C4A030"/>
+      <text x="1170.0" y="213.0" text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333">derive_column</text>
+    </g>
+    <g class="node-box" data-nid="o1_s2_out" onclick="showPopup('o1_s2_out')" onmouseenter="hlNode('o1_s2_out')" onmouseleave="ulNode()">
+      <ellipse cx="1405.0" cy="209.0" rx="85" ry="32" fill="#6BB56A" stroke="#3D8B3D" stroke-width="1.5" data-os="#3D8B3D"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="1405.0" y="202.6">pm25_2019_wi</tspan><tspan x="1405.0" y="219.4">th_geoid.csv</tspan></text>
+    </g>
+    <g class="node-box" data-nid="o1_s3_op" onclick="showPopup('o1_s3_op')" onmouseenter="hlNode('o1_s3_op')" onmouseleave="ulNode()">
+      <rect x="1550.0" y="178.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2" data-os="#C4A030"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333"><tspan x="1640.0" y="202.6">groupby_aggregat</tspan><tspan x="1640.0" y="219.4">e_mean_and_count</tspan></text>
+    </g>
+    <g class="node-box" data-nid="o1_s3_out" onclick="showPopup('o1_s3_out')" onmouseenter="hlNode('o1_s3_out')" onmouseleave="ulNode()">
+      <ellipse cx="1875.0" cy="209.0" rx="85" ry="32" fill="#6BB56A" stroke="#3D8B3D" stroke-width="1.5" data-os="#3D8B3D"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="1875.0" y="202.6">pm25_count</tspan><tspan x="1875.0" y="219.4">y_2019.csv</tspan></text>
+    </g>
+    <g class="node-box" data-nid="o1_s4_i0" onclick="showPopup('o1_s4_i0')" onmouseenter="hlNode('o1_s4_i0')" onmouseleave="ulNode()">
+      <ellipse cx="2105.0" cy="209.0" rx="85" ry="32" fill="#6BA3D6" stroke="#2F74B5" stroke-width="1.5" data-os="#2F74B5"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="2105.0" y="202.6">california_c</tspan><tspan x="2105.0" y="219.4">ounties_2019</tspan></text>
+    </g>
+    <g class="node-box" data-nid="o1_s4_op" onclick="showPopup('o1_s4_op')" onmouseenter="hlNode('o1_s4_op')" onmouseleave="ulNode()">
+      <rect x="2250.0" y="178.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2" data-os="#C4A030"/>
+      <text x="2340.0" y="213.0" text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333">attribute_join</text>
+    </g>
+    <g class="node-box" data-nid="o1_s4_out" onclick="showPopup('o1_s4_out')" onmouseenter="hlNode('o1_s4_out')" onmouseleave="ulNode()">
+      <ellipse cx="2575.0" cy="209.0" rx="85" ry="32" fill="#6BB56A" stroke="#3D8B3D" stroke-width="1.5" data-os="#3D8B3D"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="2575.0" y="202.6">counties_pm</tspan><tspan x="2575.0" y="219.4">25_2019.gpkg</tspan></text>
+    </g>
+    <g class="node-box" data-nid="o1_s5_op" onclick="showPopup('o1_s5_op')" onmouseenter="hlNode('o1_s5_op')" onmouseleave="ulNode()">
+      <rect x="2720.0" y="178.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2" data-os="#C4A030"/>
+      <text x="2810.0" y="213.0" text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333">derive_column</text>
+    </g>
+    <g class="node-box" data-nid="o1_s5_out" onclick="showPopup('o1_s5_out')" onmouseenter="hlNode('o1_s5_out')" onmouseleave="ulNode()">
+      <ellipse cx="3045.0" cy="209.0" rx="85" ry="32" fill="#6BB56A" stroke="#3D8B3D" stroke-width="1.5" data-os="#3D8B3D"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="3045.0" y="202.6">counties_pm25</tspan><tspan x="3045.0" y="219.4">_2019_qc.gpkg</tspan></text>
+    </g>
+    <g class="node-box" data-nid="o1_s6_op" onclick="showPopup('o1_s6_op')" onmouseenter="hlNode('o1_s6_op')" onmouseleave="ulNode()">
+      <rect x="3190.0" y="178.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2" data-os="#C4A030"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333"><tspan x="3280.0" y="202.6">spatial_weights_</tspan><tspan x="3280.0" y="219.4">queen_contiguity</tspan></text>
+    </g>
+    <g class="node-box" data-nid="o1_s6_out" onclick="showPopup('o1_s6_out')" onmouseenter="hlNode('o1_s6_out')" onmouseleave="ulNode()">
+      <ellipse cx="3515.0" cy="209.0" rx="85" ry="32" fill="#6BB56A" stroke="#3D8B3D" stroke-width="1.5" data-os="#3D8B3D"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="3515.0" y="202.6">ca_county_queen_</tspan><tspan x="3515.0" y="219.4">weights_2019.gpk</tspan></text>
+    </g>
+    <g class="node-box" data-nid="o1_s7_op" onclick="showPopup('o1_s7_op')" onmouseenter="hlNode('o1_s7_op')" onmouseleave="ulNode()">
+      <rect x="3660.0" y="178.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2" data-os="#C4A030"/>
+      <text x="3750.0" y="213.0" text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333">global_morans_I</text>
+    </g>
+    <g class="node-box" data-nid="o1_s7_out" onclick="showPopup('o1_s7_out')" onmouseenter="hlNode('o1_s7_out')" onmouseleave="ulNode()">
+      <ellipse cx="3985.0" cy="209.0" rx="90" ry="35" fill="#6BB56A" stroke="#3D8B3D" stroke-width="2.5" data-os="#3D8B3D"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="3985.0" y="202.6">pm25_global_mo</tspan><tspan x="3985.0" y="219.4">ransI_2019.csv</tspan></text>
+    </g>
+    <g class="node-box" data-nid="o2_s1_i0" onclick="showPopup('o2_s1_i0')" onmouseenter="hlNode('o2_s1_i0')" onmouseleave="ulNode()">
+      <ellipse cx="465" cy="557.0" rx="85" ry="32" fill="#6BA3D6" stroke="#2F74B5" stroke-width="1.5" data-os="#2F74B5"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="465" y="550.6">California_Cou</tspan><tspan x="465" y="567.4">nties_Gini_2019</tspan></text>
+    </g>
+    <g class="node-box" data-nid="o2_s1_op" onclick="showPopup('o2_s1_op')" onmouseenter="hlNode('o2_s1_op')" onmouseleave="ulNode()">
+      <rect x="610.0" y="526.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2" data-os="#C4A030"/>
+      <text x="700.0" y="561.0" text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333">row_filter</text>
+    </g>
+    <g class="node-box" data-nid="o2_s1_out" onclick="showPopup('o2_s1_out')" onmouseenter="hlNode('o2_s1_out')" onmouseleave="ulNode()">
+      <ellipse cx="935.0" cy="557.0" rx="85" ry="32" fill="#6BB56A" stroke="#3D8B3D" stroke-width="1.5" data-os="#3D8B3D"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="935.0" y="550.6">gini_2019_f</tspan><tspan x="935.0" y="567.4">iltered.csv</tspan></text>
+    </g>
+    <g class="node-box" data-nid="o2_s2_op" onclick="showPopup('o2_s2_op')" onmouseenter="hlNode('o2_s2_op')" onmouseleave="ulNode()">
+      <rect x="1080.0" y="526.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2" data-os="#C4A030"/>
+      <text x="1170.0" y="561.0" text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333">derive_column</text>
+    </g>
+    <g class="node-box" data-nid="o2_s2_out" onclick="showPopup('o2_s2_out')" onmouseenter="hlNode('o2_s2_out')" onmouseleave="ulNode()">
+      <ellipse cx="1405.0" cy="557.0" rx="85" ry="32" fill="#6BB56A" stroke="#3D8B3D" stroke-width="1.5" data-os="#3D8B3D"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="1405.0" y="550.6">gini_2019_wi</tspan><tspan x="1405.0" y="567.4">th_geoid.csv</tspan></text>
+    </g>
+    <g class="node-box" data-nid="o2_s3_op" onclick="showPopup('o2_s3_op')" onmouseenter="hlNode('o2_s3_op')" onmouseleave="ulNode()">
+      <rect x="1550.0" y="526.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2" data-os="#C4A030"/>
+      <text x="1640.0" y="561.0" text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333">attribute_join</text>
+    </g>
+    <g class="node-box" data-nid="o2_s3_out" onclick="showPopup('o2_s3_out')" onmouseenter="hlNode('o2_s3_out')" onmouseleave="ulNode()">
+      <ellipse cx="1875.0" cy="557.0" rx="85" ry="32" fill="#6BB56A" stroke="#3D8B3D" stroke-width="1.5" data-os="#3D8B3D"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="1875.0" y="550.6">counties_pm25_</tspan><tspan x="1875.0" y="567.4">gini_2019.gpkg</tspan></text>
+    </g>
+    <g class="node-box" data-nid="o2_s4_op" onclick="showPopup('o2_s4_op')" onmouseenter="hlNode('o2_s4_op')" onmouseleave="ulNode()">
+      <rect x="2020.0" y="526.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2" data-os="#C4A030"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333"><tspan x="2110.0" y="550.6">ordinary_least_squ</tspan><tspan x="2110.0" y="567.4">res_append_residua</tspan></text>
+    </g>
+    <g class="node-box" data-nid="o2_s4_out" onclick="showPopup('o2_s4_out')" onmouseenter="hlNode('o2_s4_out')" onmouseleave="ulNode()">
+      <ellipse cx="2345.0" cy="557.0" rx="85" ry="32" fill="#6BB56A" stroke="#3D8B3D" stroke-width="1.5" data-os="#3D8B3D"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="2345.0" y="550.6">counties_pm25_gi</tspan><tspan x="2345.0" y="567.4">_2019_olsresid.g</tspan></text>
+    </g>
+    <g class="node-box" data-nid="o2_s5_op" onclick="showPopup('o2_s5_op')" onmouseenter="hlNode('o2_s5_op')" onmouseleave="ulNode()">
+      <rect x="2490.0" y="526.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2" data-os="#C4A030"/>
+      <text x="2580.0" y="561.0" text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333">global_morans_I</text>
+    </g>
+    <g class="node-box" data-nid="o2_s5_out" onclick="showPopup('o2_s5_out')" onmouseenter="hlNode('o2_s5_out')" onmouseleave="ulNode()">
+      <ellipse cx="2815.0" cy="557.0" rx="85" ry="32" fill="#6BB56A" stroke="#3D8B3D" stroke-width="1.5" data-os="#3D8B3D"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="2815.0" y="550.6">ols_residuals_m</tspan><tspan x="2815.0" y="567.4">oransI_2019.csv</tspan></text>
+    </g>
+    <g class="node-box" data-nid="o2_s6_op" onclick="showPopup('o2_s6_op')" onmouseenter="hlNode('o2_s6_op')" onmouseleave="ulNode()">
+      <rect x="2960.0" y="526.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2" data-os="#C4A030"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333"><tspan x="3050.0" y="550.6">spatial_lag_model_</tspan><tspan x="3050.0" y="567.4">maximum_likelihood</tspan></text>
+    </g>
+    <g class="node-box" data-nid="o2_s6_out" onclick="showPopup('o2_s6_out')" onmouseenter="hlNode('o2_s6_out')" onmouseleave="ulNode()">
+      <ellipse cx="3285.0" cy="557.0" rx="85" ry="32" fill="#6BB56A" stroke="#3D8B3D" stroke-width="1.5" data-os="#3D8B3D"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="3285.0" y="550.6">spatial_lag_pm25</tspan><tspan x="3285.0" y="567.4">_on_gini_2019.cs</tspan></text>
+    </g>
+    <g class="node-box" data-nid="o2_s7_op" onclick="showPopup('o2_s7_op')" onmouseenter="hlNode('o2_s7_op')" onmouseleave="ulNode()">
+      <rect x="3430.0" y="526.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2" data-os="#C4A030"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333"><tspan x="3520.0" y="550.6">spatial_w</tspan><tspan x="3520.0" y="567.4">eights_knn</tspan></text>
+    </g>
+    <g class="node-box" data-nid="o2_s7_out" onclick="showPopup('o2_s7_out')" onmouseenter="hlNode('o2_s7_out')" onmouseleave="ulNode()">
+      <ellipse cx="3755.0" cy="557.0" rx="85" ry="32" fill="#6BB56A" stroke="#3D8B3D" stroke-width="1.5" data-os="#3D8B3D"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="3755.0" y="550.6">ca_county_knn_w</tspan><tspan x="3755.0" y="567.4">eights_2019.gpkg</tspan></text>
+    </g>
+    <g class="node-box" data-nid="o2_s8_op" onclick="showPopup('o2_s8_op')" onmouseenter="hlNode('o2_s8_op')" onmouseleave="ulNode()">
+      <rect x="3900.0" y="526.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2" data-os="#C4A030"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333"><tspan x="3990.0" y="550.6">spatial_error_mode</tspan><tspan x="3990.0" y="567.4">_maximum_likelihoo</tspan></text>
+    </g>
+    <g class="node-box" data-nid="o2_s8_out" onclick="showPopup('o2_s8_out')" onmouseenter="hlNode('o2_s8_out')" onmouseleave="ulNode()">
+      <ellipse cx="4225.0" cy="557.0" rx="90" ry="35" fill="#6BB56A" stroke="#3D8B3D" stroke-width="2.5" data-os="#3D8B3D"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="4225.0" y="550.6">spatial_error_pm</tspan><tspan x="4225.0" y="567.4">5_on_gini_2019.c</tspan></text>
+    </g>
+    <g class="node-box" data-nid="o3_s1_i0" onclick="showPopup('o3_s1_i0')" onmouseenter="hlNode('o3_s1_i0')" onmouseleave="ulNode()">
+      <ellipse cx="465" cy="905.0" rx="85" ry="32" fill="#6BA3D6" stroke="#2F74B5" stroke-width="1.5" data-os="#2F74B5"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="465" y="898.6">California_Urban</tspan><tspan x="465" y="915.4">l_Classification</tspan></text>
+    </g>
+    <g class="node-box" data-nid="o3_s1_op" onclick="showPopup('o3_s1_op')" onmouseenter="hlNode('o3_s1_op')" onmouseleave="ulNode()">
+      <rect x="610.0" y="874.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2" data-os="#C4A030"/>
+      <text x="700.0" y="909.0" text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333">derive_column</text>
+    </g>
+    <g class="node-box" data-nid="o3_s1_out" onclick="showPopup('o3_s1_out')" onmouseenter="hlNode('o3_s1_out')" onmouseleave="ulNode()">
+      <ellipse cx="935.0" cy="905.0" rx="85" ry="32" fill="#6BB56A" stroke="#3D8B3D" stroke-width="1.5" data-os="#3D8B3D"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="935.0" y="898.6">urban_rural_w</tspan><tspan x="935.0" y="915.4">ith_geoid.csv</tspan></text>
+    </g>
+    <g class="node-box" data-nid="o3_s2_op" onclick="showPopup('o3_s2_op')" onmouseenter="hlNode('o3_s2_op')" onmouseleave="ulNode()">
+      <rect x="1080.0" y="874.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2" data-os="#C4A030"/>
+      <text x="1170.0" y="909.0" text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333">attribute_join</text>
+    </g>
+    <g class="node-box" data-nid="o3_s2_out" onclick="showPopup('o3_s2_out')" onmouseenter="hlNode('o3_s2_out')" onmouseleave="ulNode()">
+      <ellipse cx="1405.0" cy="905.0" rx="85" ry="32" fill="#6BB56A" stroke="#3D8B3D" stroke-width="1.5" data-os="#3D8B3D"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="1405.0" y="898.6">counties_pm25_gi</tspan><tspan x="1405.0" y="915.4">urbanrural_2019.</tspan></text>
+    </g>
+    <g class="node-box" data-nid="o3_s3_op" onclick="showPopup('o3_s3_op')" onmouseenter="hlNode('o3_s3_op')" onmouseleave="ulNode()">
+      <rect x="1550.0" y="874.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2" data-os="#C4A030"/>
+      <text x="1640.0" y="909.0" text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333">derive_column</text>
+    </g>
+    <g class="node-box" data-nid="o3_s3_out" onclick="showPopup('o3_s3_out')" onmouseenter="hlNode('o3_s3_out')" onmouseleave="ulNode()">
+      <ellipse cx="1875.0" cy="905.0" rx="85" ry="32" fill="#6BB56A" stroke="#3D8B3D" stroke-width="1.5" data-os="#3D8B3D"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="1875.0" y="898.6">counties_pm25_gi</tspan><tspan x="1875.0" y="915.4">ural_interaction</tspan></text>
+    </g>
+    <g class="node-box" data-nid="o3_s4_op" onclick="showPopup('o3_s4_op')" onmouseenter="hlNode('o3_s4_op')" onmouseleave="ulNode()">
+      <rect x="2020.0" y="874.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2" data-os="#C4A030"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333"><tspan x="2110.0" y="898.6">ordinary_least_squ</tspan><tspan x="2110.0" y="915.4">res_with_interacti</tspan></text>
+    </g>
+    <g class="node-box" data-nid="o3_s4_out" onclick="showPopup('o3_s4_out')" onmouseenter="hlNode('o3_s4_out')" onmouseleave="ulNode()">
+      <ellipse cx="2345.0" cy="905.0" rx="85" ry="32" fill="#6BB56A" stroke="#3D8B3D" stroke-width="1.5" data-os="#3D8B3D"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="2345.0" y="898.6">ols_pm25_gini_me</tspan><tspan x="2345.0" y="915.4">interaction_2019</tspan></text>
+    </g>
+    <g class="node-box" data-nid="o3_s5_op" onclick="showPopup('o3_s5_op')" onmouseenter="hlNode('o3_s5_op')" onmouseleave="ulNode()">
+      <rect x="2490.0" y="874.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2" data-os="#C4A030"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333"><tspan x="2580.0" y="898.6">spatial_lag_model_</tspan><tspan x="2580.0" y="915.4">likelihood_with_in</tspan></text>
+    </g>
+    <g class="node-box" data-nid="o3_s5_out" onclick="showPopup('o3_s5_out')" onmouseenter="hlNode('o3_s5_out')" onmouseleave="ulNode()">
+      <ellipse cx="2815.0" cy="905.0" rx="85" ry="32" fill="#6BB56A" stroke="#3D8B3D" stroke-width="1.5" data-os="#3D8B3D"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="2815.0" y="898.6">spatial_lag_pm25</tspan><tspan x="2815.0" y="915.4">tro_interaction_</tspan></text>
+    </g>
+    <g class="node-box" data-nid="o3_s6_op" onclick="showPopup('o3_s6_op')" onmouseenter="hlNode('o3_s6_op')" onmouseleave="ulNode()">
+      <rect x="2960.0" y="874.0" width="180" height="62" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2" data-os="#C4A030"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333"><tspan x="3050.0" y="898.6">groupwise_spearma</tspan><tspan x="3050.0" y="915.4">n_rank_correlation</tspan></text>
+    </g>
+    <g class="node-box" data-nid="o3_s6_out" onclick="showPopup('o3_s6_out')" onmouseenter="hlNode('o3_s6_out')" onmouseleave="ulNode()">
+      <ellipse cx="3285.0" cy="905.0" rx="90" ry="35" fill="#6BB56A" stroke="#3D8B3D" stroke-width="2.5" data-os="#3D8B3D"/>
+      <text text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white"><tspan x="3285.0" y="898.6">pm25_gini_spearm</tspan><tspan x="3285.0" y="915.4">_by_metro_2019.c</tspan></text>
+    </g>
+    <path class="edge-line" data-from="o1_s5_out" data-to="o2_s3_op" d="M3045.0,241.0 C3045.0,383.5 1640.0,486.0 1640.0,526.0" fill="none" stroke="#E67E22" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#mb_arrow_orange)"/>
+    <path class="edge-line" data-from="o1_s6_out" data-to="o2_s5_op" d="M3515.0,241.0 C3515.0,383.5 2580.0,486.0 2580.0,526.0" fill="none" stroke="#E67E22" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#mb_arrow_orange)"/>
+    <path class="edge-line" data-from="o1_s6_out" data-to="o2_s6_op" d="M3515.0,241.0 C3515.0,383.5 3050.0,486.0 3050.0,526.0" fill="none" stroke="#E67E22" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#mb_arrow_orange)"/>
+    <path class="edge-line" data-from="o2_s3_out" data-to="o3_s2_op" d="M1875.0,589.0 C1875.0,731.5 1170.0,834.0 1170.0,874.0" fill="none" stroke="#E67E22" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#mb_arrow_orange)"/>
+    <path class="edge-line" data-from="o1_s6_out" data-to="o3_s5_op" d="M3515.0,241.0 C3515.0,557.5 2580.0,834.0 2580.0,874.0" fill="none" stroke="#E67E22" stroke-width="2" stroke-dasharray="8,4" marker-end="url(#mb_arrow_orange)"/>
+    <line class="edge-line" data-from="stage_0" data-to="stage_1" x1="4615.0" y1="557.0" x2="4670.0" y2="557.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="stage_1" data-to="stage_2" x1="4860.0" y1="557.0" x2="4915.0" y2="557.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="stage_2" data-to="stage_3" x1="5105.0" y1="557.0" x2="5160.0" y2="557.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <path class="edge-line" data-from="o1_s7_out" data-to="stage_0" d="M4070.0,209.0 C4247.5,209.0 4247.5,557.0 4425.0,557.0" fill="none" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <line class="edge-line" data-from="o2_s8_out" data-to="stage_0" x1="4310.0" y1="557.0" x2="4425.0" y2="557.0" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <path class="edge-line" data-from="o3_s6_out" data-to="stage_0" d="M3370.0,905.0 C3897.5,905.0 3897.5,557.0 4425.0,557.0" fill="none" stroke="#555" stroke-width="2" marker-end="url(#mb_arrow)"/>
+    <g class="node-box" data-nid="stage_0" onclick="showPopup('stage_0')" onmouseenter="hlNode('stage_0')" onmouseleave="ulNode()">
+      <rect x="4425.0" y="527.0" width="190" height="60" rx="5" fill="#F5D576" stroke="#C4A030" stroke-width="2" data-os="#C4A030"/>
+      <text x="4520.0" y="561.0" text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="#333">Result Collation</text>
+    </g>
+    <g class="node-box" data-nid="stage_1" onclick="showPopup('stage_1')" onmouseenter="hlNode('stage_1')" onmouseleave="ulNode()">
+      <rect x="4670.0" y="527.0" width="190" height="60" rx="5" fill="#8E44AD" stroke="#6C3483" stroke-width="2" data-os="#6C3483"/>
+      <text x="4765.0" y="561.0" text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white">Results Analysis</text>
+    </g>
+    <g class="node-box" data-nid="stage_2" onclick="showPopup('stage_2')" onmouseenter="hlNode('stage_2')" onmouseleave="ulNode()">
+      <rect x="4915.0" y="527.0" width="190" height="60" rx="5" fill="#8E44AD" stroke="#6C3483" stroke-width="2" data-os="#6C3483"/>
+      <text x="5010.0" y="561.0" text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white">Discussion of Results</text>
+    </g>
+    <g class="node-box" data-nid="stage_3" onclick="showPopup('stage_3')" onmouseenter="hlNode('stage_3')" onmouseleave="ulNode()">
+      <ellipse cx="5250.0" cy="557.0" rx="90" ry="32" fill="#C0392B" stroke="#922B21" stroke-width="2.5" data-os="#922B21"/>
+      <text x="5250.0" y="561.0" text-anchor="middle" font-size="14" font-weight="bold" font-family="Segoe UI, Arial, sans-serif" fill="white">Manuscript</text>
+    </g>
+    </g>
+  </svg>
+</div>
+
+<div class="node-tooltip" id="nodeTooltip"></div>
+<div class="popup-overlay" id="popupOverlay" onclick="closePopup(event)">
+  <div class="popup-box" onclick="event.stopPropagation()">
+    <button class="popup-close" onclick="closePopup()">&times;</button>
+    <div id="popupContent"></div>
+  </div>
+</div>
+
+<script>
+const details = {"o1_s1_i0": "<h3>Input Data</h3><p><b>Name:</b> PM2.5_Annual_California_2019</p>", "o1_s1_op": "<h3>Step 1.1: row_filter</h3><p><b>Operation Type:</b> data_wrangling</p><p><b>Inputs:</b> PM2.5_Annual_California_2019</p><p><b>Output:</b> pm25_2019_annual_records.csv</p><p><b>Description:</b> Filter `PM2.5_Annual_California_2019` to rows where `year == 2019` and `pollutant_standard == &#x27;PM25 Annual 2006&#x27;`, keeping only `state_code`, `county_code`, `site_number`, and `arithmetic_mean`.</p>", "o1_s1_out": "<h3>Output Data</h3><p><b>Name:</b> pm25_2019_annual_records.csv</p>", "o1_s2_op": "<h3>Step 1.2: derive_column</h3><p><b>Operation Type:</b> data_wrangling</p><p><b>Inputs:</b> pm25_2019_annual_records.csv</p><p><b>Output:</b> pm25_2019_with_geoid.csv</p><p><b>Description:</b> Create county `GEOID` as a 5-character string by concatenating zero-padded `state_code` (2 digits) and zero-padded `county_code` (3 digits).</p>", "o1_s2_out": "<h3>Output Data</h3><p><b>Name:</b> pm25_2019_with_geoid.csv</p>", "o1_s3_op": "<h3>Step 1.3: groupby_aggregate_mean_and_count</h3><p><b>Operation Type:</b> aggregation</p><p><b>Inputs:</b> pm25_2019_with_geoid.csv</p><p><b>Output:</b> pm25_county_2019.csv</p><p><b>Description:</b> Group by `GEOID` and compute `pm25_mean_2019 = mean(arithmetic_mean)` and `pm25_site_count_2019 = count(site_number)`.</p><p><b>Expected Output:</b> A county-level PM2.5 table with `GEOID`, `pm25_mean_2019`, and `pm25_site_count_2019`.</p>", "o1_s3_out": "<h3>Output Data</h3><p><b>Name:</b> pm25_county_2019.csv</p><p><b>Description:</b> A county-level PM2.5 table with `GEOID`, `pm25_mean_2019`, and `pm25_site_count_2019`.</p>", "o1_s4_i0": "<h3>Input Data</h3><p><b>Name:</b> california_counties_2019</p>", "o1_s4_op": "<h3>Step 1.4: attribute_join</h3><p><b>Operation Type:</b> geoprocessing</p><p><b>Inputs:</b> california_counties_2019, pm25_county_2019.csv</p><p><b>Output:</b> counties_pm25_2019.gpkg</p><p><b>Description:</b> Left-join `pm25_county_2019.csv` to `california_counties_2019` on `GEOID` to attach `pm25_mean_2019` and `pm25_site_count_2019` to county polygons.</p><p><b>Expected Output:</b> County polygons with `pm25_mean_2019` and `pm25_site_count_2019` attached.</p>", "o1_s4_out": "<h3>Output Data</h3><p><b>Name:</b> counties_pm25_2019.gpkg</p><p><b>Description:</b> County polygons with `pm25_mean_2019` and `pm25_site_count_2019` attached.</p>", "o1_s5_op": "<h3>Step 1.5: derive_column</h3><p><b>Operation Type:</b> data_wrangling</p><p><b>Inputs:</b> counties_pm25_2019.gpkg</p><p><b>Output:</b> counties_pm25_2019_qc.gpkg</p><p><b>Description:</b> Create `pm25_missing_2019` as a boolean indicator where `pm25_mean_2019` is null to identify counties with no monitor-derived PM2.5 summary in 2019.</p>", "o1_s5_out": "<h3>Output Data</h3><p><b>Name:</b> counties_pm25_2019_qc.gpkg</p>", "o1_s6_op": "<h3>Step 1.6: spatial_weights_queen_contiguity</h3><p><b>Operation Type:</b> geoprocessing</p><p><b>Inputs:</b> counties_pm25_2019_qc.gpkg</p><p><b>Output:</b> ca_county_queen_weights_2019.gpkg</p><p><b>Description:</b> Construct Queen contiguity spatial weights from county `geometry`, keyed by `GEOID`.</p>", "o1_s6_out": "<h3>Output Data</h3><p><b>Name:</b> ca_county_queen_weights_2019.gpkg</p>", "o1_s7_op": "<h3>Step 1.7: global_morans_I</h3><p><b>Operation Type:</b> statistical</p><p><b>Inputs:</b> counties_pm25_2019_qc.gpkg, ca_county_queen_weights_2019.gpkg</p><p><b>Output:</b> pm25_global_moransI_2019.csv</p><p><b>Description:</b> Compute global Moran\u2019s I for `pm25_mean_2019` using the Queen contiguity weights.</p><p><b>Expected Output:</b> A table with Moran\u2019s I, expected I, variance, z-score, and p-value for `pm25_mean_2019` in 2019.</p>", "o1_s7_out": "<h3>Output Data</h3><p><b>Name:</b> pm25_global_moransI_2019.csv</p><p><b>Description:</b> A table with Moran\u2019s I, expected I, variance, z-score, and p-value for `pm25_mean_2019` in 2019.</p>", "o2_s1_i0": "<h3>Input Data</h3><p><b>Name:</b> California_Counties_Gini_2019</p>", "o2_s1_op": "<h3>Step 2.1: row_filter</h3><p><b>Operation Type:</b> data_wrangling</p><p><b>Inputs:</b> California_Counties_Gini_2019</p><p><b>Output:</b> gini_2019_filtered.csv</p><p><b>Description:</b> Filter `California_Counties_Gini_2019` to rows where `year == 2019`, keeping only `state_fips`, `county_fips`, and `B19083_001E:Gini Index`.</p>", "o2_s1_out": "<h3>Output Data</h3><p><b>Name:</b> gini_2019_filtered.csv</p>", "o2_s2_op": "<h3>Step 2.2: derive_column</h3><p><b>Operation Type:</b> data_wrangling</p><p><b>Inputs:</b> gini_2019_filtered.csv</p><p><b>Output:</b> gini_2019_with_geoid.csv</p><p><b>Description:</b> Create county `GEOID` as a 5-character string by concatenating zero-padded `state_fips` (2 digits) and zero-padded `county_fips` (3 digits), and retain `GEOID` and `B19083_001E:Gini Index`.</p>", "o2_s2_out": "<h3>Output Data</h3><p><b>Name:</b> gini_2019_with_geoid.csv</p>", "o2_s3_op": "<h3>Step 2.3: attribute_join</h3><p><b>Operation Type:</b> geoprocessing</p><p><b>Inputs:</b> counties_pm25_2019_qc.gpkg, gini_2019_with_geoid.csv</p><p><b>Output:</b> counties_pm25_gini_2019.gpkg</p><p><b>Description:</b> Left-join `gini_2019_with_geoid.csv` to `counties_pm25_2019_qc.gpkg` on `GEOID` to attach `B19083_001E:Gini Index` to each county.</p><p><b>Expected Output:</b> County polygons with `pm25_mean_2019` and `B19083_001E:Gini Index` for 2019.</p>", "o2_s3_out": "<h3>Output Data</h3><p><b>Name:</b> counties_pm25_gini_2019.gpkg</p><p><b>Description:</b> County polygons with `pm25_mean_2019` and `B19083_001E:Gini Index` for 2019.</p>", "o2_s4_op": "<h3>Step 2.4: ordinary_least_squares_append_residuals</h3><p><b>Operation Type:</b> statistical</p><p><b>Inputs:</b> counties_pm25_gini_2019.gpkg</p><p><b>Output:</b> counties_pm25_gini_2019_olsresid.gpkg</p><p><b>Description:</b> Fit an OLS model with dependent variable `pm25_mean_2019` and predictor `B19083_001E:Gini Index`, and append model outputs to features as `ols_fitted_pm25` and `ols_residual_pm25` keyed by `GEOID`.</p><p><b>Expected Output:</b> County layer with OLS fitted values (`ols_fitted_pm25`) and residuals (`ols_residual_pm25`) for `pm25_mean_2019`.</p>", "o2_s4_out": "<h3>Output Data</h3><p><b>Name:</b> counties_pm25_gini_2019_olsresid.gpkg</p><p><b>Description:</b> County layer with OLS fitted values (`ols_fitted_pm25`) and residuals (`ols_residual_pm25`) for `pm25_mean_2019`.</p>", "o2_s5_op": "<h3>Step 2.5: global_morans_I</h3><p><b>Operation Type:</b> statistical</p><p><b>Inputs:</b> counties_pm25_gini_2019_olsresid.gpkg, ca_county_queen_weights_2019.gpkg</p><p><b>Output:</b> ols_residuals_moransI_2019.csv</p><p><b>Description:</b> Compute global Moran\u2019s I for `ols_residual_pm25` using the Queen contiguity weights keyed by `GEOID`.</p><p><b>Expected Output:</b> A table with Moran\u2019s I, z-score, and p-value for spatial autocorrelation in OLS residuals.</p>", "o2_s5_out": "<h3>Output Data</h3><p><b>Name:</b> ols_residuals_moransI_2019.csv</p><p><b>Description:</b> A table with Moran\u2019s I, z-score, and p-value for spatial autocorrelation in OLS residuals.</p>", "o2_s6_op": "<h3>Step 2.6: spatial_lag_model_maximum_likelihood</h3><p><b>Operation Type:</b> statistical</p><p><b>Inputs:</b> counties_pm25_gini_2019.gpkg, ca_county_queen_weights_2019.gpkg</p><p><b>Output:</b> spatial_lag_pm25_on_gini_2019.csv</p><p><b>Description:</b> Fit a maximum-likelihood spatial lag (SAR) model with dependent variable `pm25_mean_2019` and predictor `B19083_001E:Gini Index` using the Queen contiguity weights keyed by `GEOID`.</p><p><b>Expected Output:</b> A table of spatial lag model estimates including the `B19083_001E:Gini Index` coefficient, the spatial autoregressive parameter, standard errors, and fit statistics.</p>", "o2_s6_out": "<h3>Output Data</h3><p><b>Name:</b> spatial_lag_pm25_on_gini_2019.csv</p><p><b>Description:</b> A table of spatial lag model estimates including the `B19083_001E:Gini Index` coefficient, the spatial autoregressive parameter, standard errors, and fit statistics.</p>", "o2_s7_op": "<h3>Step 2.7: spatial_weights_knn</h3><p><b>Operation Type:</b> geoprocessing</p><p><b>Inputs:</b> counties_pm25_gini_2019.gpkg</p><p><b>Output:</b> ca_county_knn_weights_2019.gpkg</p><p><b>Description:</b> Construct K-nearest-neighbors (KNN) spatial weights with k=5 from county `geometry` centroids, keyed by `GEOID`.</p>", "o2_s7_out": "<h3>Output Data</h3><p><b>Name:</b> ca_county_knn_weights_2019.gpkg</p>", "o2_s8_op": "<h3>Step 2.8: spatial_error_model_maximum_likelihood</h3><p><b>Operation Type:</b> statistical</p><p><b>Inputs:</b> counties_pm25_gini_2019.gpkg, ca_county_knn_weights_2019.gpkg</p><p><b>Output:</b> spatial_error_pm25_on_gini_2019.csv</p><p><b>Description:</b> Fit a maximum-likelihood spatial error (SEM) model with dependent variable `pm25_mean_2019` and predictor `B19083_001E:Gini Index` using KNN weights (k=5) keyed by `GEOID`.</p><p><b>Expected Output:</b> A table of spatial error model estimates including the `B19083_001E:Gini Index` coefficient, the spatial error parameter, standard errors, and fit statistics.</p>", "o2_s8_out": "<h3>Output Data</h3><p><b>Name:</b> spatial_error_pm25_on_gini_2019.csv</p><p><b>Description:</b> A table of spatial error model estimates including the `B19083_001E:Gini Index` coefficient, the spatial error parameter, standard errors, and fit statistics.</p>", "o3_s1_i0": "<h3>Input Data</h3><p><b>Name:</b> California_UrbanRural_Classification_2019</p>", "o3_s1_op": "<h3>Step 3.1: derive_column</h3><p><b>Operation Type:</b> data_wrangling</p><p><b>Inputs:</b> California_UrbanRural_Classification_2019</p><p><b>Output:</b> urban_rural_with_geoid.csv</p><p><b>Description:</b> Create county `GEOID` as a 5-character string from `FIPSTXT` using zero-padding, and keep `GEOID`, `Metro2013`, `Nonmetro2013`, and `RuralUrbanContinuumCode2013`.</p>", "o3_s1_out": "<h3>Output Data</h3><p><b>Name:</b> urban_rural_with_geoid.csv</p>", "o3_s2_op": "<h3>Step 3.2: attribute_join</h3><p><b>Operation Type:</b> geoprocessing</p><p><b>Inputs:</b> counties_pm25_gini_2019.gpkg, urban_rural_with_geoid.csv</p><p><b>Output:</b> counties_pm25_gini_urbanrural_2019.gpkg</p><p><b>Description:</b> Left-join `urban_rural_with_geoid.csv` to `counties_pm25_gini_2019.gpkg` on `GEOID` to attach `Metro2013` to each county.</p><p><b>Expected Output:</b> County polygons with `pm25_mean_2019`, `B19083_001E:Gini Index`, and `Metro2013`.</p>", "o3_s2_out": "<h3>Output Data</h3><p><b>Name:</b> counties_pm25_gini_urbanrural_2019.gpkg</p><p><b>Description:</b> County polygons with `pm25_mean_2019`, `B19083_001E:Gini Index`, and `Metro2013`.</p>", "o3_s3_op": "<h3>Step 3.3: derive_column</h3><p><b>Operation Type:</b> data_wrangling</p><p><b>Inputs:</b> counties_pm25_gini_urbanrural_2019.gpkg</p><p><b>Output:</b> counties_pm25_gini_urbanrural_interaction_2019.gpkg</p><p><b>Description:</b> Create interaction term `gini_x_metro = (B19083_001E:Gini Index) * Metro2013`.</p>", "o3_s3_out": "<h3>Output Data</h3><p><b>Name:</b> counties_pm25_gini_urbanrural_interaction_2019.gpkg</p>", "o3_s4_op": "<h3>Step 3.4: ordinary_least_squares_with_interaction</h3><p><b>Operation Type:</b> statistical</p><p><b>Inputs:</b> counties_pm25_gini_urbanrural_interaction_2019.gpkg</p><p><b>Output:</b> ols_pm25_gini_metro_interaction_2019.csv</p><p><b>Description:</b> Fit an OLS model with dependent variable `pm25_mean_2019` and predictors `B19083_001E:Gini Index`, `Metro2013`, and `gini_x_metro`, and report coefficient estimates, standard errors, and p-values.</p><p><b>Expected Output:</b> A coefficient table where the `gini_x_metro` term tests whether the `B19083_001E:Gini Index` slope differs by `Metro2013`.</p>", "o3_s4_out": "<h3>Output Data</h3><p><b>Name:</b> ols_pm25_gini_metro_interaction_2019.csv</p><p><b>Description:</b> A coefficient table where the `gini_x_metro` term tests whether the `B19083_001E:Gini Index` slope differs by `Metro2013`.</p>", "o3_s5_op": "<h3>Step 3.5: spatial_lag_model_maximum_likelihood_with_interaction</h3><p><b>Operation Type:</b> statistical</p><p><b>Inputs:</b> counties_pm25_gini_urbanrural_interaction_2019.gpkg, ca_county_queen_weights_2019.gpkg</p><p><b>Output:</b> spatial_lag_pm25_gini_metro_interaction_2019.csv</p><p><b>Description:</b> Fit a maximum-likelihood spatial lag (SAR) model with dependent variable `pm25_mean_2019` and predictors `B19083_001E:Gini Index`, `Metro2013`, and `gini_x_metro` using Queen contiguity weights keyed by `GEOID`.</p><p><b>Expected Output:</b> A spatial lag model coefficient table where `gini_x_metro` quantifies metro effect modification under spatial dependence.</p>", "o3_s5_out": "<h3>Output Data</h3><p><b>Name:</b> spatial_lag_pm25_gini_metro_interaction_2019.csv</p><p><b>Description:</b> A spatial lag model coefficient table where `gini_x_metro` quantifies metro effect modification under spatial dependence.</p>", "o3_s6_op": "<h3>Step 3.6: groupwise_spearman_rank_correlation</h3><p><b>Operation Type:</b> statistical</p><p><b>Inputs:</b> counties_pm25_gini_urbanrural_2019.gpkg</p><p><b>Output:</b> pm25_gini_spearman_by_metro_2019.csv</p><p><b>Description:</b> Compute Spearman rank correlation between `pm25_mean_2019` and `B19083_001E:Gini Index` separately for counties where `Metro2013 == 1` and where `Metro2013 == 0`, reporting correlation and group sample size.</p><p><b>Expected Output:</b> A two-row table of metro vs nonmetro Spearman correlations with sample sizes.</p>", "o3_s6_out": "<h3>Output Data</h3><p><b>Name:</b> pm25_gini_spearman_by_metro_2019.csv</p><p><b>Description:</b> A two-row table of metro vs nonmetro Spearman correlations with sample sizes.</p>", "rq_node": "<h3>Research Question</h3><p>How do spatial inequalities in PM2.5 exposure across California counties vary with income inequality (Gini) in 2019, and does the spatial relationship vary by urban\u2013rural classification?</p>", "stage_0": "<h3>Result Collation</h3><p>Collate outputs and results from all objectives into a unified dataset for analysis.</p>", "stage_1": "<h3>Results Analysis</h3><p>Perform statistical analysis, validation, and interpretation of the collated results.</p>", "stage_2": "<h3>Discussion of Results</h3><p>Synthesise findings, compare with hypotheses, and discuss implications.</p>", "stage_3": "<h3>Manuscript</h3><p>Final research deliverable: paper, report, or document combining all findings.</p>", "obj_title_1": "<h3>Objective 1</h3><p><b>Title:</b> Assess how PM2.5 exposure varies across California counties in 2019 and whether county-level PM2.5 is spatially clustered</p><p><b>Hypothesis:</b> County-level annual PM2.5 exposure in 2019 is spatially clustered (positive global Moran\u2019s I) rather than randomly distributed across California.</p><p><b>Steps:</b></p><ol><li><b>row_filter</b>: Filter `PM2.5_Annual_California_2019` to rows where `year == 2019` and `pollutant_standard == &#x27;PM25 Annual 2006&#x27;`, keeping only `state_code`, `county_code`, `site_number`, and `arithmetic_mean`.</li><li><b>derive_column</b>: Create county `GEOID` as a 5-character string by concatenating zero-padded `state_code` (2 digits) and zero-padded `county_code` (3 digits).</li><li><b>groupby_aggregate_mean_and_count</b>: Group by `GEOID` and compute `pm25_mean_2019 = mean(arithmetic_mean)` and `pm25_site_count_2019 = count(site_number)`.</li><li><b>attribute_join</b>: Left-join `pm25_county_2019.csv` to `california_counties_2019` on `GEOID` to attach `pm25_mean_2019` and `pm25_site_count_2019` to county polygons.</li><li><b>derive_column</b>: Create `pm25_missing_2019` as a boolean indicator where `pm25_mean_2019` is null to identify counties with no monitor-derived PM2.5 summary in 2019.</li><li><b>spatial_weights_queen_contiguity</b>: Construct Queen contiguity spatial weights from county `geometry`, keyed by `GEOID`.</li><li><b>global_morans_I</b>: Compute global Moran\u2019s I for `pm25_mean_2019` using the Queen contiguity weights.</li></ol>", "obj_title_2": "<h3>Objective 2</h3><p><b>Title:</b> Estimate the county-level association between PM2.5 exposure and income inequality (Gini) in 2019 and test whether residual spatial autocorrelation remains</p><p><b>Hypothesis:</b> Higher county income inequality (`B19083_001E:Gini Index`) is associated with higher county mean PM2.5 (`pm25_mean_2019`) in 2019, and OLS residuals exhibit spatial autocorrelation indicating the need for a spatial regression specification.</p><p><b>Steps:</b></p><ol><li><b>row_filter</b>: Filter `California_Counties_Gini_2019` to rows where `year == 2019`, keeping only `state_fips`, `county_fips`, and `B19083_001E:Gini Index`.</li><li><b>derive_column</b>: Create county `GEOID` as a 5-character string by concatenating zero-padded `state_fips` (2 digits) and zero-padded `county_fips` (3 digits), and retain `GEOID` and `B19083_001E:Gini Index`.</li><li><b>attribute_join</b>: Left-join `gini_2019_with_geoid.csv` to `counties_pm25_2019_qc.gpkg` on `GEOID` to attach `B19083_001E:Gini Index` to each county.</li><li><b>ordinary_least_squares_append_residuals</b>: Fit an OLS model with dependent variable `pm25_mean_2019` and predictor `B19083_001E:Gini Index`, and append model outputs to features as `ols_fitted_pm25` and `ols_residual_pm25` keyed by `GEOID`.</li><li><b>global_morans_I</b>: Compute global Moran\u2019s I for `ols_residual_pm25` using the Queen contiguity weights keyed by `GEOID`.</li><li><b>spatial_lag_model_maximum_likelihood</b>: Fit a maximum-likelihood spatial lag (SAR) model with dependent variable `pm25_mean_2019` and predictor `B19083_001E:Gini Index` using the Queen contiguity weights keyed by `GEOID`.</li><li><b>spatial_weights_knn</b>: Construct K-nearest-neighbors (KNN) spatial weights with k=5 from county `geometry` centroids, keyed by `GEOID`.</li><li><b>spatial_error_model_maximum_likelihood</b>: Fit a maximum-likelihood spatial error (SEM) model with dependent variable `pm25_mean_2019` and predictor `B19083_001E:Gini Index` using KNN weights (k=5) keyed by `GEOID`.</li></ol>", "obj_title_3": "<h3>Objective 3</h3><p><b>Title:</b> Test whether the 2019 PM2.5\u2013income inequality association differs by metro status at the county level</p><p><b>Hypothesis:</b> The association between `B19083_001E:Gini Index` and `pm25_mean_2019` differs by `Metro2013` status (effect modification).</p><p><b>Steps:</b></p><ol><li><b>derive_column</b>: Create county `GEOID` as a 5-character string from `FIPSTXT` using zero-padding, and keep `GEOID`, `Metro2013`, `Nonmetro2013`, and `RuralUrbanContinuumCode2013`.</li><li><b>attribute_join</b>: Left-join `urban_rural_with_geoid.csv` to `counties_pm25_gini_2019.gpkg` on `GEOID` to attach `Metro2013` to each county.</li><li><b>derive_column</b>: Create interaction term `gini_x_metro = (B19083_001E:Gini Index) * Metro2013`.</li><li><b>ordinary_least_squares_with_interaction</b>: Fit an OLS model with dependent variable `pm25_mean_2019` and predictors `B19083_001E:Gini Index`, `Metro2013`, and `gini_x_metro`, and report coefficient estimates, standard errors, and p-values.</li><li><b>spatial_lag_model_maximum_likelihood_with_interaction</b>: Fit a maximum-likelihood spatial lag (SAR) model with dependent variable `pm25_mean_2019` and predictors `B19083_001E:Gini Index`, `Metro2013`, and `gini_x_metro` using Queen contiguity weights keyed by `GEOID`.</li><li><b>groupwise_spearman_rank_correlation</b>: Compute Spearman rank correlation between `pm25_mean_2019` and `B19083_001E:Gini Index` separately for counties where `Metro2013 == 1` and where `Metro2013 == 0`, reporting correlation and group sample size.</li></ol>"};
+const nodeNames = {"o1_s1_i0": "PM2.5_Annual_California_2019", "o1_s1_op": "row_filter", "o1_s1_out": "pm25_2019_annual_records.csv", "o1_s2_op": "derive_column", "o1_s2_out": "pm25_2019_with_geoid.csv", "o1_s3_op": "groupby_aggregate_mean_and_count", "o1_s3_out": "pm25_county_2019.csv", "o1_s4_i0": "california_counties_2019", "o1_s4_op": "attribute_join", "o1_s4_out": "counties_pm25_2019.gpkg", "o1_s5_op": "derive_column", "o1_s5_out": "counties_pm25_2019_qc.gpkg", "o1_s6_op": "spatial_weights_queen_contiguity", "o1_s6_out": "ca_county_queen_weights_2019.gpkg", "o1_s7_op": "global_morans_I", "o1_s7_out": "pm25_global_moransI_2019.csv", "o2_s1_i0": "California_Counties_Gini_2019", "o2_s1_op": "row_filter", "o2_s1_out": "gini_2019_filtered.csv", "o2_s2_op": "derive_column", "o2_s2_out": "gini_2019_with_geoid.csv", "o2_s3_op": "attribute_join", "o2_s3_out": "counties_pm25_gini_2019.gpkg", "o2_s4_op": "ordinary_least_squares_append_residuals", "o2_s4_out": "counties_pm25_gini_2019_olsresid.gpkg", "o2_s5_op": "global_morans_I", "o2_s5_out": "ols_residuals_moransI_2019.csv", "o2_s6_op": "spatial_lag_model_maximum_likelihood", "o2_s6_out": "spatial_lag_pm25_on_gini_2019.csv", "o2_s7_op": "spatial_weights_knn", "o2_s7_out": "ca_county_knn_weights_2019.gpkg", "o2_s8_op": "spatial_error_model_maximum_likelihood", "o2_s8_out": "spatial_error_pm25_on_gini_2019.csv", "o3_s1_i0": "California_UrbanRural_Classification_2019", "o3_s1_op": "derive_column", "o3_s1_out": "urban_rural_with_geoid.csv", "o3_s2_op": "attribute_join", "o3_s2_out": "counties_pm25_gini_urbanrural_2019.gpkg", "o3_s3_op": "derive_column", "o3_s3_out": "counties_pm25_gini_urbanrural_interaction_2019.gpkg", "o3_s4_op": "ordinary_least_squares_with_interaction", "o3_s4_out": "ols_pm25_gini_metro_interaction_2019.csv", "o3_s5_op": "spatial_lag_model_maximum_likelihood_with_interaction", "o3_s5_out": "spatial_lag_pm25_gini_metro_interaction_2019.csv", "o3_s6_op": "groupwise_spearman_rank_correlation", "o3_s6_out": "pm25_gini_spearman_by_metro_2019.csv", "rq_node": "How do spatial inequalities in PM2.5 exposure across California counties vary with income inequality (Gini) in 2019, and does the spatial relationship vary by urban\u2013rural classification?", "stage_0": "Result Collation", "stage_1": "Results Analysis", "stage_2": "Discussion of Results", "stage_3": "Manuscript", "obj_title_1": "Assess how PM2.5 exposure varies across California counties in 2019 and whether county-level PM2.5 is spatially clustered", "obj_title_2": "Estimate the county-level association between PM2.5 exposure and income inequality (Gini) in 2019 and test whether residual spatial autocorrelation remains", "obj_title_3": "Test whether the 2019 PM2.5\u2013income inequality association differs by metro status at the county level"};
+
+let scale=1, panX=0, panY=0, isPanning=false, _wasDragged=false, psX=0, psY=0, _mdX=0, _mdY=0;
+const PT=4;
+const MN=0.2, MX=5, ZS=0.15;
+const svg=document.getElementById('flowchartSvg');
+const zg=document.getElementById('zoomGroup');
+const gp=document.getElementById('graphPanel');
+const tooltip=document.getElementById('nodeTooltip');
+
+function applyTransform(){
+  zg.setAttribute('transform','translate('+panX+','+panY+') scale('+scale+')');
+  document.getElementById('zoomLevel').textContent=Math.round(scale*100)+'%';
+}
+function zoomIn(){ scale=Math.min(MX,scale+ZS); applyTransform(); }
+function zoomOut(){ scale=Math.max(MN,scale-ZS); applyTransform(); }
+function zoomReset(){ scale=1;panX=0;panY=0;applyTransform(); }
+function zoomFit(){
+  var b=zg.getBBox(),v=svg.viewBox.baseVal,p=30;
+  scale=Math.min((v.width-p*2)/b.width,(v.height-p*2)/b.height,MX);
+  panX=(v.width/scale-b.width)/2-b.x+p/scale;
+  panY=(v.height/scale-b.height)/2-b.y+p/scale;
+  applyTransform();
+}
+
+gp.addEventListener('wheel',function(e){
+  e.preventDefault();
+  var r=svg.getBoundingClientRect(),v=svg.viewBox.baseVal;
+  var sx=((e.clientX-r.left)/r.width)*v.width, sy=((e.clientY-r.top)/r.height)*v.height;
+  var os=scale;
+  scale=e.deltaY<0?Math.min(MX,scale+ZS):Math.max(MN,scale-ZS);
+  panX=sx/scale-sx/os+panX; panY=sy/scale-sy/os+panY; applyTransform();
+},{passive:false});
+
+gp.addEventListener('mousedown',function(e){
+  if(e.button===0||e.button===1){
+    e.preventDefault();isPanning=true;_wasDragged=false;
+    psX=e.clientX;psY=e.clientY;_mdX=e.clientX;_mdY=e.clientY;
+    gp.style.cursor='grabbing';
+  }
+});
+window.addEventListener('mousemove',function(e){
+  if(!isPanning)return;
+  var dist=Math.abs(e.clientX-_mdX)+Math.abs(e.clientY-_mdY);
+  if(dist>PT)_wasDragged=true;
+  var v=svg.viewBox.baseVal,r=svg.getBoundingClientRect();
+  panX+=(e.clientX-psX)*(v.width/r.width)/scale;
+  panY+=(e.clientY-psY)*(v.height/r.height)/scale;
+  psX=e.clientX;psY=e.clientY;applyTransform();
+});
+window.addEventListener('mouseup',function(){ if(isPanning){isPanning=false;gp.style.cursor='';} });
+gp.addEventListener('click',function(e){ if(_wasDragged){e.stopPropagation();_wasDragged=false;} },true);
+
+// ── Hover highlight: direct connections only ──
+function getConnected(nid){
+  var edges=document.querySelectorAll('.edge-line');
+  var visited={};
+  var connEdges=[];
+  visited[nid]=true;
+  edges.forEach(function(e){
+    var f=e.getAttribute('data-from'), t=e.getAttribute('data-to');
+    if(f===nid){ connEdges.push(e); visited[t]=true; }
+    if(t===nid){ connEdges.push(e); visited[f]=true; }
+  });
+  return {nodes:visited, edges:connEdges};
+}
+
+function hlNode(nid){
+  var conn=getConnected(nid);
+  // Highlight connected edges
+  document.querySelectorAll('.edge-line').forEach(function(e){
+    if(conn.edges.indexOf(e)>=0) e.classList.add('highlighted');
+  });
+  // Dim unconnected nodes
+  document.querySelectorAll('.node-box').forEach(function(g){
+    var id=g.getAttribute('data-nid');
+    if(id && !conn.nodes[id]) g.classList.add('dimmed');
+  });
+  // Tooltip
+  var name=nodeNames[nid]||'';
+  if(name){
+    tooltip.textContent=name;
+    tooltip.style.display='block';
+  }
+}
+
+function ulNode(){
+  document.querySelectorAll('.edge-line.highlighted').forEach(function(e){ e.classList.remove('highlighted'); });
+  document.querySelectorAll('.node-box.dimmed').forEach(function(g){ g.classList.remove('dimmed'); });
+  tooltip.style.display='none';
+}
+
+// Position tooltip near cursor
+document.addEventListener('mousemove',function(e){
+  if(tooltip.style.display==='block'){
+    tooltip.style.left=(e.clientX+12)+'px';
+    tooltip.style.top=(e.clientY-28)+'px';
+  }
+});
+
+function showPopup(nodeId){
+  var c=document.getElementById('popupContent');
+  var o=document.getElementById('popupOverlay');
+  c.innerHTML=details[nodeId]||'<p style="color:#999">No details.</p>';
+  o.classList.add('visible');
+  document.querySelectorAll('.node-box ellipse,.node-box rect').forEach(function(el){
+    el.setAttribute('stroke',el.getAttribute('data-os')||'#333');
+    el.setAttribute('stroke-width',el.tagName==='rect'?'2':'1.5');
+  });
+  var cl=event.currentTarget.querySelector('ellipse,rect');
+  if(cl){ cl.setAttribute('stroke-width','3.5'); cl.setAttribute('stroke','#FFD700'); }
+}
+function closePopup(e){
+  if(e&&e.target!==document.getElementById('popupOverlay'))return;
+  document.getElementById('popupOverlay').classList.remove('visible');
+  document.querySelectorAll('.node-box ellipse,.node-box rect').forEach(function(el){
+    el.setAttribute('stroke',el.getAttribute('data-os')||'#333');
+    el.setAttribute('stroke-width',el.tagName==='rect'?'2':'1.5');
+  });
+}
+document.addEventListener('keydown',function(e){ if(e.key==='Escape')closePopup(); });
+window.addEventListener('DOMContentLoaded',function(){ setTimeout(zoomFit,100); });
+</script>
+</body>
+</html>

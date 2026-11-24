@@ -1,0 +1,26 @@
+{
+  "figures": [
+    {
+      "path": "tract_centroids.gpkg",
+      "caption": "Centroids for North Carolina census tracts",
+      "role": "intermediate",
+      "kind": "data_to_viz",
+      "viz_hint": {
+        "type": "scatter",
+        "x": "centroid_x",
+        "y": "centroid_y"
+      }
+    },
+    {
+      "path": "merged_tract_data.csv",
+      "caption": "Joined tract hazard distances and asthma prevalence data by GEOID",
+      "role": "promoted",
+      "kind": "table",
+      "columns": [
+        "GEOID",
+        "distance_meters",
+        "Asthma_prev"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "title": "Spatial Inequalities in PM2.5 Exposure and Income Inequality in California, 2019",
+  "intent": "The research aims to investigate how inequalities in PM2.5 exposure in California counties are associated with income inequalities, measured by the Gini index, and how these relationships differ across urban and rural classifications.",
+  "brief_description": "This research seeks to understand the spatial variations in PM2.5 pollution relative to income inequality, examining whether these spatial patterns differ based on urban-rural classifications in California counties for the year 2019. It involves analyzing relationships between PM2.5 exposure levels, income distribution (Gini index), and urban-rural status.",
+  "category": "explanatory",
+  "scale": {
+    "temporal_scale": "2019",
+    "spatial_scale": "county"
+  },
+  "data_requirement": [
+    "County-level PM2.5 exposure data",
+    "County-level Gini index (income inequality) data",
+    "County-level urban-rural classification",
+    "California counties geometry data for spatial analysis"
+  ],
+  "data_available_sufficiency": "The available data provides the necessary county-level PM2.5 exposure records, Gini index data, urban-rural classification, and county geometries for spatial analysis.",
+  "data_available": [
+    "PM2.5_Annual_California_2019_1.csv",
+    "California_Counties_Gini_2019.csv",
+    "California_UrbanRural_Classification_2019.csv",
+    "california_counties_2019.gpkg"
+  ],
+  "data_requests": null
+}

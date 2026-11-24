@@ -1,0 +1,180 @@
+{
+  "figures": [
+    {
+      "path": "tables/descriptive_stats_by_urban_rural.csv",
+      "caption": "Descriptive statistics of county-level PM2.5 exposure and income inequality (Gini index) by metro vs nonmetro classification (2019).",
+      "role": "promoted",
+      "kind": "table",
+      "columns": [
+        "urban_rural",
+        "n_counties",
+        "pm25_mean",
+        "pm25_sd",
+        "pm25_gini_across_counties",
+        "gini_index_mean",
+        "gini_index_sd"
+      ]
+    },
+    {
+      "path": "tables/pearson_correlation_pm25_vs_gini.csv",
+      "caption": "Pearson correlation between county PM2.5 exposure and income inequality (Gini index), overall and stratified by urban\u2013rural classification (2019).",
+      "role": "promoted",
+      "kind": "table",
+      "columns": [
+        "urban_rural",
+        "r",
+        "p_value",
+        "n"
+      ]
+    },
+    {
+      "path": "tables/ols_coefficients_pm25_gini_urbanrural_interaction.csv",
+      "caption": "OLS regression of county PM2.5 exposure on income inequality (Gini) with an urban\u2013rural interaction term (2019).",
+      "role": "promoted",
+      "kind": "table",
+      "columns": [
+        "variable",
+        "beta",
+        "std_err",
+        "t",
+        "p_value",
+        "ci_low",
+        "ci_high"
+      ]
+    },
+    {
+      "path": "tables/ols_fit_stats_pm25_gini_urbanrural_interaction.csv",
+      "caption": "OLS model fit statistics for PM2.5 ~ Gini + urban\u2013rural + interaction (2019).",
+      "role": "promoted",
+      "kind": "table",
+      "columns": [
+        "n",
+        "k_predictors",
+        "R2",
+        "adj_R2",
+        "AIC",
+        "BIC",
+        "RMSE",
+        "urban_rural_reference"
+      ]
+    },
+    {
+      "path": "tables/global_moransI_pm25_and_ols_residuals.csv",
+      "caption": "Global Moran\u2019s I for county PM2.5 exposure and OLS residuals (2019), testing spatial clustering and residual spatial autocorrelation.",
+      "role": "promoted",
+      "kind": "table",
+      "columns": [
+        "variable",
+        "morans_I",
+        "expected_I",
+        "z_sim",
+        "p_sim",
+        "n",
+        "weights"
+      ]
+    },
+    {
+      "path": "tables/ols_coefficients_pm25_gini_urbanrural_2019.csv",
+      "caption": "OLS coefficients for county PM2.5 (2019) regressed on Gini and urban\u2013rural classification with interaction.",
+      "role": "promoted",
+      "kind": "table",
+      "columns": [
+        "model",
+        "variable",
+        "beta",
+        "std_err",
+        "t",
+        "p",
+        "ci_low",
+        "ci_high"
+      ]
+    },
+    {
+      "path": "tables/ols_fit_stats_pm25_gini_urbanrural_2019.csv",
+      "caption": "OLS model fit statistics comparing baseline and interaction models for PM2.5 vs Gini (2019).",
+      "role": "promoted",
+      "kind": "table",
+      "columns": [
+        "analysis",
+        "model",
+        "group",
+        "n",
+        "R2",
+        "adj_R2",
+        "AIC",
+        "BIC",
+        "F",
+        "F_pvalue",
+        "RMSE"
+      ]
+    },
+    {
+      "path": "tables/ols_vif_model2_pm25_gini_urbanrural_2019.csv",
+      "caption": "Variance inflation factors (VIF) for predictors in the PM2.5~Gini urban\u2013rural interaction model (2019).",
+      "role": "promoted",
+      "kind": "table",
+      "columns": [
+        "variable",
+        "VIF"
+      ]
+    },
+    {
+      "path": "fig_pm25_choropleth_2019.png",
+      "caption": "County choropleth of PM2.5 annual mean concentration (2019) aggregated from monitoring sites.",
+      "role": "final",
+      "kind": "figure",
+      "objective_key": "objective_1",
+      "step_index": 1
+    },
+    {
+      "path": "fig_gini_choropleth_2019.png",
+      "caption": "County choropleth of income inequality (Gini index) in 2019.",
+      "role": "final",
+      "kind": "figure",
+      "objective_key": "objective_1",
+      "step_index": 2
+    },
+    {
+      "path": "fig_scatter_pm25_vs_gini_by_urbanrural_2019.png",
+      "caption": "Scatterplot of county PM2.5 (2019) versus Gini (2019), colored by urban\u2013rural class with groupwise OLS trend lines.",
+      "role": "final",
+      "kind": "figure",
+      "objective_key": "objective_1",
+      "step_index": 3
+    },
+    {
+      "path": "fig_box_pm25_by_urbanrural_2019.png",
+      "caption": "Boxplots of county PM2.5 annual mean (2019) by urban\u2013rural classification.",
+      "role": "promoted",
+      "kind": "figure",
+      "objective_key": "objective_1",
+      "step_index": 4
+    },
+    {
+      "path": "tables/table_county_pm25_gini_urbanrural_2019.csv",
+      "caption": "County-level dataset (2019) merging PM2.5 annual mean, Gini index, and urban\u2013rural classification.",
+      "role": "intermediate",
+      "kind": "table",
+      "columns": [
+        "GEOID",
+        "NAME",
+        "pm25_mean",
+        "pm25_n_sites",
+        "gini",
+        "urban_rural",
+        "rucc_2013"
+      ]
+    },
+    {
+      "path": "merged_county_pm25_gini_urbanrural_2019.gpkg",
+      "caption": "California counties with merged 2019 PM2.5, Gini, and urban\u2013rural attributes for mapping.",
+      "role": "intermediate",
+      "kind": "data_to_viz",
+      "viz_hint": {
+        "type": "choropleth",
+        "column": "pm25_mean",
+        "cmap": "viridis"
+      }
+    }
+  ]
+}

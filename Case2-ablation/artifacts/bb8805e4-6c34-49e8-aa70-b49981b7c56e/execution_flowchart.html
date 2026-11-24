@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Mediation of Neighborhood Socioeconomic Status on Depression by Mobility Patterns - Execution Flowchart</title>
+<style>
+  body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: #f8f9fa; display: flex; flex-direction: column; height: 100vh; }
+  h1 { text-align: center; padding: 12px 0 4px 0; margin: 0; font-size: 18px; color: #2C3E50; }
+  .legend {
+    display: flex; gap: 16px; padding: 8px 24px; background: #fff; font-size: 0.8em;
+    border-bottom: 1px solid #dee2e6; align-items: center; flex-wrap: wrap;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+  .graph-panel { flex: 1; overflow: hidden; position: relative; cursor: grab; }
+  svg { display: block; width: 100%; height: 100%; }
+  .node-box { cursor: pointer; transition: filter 0.15s; }
+  .node-box:hover { filter: brightness(1.12); }
+  marker { overflow: visible; }
+
+  /* Zoom controls toolbar */
+  .zoom-toolbar {
+    position: absolute; top: 10px; right: 10px;
+    display: flex; flex-direction: column; gap: 4px; z-index: 50;
+    background: white; border-radius: 8px; padding: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15); border: 1px solid #ddd;
+  }
+  .zoom-btn {
+    width: 32px; height: 32px; border: 1px solid #ddd; border-radius: 6px;
+    background: #fff; cursor: pointer; font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    color: #444; transition: all 0.15s; padding: 0;
+  }
+  .zoom-btn:hover { background: #e9ecef; color: #111; }
+  .zoom-btn:active { background: #dee2e6; }
+  .zoom-level { font-size: 10px; text-align: center; color: #888; padding: 2px 0; user-select: none; }
+  .zoom-divider { height: 1px; background: #e0e0e0; margin: 2px 0; }
+
+  /* Popup overlay */
+  .popup-overlay {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.35); z-index: 100; justify-content: center; align-items: center;
+  }
+  .popup-overlay.visible { display: flex; }
+
+  /* Popup box */
+  .popup-box {
+    background: white; border-radius: 10px; padding: 24px 28px;
+    max-width: 800px; width: 92%; max-height: 80vh; overflow-y: auto;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25); position: relative;
+    animation: popIn 0.18s ease-out;
+  }
+  @keyframes popIn {
+    from { transform: scale(0.92); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .popup-box h3 { margin-top: 0; color: #2C3E50; border-bottom: 2px solid #4C72B0; padding-bottom: 8px; }
+  .popup-box p { line-height: 1.6; color: #333; font-size: 13px; }
+  .popup-close {
+    position: absolute; top: 10px; right: 14px;
+    background: none; border: none; font-size: 20px; color: #999;
+    cursor: pointer; line-height: 1; padding: 4px 8px; border-radius: 4px;
+  }
+  .popup-close:hover { background: #f0f0f0; color: #333; }
+
+  /* Execution popup specifics */
+  .meta-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px;
+  }
+  .meta-item {
+    background: #f1f3f5; padding: 8px 12px; border-radius: 6px; font-size: 0.85em;
+  }
+  .meta-label { display: block; color: #6c757d; font-size: 0.8em; }
+  .meta-value { display: block; color: #212529; margin-top: 2px; }
+  .code-section { margin-top: 12px; }
+  .code-section h4 { font-size: 0.95em; color: #495057; margin-bottom: 8px; margin-top: 0; }
+  pre {
+    background: #1e293b; padding: 14px; border-radius: 8px; overflow-x: auto;
+    font-size: 0.82em; line-height: 1.5; color: #e2e8f0;
+    font-family: 'Fira Code', 'Consolas', monospace; white-space: pre-wrap; word-wrap: break-word;
+    max-height: 350px; overflow-y: auto;
+  }
+  .output-section pre { color: #a3e635; background: #0c1222; }
+  .error-section pre { color: #f87171; background: #1c0c0c; }
+  .files-list { display: flex; flex-wrap: wrap; gap: 4px; }
+  .file-tag {
+    display: inline-block; background: #e7f5ff; color: #1971c2;
+    padding: 2px 8px; border-radius: 4px; font-size: 0.8em;
+  }
+</style>
+</head>
+<body>
+<h1>Mediation of Neighborhood Socioeconomic Status on Depression by Mobility Patterns — Execution Flowchart</h1>
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#2C3E50;"></div> Research Question</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#4C72B0;"></div> Objective</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#28a745;"></div> Step (OK)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#dc3545;"></div> Step (Error)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#6c757d;"></div> Step (Pending)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#58a6ff;"></div> Dependency</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#40916C;"></div> Analysis Stage</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#7B2D8E;"></div> Manuscript</div>
+  <span style="margin-left:auto; color:#94a3b8;">Click any node to view details</span>
+</div>
+<div class="graph-panel" id="graphPanel">
+<!-- Zoom controls -->
+<div class="zoom-toolbar">
+  <button class="zoom-btn" onclick="zoomIn()" title="Zoom in">+</button>
+  <button class="zoom-btn" onclick="zoomOut()" title="Zoom out">&minus;</button>
+  <div class="zoom-divider"></div>
+  <span class="zoom-level" id="zoomLevel">100%</span>
+  <div class="zoom-divider"></div>
+  <button class="zoom-btn" onclick="zoomReset()" title="Reset view">&#8634;</button>
+  <button class="zoom-btn" onclick="zoomFit()" title="Fit to view">&#11036;</button>
+  <div class="zoom-divider"></div>
+  <button class="zoom-btn" id="fullscreenBtn" onclick="toggleFullscreen()" title="Toggle fullscreen">&#x26F6;</button>
+</div>
+<svg id="flowchartSvg" width="1000" height="750" viewBox="0 0 1000 750">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#666"/>
+    </marker>
+    <marker id="arrowblue" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#58a6ff"/>
+    </marker>
+  </defs>
+  <g id="zoomGroup">
+    <line x1="500" y1="80" x2="500" y2="153" stroke="#555" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="500" y1="207" x2="500" y2="285" stroke="#4C72B0" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="500" y1="335" x2="500" y2="443" stroke="#555" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="500" y1="497" x2="500" y2="543" stroke="#555" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <g class="node-box" onclick="showPopup('RQ')">
+      <rect x="200" y="20" width="600" height="60" rx="10" ry="10" fill="#2C3E50" stroke="#333" stroke-width="1.5"/>
+      <text x="500" y="47.2" text-anchor="middle" fill="white" font-size="13" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">How do spatial patterns of mobility (place visitation) mediate the relationship</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj_1')">
+      <rect x="380" y="153" width="240" height="55" rx="10" ry="10" fill="#4C72B0" stroke="#333" stroke-width="1.5"/>
+      <text x="500" y="170.4" text-anchor="middle" fill="white" font-size="11" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">Obj 1: How do spatial patterns of</text>
+      <text x="500" y="184.4" text-anchor="middle" fill="white" font-size="11" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">mobility (p</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj1_s1')">
+      <polygon points="400,285 615,285 600,335 385,335" fill="#85e29b" stroke="#28a745" stroke-width="2"/>
+      <text x="500" y="301.0" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">[OK] S1.1: Direct code generation</text>
+      <text x="500" y="314.0" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">(ModelingAgent)</text>
+    </g>
+    <g class="node-box" onclick="showPopup('result_collation')">
+      <rect x="350" y="443" width="300" height="55" rx="10" ry="10" fill="#D4A017" stroke="#28a745" stroke-width="1.5"/>
+      <text x="500" y="467.3" text-anchor="middle" fill="white" font-size="12" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">Result Collation [OK]</text>
+    </g>
+    <g class="node-box" onclick="showPopup('manuscript')">
+      <rect x="350" y="543" width="300" height="55" rx="10" ry="10" fill="#7B2D8E" stroke="#28a745" stroke-width="1.5"/>
+      <text x="500" y="567.3" text-anchor="middle" fill="white" font-size="12" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">Manuscript [OK]</text>
+    </g>
+  </g>
+</svg>
+</div>
+
+<!-- Popup overlay -->
+<div class="popup-overlay" id="popupOverlay" onclick="closePopup(event)">
+  <div class="popup-box" id="popupBox" onclick="event.stopPropagation()">
+    <button class="popup-close" onclick="closePopup()">&times;</button>
+    <div id="popupContent"></div>
+  </div>
+</div>
+
+<script>
+const details = {"RQ": "<h3>Research Question</h3><p>How do spatial patterns of mobility (place visitation) mediate the relationship between neighborhood socioeconomic status and depression prevalence across the counties of South Carolina?</p>", "obj_1": "<h3>Objective 1</h3><p><b>Title:</b> How do spatial patterns of mobility (place visitation) mediate the relationship between neighborhood socioeconomic status and depression prevalence across the counties of South Carolina?</p><p><b>Hypothesis:</b> </p>", "obj1_s1": "<h3 style=\"border-bottom-color:#4C72B0; display:flex; align-items:center; justify-content:space-between; gap:8px;\"><span style=\"cursor:pointer;\" onclick=\"goToStepCard('exec_obj1_step1')\">OBJECTIVE 1 | Step 1</span><button onclick=\"goToStepCard('exec_obj1_step1')\" style=\"font-size:0.65em; padding:3px 10px; border:1px solid #4a90d9; border-radius:4px; background:#f0f6ff; color:#2a6cb6; cursor:pointer; white-space:nowrap;\">Go to Card</button></h3><div class=\"meta-grid\"><div class=\"meta-item\"><span class=\"meta-label\">Status</span><span class=\"meta-value\" style=\"color:#28a745;font-weight:bold;\">Completed</span></div><div class=\"meta-item\"><span class=\"meta-label\">Agent</span><span class=\"meta-value\">ModelingAgent</span></div><div class=\"meta-item\" style=\"grid-column:span 2\"><span class=\"meta-label\">Description</span><span class=\"meta-value\">Answer the research question end to end: How do spatial patterns of mobility (place visitation) mediate the relationship between neighborhood socioeconomic status and depression prevalence across the counties of South Carolina?\n\nResearch question breakdown:\n- Intent: The intent is to examine how spatial patterns of mobility, specifically place visitation, influence the connection between neighborhood socioeconomic status and depression prevalence within the counties of South Carolina.\n- Brief description: This study explores the mediation role of place visitation patterns in the relationship between neighborhood socioeconomic status and depression prevalence across different counties in South Carolina. It involves assessing how the frequency and types of places visited within counties relate to socioeconomic conditions and how these factors together impact depression rates.\n- Category: Explanatory\n- Spatial scale: County\n- Data requirement: [&quot;Visitor data to places of interest within counties&quot;, &quot;Depression prevalence rates across counties&quot;, &quot;Socioeconomic data including income, education, and employment across counties&quot;, &quot;Geospatial boundary data for counties in South Carolina&quot;]\n\nDo all data preparation, analysis, and visualization this requires in one script, and save the key quantitative results to analysis_results.csv.</span></div></div><div class=\"meta-item\" style=\"margin-bottom:12px\"><span class=\"meta-label\">Code File</span><span class=\"meta-value\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\bb8805e4-6c34-49e8-aa70-b49981b7c56e\\generated_code\\op_Direct code generation for the_9170145b.py</span></div><div class=\"code-section\"><h4>Executed Code</h4><pre>import os\nimport warnings\n\nimport numpy as np\nimport pandas as pd\nimport geopandas as gpd\nimport matplotlib.pyplot as plt\n\nimport statsmodels.api as sm\nfrom statsmodels.stats.outliers_influence import variance_inflation_factor\n\nfrom libpysal.weights import Queen\nfrom esda.moran import Moran\n\n# Pre-imported helpers (provided by the system)\n# record_figure, record_table, record_data_to_viz\n\nwarnings.filterwarnings(&quot;ignore&quot;, category=UserWarning)\n\n# ------------------------------------------------------------------------------\n# Paths (EXACT)\n# ------------------------------------------------------------------------------\nVISITOR_PATH = r&quot;C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\WebUI\\uploads\\bb8805e4-6c34-49e8-aa70-b49981b7c56e\\SC_Visitor_POI.csv&quot;\nDEPR_PATH    = r&quot;C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\WebUI\\uploads\\bb8805e4-6c34-49e8-aa70-b49981b7c56e\\SC_PLACES_depression.csv&quot;\nCOUNTY_PATH  = r&quot;C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\WebUI\\uploads\\bb8805e4-6c34-49e8-aa70-b49981b7c56e\\SC_counties.gpkg&quot;\nACS_PATH     = r&quot;C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\WebUI\\uploads\\bb8805e4-6c34-49e8-aa70-b49981b7c56e\\SC_ACS_data.csv&quot;\n\nOUTPUT_NODE_PATH = r&quot;C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\bb8805e4-6c34-49e8-aa70-b49981b7c56e\\analysis_results.csv&quot;\nOUTPUT_DIR = os.path.dirname(OUTPUT_NODE_PATH)\nos.makedirs(os.path.dirname(OUTPUT_NODE_PATH), exist_ok=True)\nos.makedirs(OUTPUT_DIR, exist_ok=True)\n\ntables_dir = os.path.join(OUTPUT_DIR, &quot;tables&quot;)\nos.makedirs(tables_dir, exist_ok=True)\n\n# ------------------------------------------------------------------------------\n# STEP 3: Script helpers\n# ------------------------------------------------------------------------------\ndef _to_numeric_inplace(df: pd.DataFrame, cols):\n    for c in cols:\n        df[c] = pd.to_numeric(df[c], errors=&quot;coerce&quot;)\n    return df\n\ndef zscore(s: pd.Series) -&gt; pd.Series:\n    s = pd.to_numeric(s, errors=&quot;coerce&quot;)\n    mu = np.nanmean(s.values)\n    sd = np.nanstd(s.values, ddof=0)\n    if sd == 0 or np.isnan(sd):\n        return (s * 0) * np.nan\n    return (s - mu) / sd\n\ndef ols_fit(df: pd.DataFrame, y_col: str, x_cols: list, robust_hc1: bool = True):\n    work = df[[y_col] + x_cols].copy()\n    _to_numeric_inplace(work, [y_col] + x_cols)\n    work = work.dropna(subset=[y_col] + x_cols).reset_index(drop=True)\n\n    y = work[y_col].values\n    X = sm.add_constant(work[x_cols].values, has_constant=&quot;add&quot;)\n    model = sm.OLS(y, X).fit()\n\n    if robust_hc1:\n        model_rob = model.get_robustcov_results(cov_type=&quot;HC1&quot;)\n        return model, model_rob, work\n    return model, model, work\n\ndef coef_table(model, x_cols: list):\n    # model might be robustcov results; it still has params/bse/tvalues/pvalues\n    ci = model.conf_int()\n    return pd.DataFrame({\n        &quot;variable&quot;: [&quot;const&quot;] + x_cols,\n        &quot;beta&quot;: model.params,\n        &quot;std_err&quot;: model.bse,\n        &quot;t&quot;: model.tvalues,\n        &quot;p_value&quot;: model.pvalues,\n        &quot;ci_low&quot;: ci[:, 0],\n        &quot;ci_high&quot;: ci[:, 1],\n    })\n\ndef fit_stats(model, k_predictors: int, label: str):\n    rmse = float(np.sqrt(np.mean(model.resid ** 2)))\n    return {\n        &quot;model&quot;: label,\n        &quot;n&quot;: int(model.nobs),\n        &quot;k&quot;: int(k_predictors),\n        &quot;R2&quot;: float(model.rsquared),\n        &quot;adj_R2&quot;: float(model.rsquared_adj),\n        &quot;AIC&quot;: float(model.aic),\n        &quot;BIC&quot;: float(model.bic),\n        &quot;F&quot;: float(model.fvalue) if model.fvalue is not None else np.nan,\n        &quot;F_pvalue&quot;: float(model.f_pvalue) if model.f_pvalue is not None else np.nan,\n        &quot;RMSE&quot;: rmse,\n    }\n\ndef vif_table(df: pd.DataFrame, x_cols: list):\n    work = df[x_cols].copy()\n    _to_numeric_inplace(work, x_cols)\n    work = work.dropna().reset_index(drop=True)\n    X = sm.add_constant(work.values, has_constant=&quot;add&quot;)\n    # exclude constant from VIF report\n    return pd.DataFrame({\n        &quot;variable&quot;: x_cols,\n        &quot;VIF&quot;: [variance_inflation_factor(X, i + 1) for i in range(len(x_cols))]\n    })\n\ndef mediation_sobel(a, sa, b, sb):\n    # Sobel test for indirect effect a*b\n    indirect = a * b\n    se_ind = np.sqrt((b**2) * (sa**2) + (a**2) * (sb**2))\n    z = indirect / se_ind if se_ind not in [0, np.nan] else np.nan\n    # normal approx p-value (two-sided)\n    from math import erf, sqrt\n    if np.isnan(z):\n        p = np.nan\n    else:\n        cdf = 0.5 * (1 + erf(abs(z) / sqrt(2)))\n        p = 2 * (1 - cdf)\n    return indirect, se_ind, z, p\n\n# ------------------------------------------------------------------------------\n# Load data\n# ------------------------------------------------------------------------------\nvisitor = pd.read_csv(VISITOR_PATH, dtype={&quot;GEOID&quot;: &quot;string&quot;})\ndepr    = pd.read_csv(DEPR_PATH, dtype={&quot;GEOID&quot;: &quot;string&quot;})\nacs     = pd.read_csv(ACS_PATH, dtype={&quot;GEOID&quot;: &quot;string&quot;})\ncounties = gpd.read_file(COUNTY_PATH)\n\n# Validate / clean geometries\ncounties = counties[counties.geometry.notnull()].copy()\ncounties = counties[counties.geometry.is_valid &amp; ~counties.geometry.is_empty].copy()\n\n# Ensure GEOID as string everywhere\nfor df in (visitor, depr, acs):\n    df[&quot;GEOID&quot;] = df[&quot;GEOID&quot;].astype(&quot;string&quot;)\ncounties[&quot;GEOID&quot;] = counties[&quot;GEOID&quot;].astype(&quot;string&quot;)\n\n# ------------------------------------------------------------------------------\n# Harmonize / numeric casting for analysis columns\n# ------------------------------------------------------------------------------\nvisitor_cols = [\n    &quot;Full_Service_Restaurant&quot;, &quot;Sport_facilities&quot;, &quot;Parks&quot;, &quot;Fastfood_Restaurant&quot;,\n    &quot;Convenience&quot;, &quot;Supermarket&quot;, &quot;Warehouse&quot;, &quot;Fruit&quot;, &quot;TobaccoStore&quot;, &quot;DrinkingPlaces&quot;\n]\nacs_cols = [\n    &quot;percent_&gt;=18&quot;, &quot;percent_Married&quot;, &quot;percent_White&quot;, &quot;percent_Black&quot;, &quot;percent_Asian&quot;,\n    &quot;percent_Hispanic&quot;, &quot;percent_Other_Race&quot;, &quot;percent_Male&quot;, &quot;percent_Female&quot;,\n    &quot;percent_&gt;=HighSch&quot;, &quot;percent_Poverty&quot;, &quot;percent_Unemployed&quot;, &quot;percent_Uninsured&quot;,\n    &quot;Med_income&quot;\n]\n\n_to_numeric_inplace(visitor, visitor_cols)\n_to_numeric_inplace(depr, [&quot;Depression_prev&quot;])\n_to_numeric_inplace(acs, acs_cols)\n\n# ------------------------------------------------------------------------------\n# County-level mobility summary measures\n# ------------------------------------------------------------------------------\n# Basic totals and composition shares (per county across POI types)\nvisitor[&quot;mobility_total_visits&quot;] = visitor[visitor_cols].sum(axis=1, skipna=True)\n\n# Avoid divide-by-zero\nden = visitor[&quot;mobility_total_visits&quot;].replace({0: np.nan})\nfor c in visitor_cols:\n    visitor[f&quot;share_{c}&quot;] = visitor[c] / den\n\n# Mobility diversity (Shannon entropy) over shares\nshare_cols = [f&quot;share_{c}&quot; for c in visitor_cols]\nshares = visitor[share_cols].copy()\n# Replace NaN shares (from zero total) with 0 for entropy calc; keep row-level NaN flag separately\nshares_filled = shares.fillna(0.0).clip(lower=0.0)\neps = 1e-12\nvisitor[&quot;mobility_entropy&quot;] = -(shares_filled * np.log(shares_filled + eps)).sum(axis=1)\n\n# ------------------------------------------------------------------------------\n# Socioeconomic status index (SES): combine income (+) and poverty/unemployment/uninsured (-) and education (+)\n# Build standardized components then average\n# ------------------------------------------------------------------------------\nanalysis = (\n    counties[[&quot;GEOID&quot;, &quot;geometry&quot;]]\n    .merge(acs, on=&quot;GEOID&quot;, how=&quot;left&quot;)\n    .merge(depr, on=&quot;GEOID&quot;, how=&quot;left&quot;)\n    .merge(visitor[[&quot;GEOID&quot;, &quot;mobility_total_visits&quot;, &quot;mobility_entropy&quot;] + visitor_cols], on=&quot;GEOID&quot;, how=&quot;left&quot;)\n)\n\n# Numeric casting again after merges\n_to_numeric_inplace(\n    analysis,\n    [&quot;Depression_prev&quot;, &quot;mobility_total_visits&quot;, &quot;mobility_entropy&quot;] + visitor_cols + acs_cols\n)\n\nanalysis[&quot;ses_z_income&quot;] = zscore(analysis[&quot;Med_income&quot;])\nanalysis[&quot;ses_z_edu&quot;] = zscore(analysis[&quot;percent_&gt;=HighSch&quot;])\nanalysis[&quot;ses_z_poverty&quot;] = zscore(analysis[&quot;percent_Poverty&quot;])\nanalysis[&quot;ses_z_unemp&quot;] = zscore(analysis[&quot;percent_Unemployed&quot;])\nanalysis[&quot;ses_z_uninsured&quot;] = zscore(analysis[&quot;percent_Uninsured&quot;])\n\n# SES index: higher = higher SES\nanalysis[&quot;SES_index&quot;] = (\n    analysis[&quot;ses_z_income&quot;]\n    + analysis[&quot;ses_z_edu&quot;]\n    - analysis[&quot;ses_z_poverty&quot;]\n    - analysis[&quot;ses_z_unemp&quot;]\n    - analysis[&quot;ses_z_uninsured&quot;]\n) / 5.0\n\n# Log-transform visits (reduce skew)\nanalysis[&quot;log_mobility_total_visits&quot;] = np.log1p(analysis[&quot;mobility_total_visits&quot;])\n\n# Keep a modeling frame with key variables\ny_col = &quot;Depression_prev&quot;\nses_col = &quot;SES_index&quot;\nmed_col = &quot;log_mobility_total_visits&quot;\nmed2_col = &quot;mobility_entropy&quot;\n\n# Controls (demographics) to reduce confounding (kept modest for n=46)\ncontrols = [&quot;percent_White&quot;, &quot;percent_Black&quot;, &quot;percent_Hispanic&quot;, &quot;percent_&gt;=18&quot;, &quot;percent_Male&quot;]\n_to_numeric_inplace(analysis, controls)\n\n# ------------------------------------------------------------------------------\n# Models for mediation:\n#   Total effect:        y ~ SES + controls\n#   Mediator model:      M ~ SES + controls\n#   Direct + mediator:   y ~ SES + M + controls\n# Repeat for M = log_total_visits and for M = entropy (two mediators separately)\n# ------------------------------------------------------------------------------\nmodel_results = []\ncoef_tables = []\n\ndef run_mediation(analysis_gdf: gpd.GeoDataFrame, mediator_col: str, label: str):\n    # Drop NAs jointly across variables used\n    needed = [y_col, ses_col, mediator_col] + controls\n    dfm = analysis_gdf[[&quot;GEOID&quot;] + needed].copy()\n    _to_numeric_inplace(dfm, needed)\n    dfm = dfm.dropna(subset=needed).reset_index(drop=True)\n\n    # 1) total effect c: y ~ SES + controls\n    x_total = [ses_col] + controls\n    m_total, m_total_rob, _ = ols_fit(dfm, y_col, x_total, robust_hc1=True)\n\n    # 2) a path: M ~ SES + controls\n    x_a = [ses_col] + controls\n    m_a, m_a_rob, _ = ols_fit(dfm, mediator_col, x_a, robust_hc1=True)\n\n    # 3) b and c&#x27; paths: y ~ SES + M + controls\n    x_b = [ses_col, mediator_col] + controls\n    m_b, m_b_rob, _ = ols_fit(dfm, y_col, x_b, robust_hc1=True)\n\n    # Extract a, b (robust)\n    # param order: const, SES, mediator?, controls...\n    a = float(m_a_rob.params[1])  # SES coefficient in mediator model\n    sa = float(m_a_rob.bse[1])\n\n    # mediator coefficient index in model 3 is 2 (const=0, SES=1, mediator=2)\n    b = float(m_b_rob.params[2])\n    sb = float(m_b_rob.bse[2])\n\n    indirect, se_ind, z, p = mediation_sobel(a, sa, b, sb)\n\n    c_total = float(m_total_rob.params[1])\n    cp_direct = float(m_b_rob.params[1])\n\n    prop_med = indirect / c_total if (not np.isnan(c_total) and c_total != 0) else np.nan\n\n    # Save coefficient tables (promoted manuscript tables)\n    ct_total = coef_table(m_total_rob, x_total)\n    ct_total.insert(0, &quot;model&quot;, f&quot;{label}: total (y~SES+controls)&quot;)\n    ct_a = coef_table(m_a_rob, x_a)\n    ct_a.insert(0, &quot;model&quot;, f&quot;{label}: a-path (M~SES+controls)&quot;)\n    ct_b = coef_table(m_b_rob, x_b)\n    ct_b.insert(0, &quot;model&quot;, f&quot;{label}: b/c&#x27;-paths (y~SES+M+controls)&quot;)\n\n    coef_tables.extend([ct_total, ct_a, ct_b])\n\n    # Fit stats\n    model_results.extend([\n        fit_stats(m_total, len(x_total), f&quot;{label}_total_nonrobust&quot;),\n        fit_stats(m_a, len(x_a), f&quot;{label}_a_nonrobust&quot;),\n        fit_stats(m_b, len(x_b), f&quot;{label}_b_nonrobust&quot;),\n    ])\n\n    # VIFs (for the y~SES+M+controls model)\n    vif = vif_table(dfm, x_b)\n    vif_path = os.path.join(tables_dir, f&quot;vif_{label}.csv&quot;)\n    vif.to_csv(vif_path, index=False)\n    record_table(\n        output_dir=OUTPUT_DIR,\n        file_path=vif_path,\n        caption=f&quot;Variance inflation factors (VIF) for predictors in the {label} mediation outcome model.&quot;,\n        role=&quot;promoted&quot;,\n        columns=[&quot;variable&quot;, &quot;VIF&quot;],\n    )\n\n    return {\n        &quot;mediation_label&quot;: label,\n        &quot;mediator&quot;: mediator_col,\n        &quot;n&quot;: int(m_b_rob.nobs),\n        &quot;c_total_SES_effect&quot;: c_total,\n        &quot;cp_direct_SES_effect&quot;: cp_direct,\n        &quot;a_SES_to_M&quot;: a,\n        &quot;b_M_to_y&quot;: b,\n        &quot;indirect_ab&quot;: indirect,\n        &quot;indirect_se&quot;: se_ind,\n        &quot;sobel_z&quot;: z,\n        &quot;sobel_p&quot;: p,\n        &quot;prop_mediated_ab_over_c&quot;: prop_med,\n        &quot;R2_total_model&quot;: float(m_total.rsquared),\n        &quot;R2_direct_mediator_model&quot;: float(m_b.rsquared),\n    }, m_b_rob.resid, dfm[&quot;GEOID&quot;]\n\nmediation_rows = []\n\nrow1, resid1, geoid1 = run_mediation(analysis, med_col, label=&quot;MobilityTotalVisits_log1p&quot;)\nmediation_rows.append(row1)\n\nrow2, resid2, geoid2 = run_mediation(analysis, med2_col, label=&quot;MobilityDiversity_entropy&quot;)\nmediation_rows.append(row2)\n\n# ------------------------------------------------------------------------------\n# Spatial autocorrelation of residuals (Moran&#x27;s I) for the &quot;direct+mediator&quot; models\n# ------------------------------------------------------------------------------\n# Use counties geometry; align residuals by GEOID\nanalysis_geom = analysis[[&quot;GEOID&quot;, &quot;geometry&quot;]].dropna(subset=[&quot;geometry&quot;]).copy()\nanalysis_geom = analysis_geom[analysis_geom.geometry.is_valid &amp; ~analysis_geom.geometry.is_empty].copy()\n\nw = Queen.from_dataframe(analysis_geom)\nw.transform = &quot;R&quot;\n\ndef moran_for_residuals(resid: np.ndarray, geoid_series: pd.Series, label: str):\n    resid_df = pd.DataFrame({&quot;GEOID&quot;: geoid_series.astype(&quot;string&quot;), &quot;resid&quot;: resid})\n    g = analysis_geom.merge(resid_df, on=&quot;GEOID&quot;, how=&quot;inner&quot;).dropna(subset=[&quot;resid&quot;]).copy()\n\n    # Ensure weights align with g&#x27;s order: rebuild weights on this subset\n    w_sub = Queen.from_dataframe(g)\n    w_sub.transform = &quot;R&quot;\n\n    mi = Moran(g[&quot;resid&quot;].values, w_sub, permutations=999)\n    return {\n        &quot;metric&quot;: &quot;Moran_I_residuals&quot;,\n        &quot;model&quot;: label,\n        &quot;n&quot;: int(len(g)),\n        &quot;moran_I&quot;: float(mi.I),\n        &quot;moran_p_sim&quot;: float(mi.p_sim),\n        &quot;moran_z_sim&quot;: float(mi.z_sim),\n    }\n\nmoran_rows = [\n    moran_for_residuals(resid1, geoid1, &quot;MobilityTotalVisits_log1p_direct_plus_mediator&quot;),\n    moran_for_residuals(resid2, geoid2, &quot;MobilityDiversity_entropy_direct_plus_mediator&quot;),\n]\n\n# ------------------------------------------------------------------------------\n# Save promoted regression coefficient table\n# ------------------------------------------------------------------------------\ncoef_all = pd.concat(coef_tables, ignore_index=True)\ncoef_path = os.path.join(tables_dir, &quot;mediation_ols_coefficients_robustHC1.csv&quot;)\ncoef_all.to_csv(coef_path, index=False)\nrecord_table(\n    output_dir=OUTPUT_DIR,\n    file_path=coef_path,\n    caption=&quot;OLS coefficient tables (HC1 robust standard errors) for mediation models: total effect, mediator model, and direct+mediator outcome model.&quot;,\n    role=&quot;promoted&quot;,\n    columns=[&quot;model&quot;, &quot;variable&quot;, &quot;beta&quot;, &quot;std_err&quot;, &quot;t&quot;, &quot;p_value&quot;, &quot;ci_low&quot;, &quot;ci_high&quot;],\n)\n\n# Save model fit stats (intermediate or promoted as a table)\nfit_stats_df = pd.DataFrame(model_results)\nfit_path = os.path.join(tables_dir, &quot;model_fit_stats.csv&quot;)\nfit_stats_df.to_csv(fit_path, index=False)\nrecord_table(\n    output_dir=OUTPUT_DIR,\n    file_path=fit_path,\n    caption=&quot;Model fit statistics (non-robust OLS) for total, mediator, and direct+mediator models.&quot;,\n    role=&quot;promoted&quot;,\n)\n\n# ------------------------------------------------------------------------------\n# Key quantitative results to primary output: mediation + moran diagnostics\n# ------------------------------------------------------------------------------\nmediation_df = pd.DataFrame(mediation_rows)\nmoran_df = pd.DataFrame(moran_rows)\n\n# Combine into one wide-ish results file (requested key quantitative results)\nanalysis_results = mediation_df.merge(\n    moran_df.rename(columns={&quot;model&quot;: &quot;moran_model&quot;}), how=&quot;cross&quot;\n)\n\n# But cross-merge duplicates; instead write two blocks separated in one CSV-like table:\n# We&#x27;ll output a long format with a &quot;section&quot; column.\nmediation_long = mediation_df.copy()\nmediation_long.insert(0, &quot;section&quot;, &quot;mediation_results&quot;)\n\nmoran_long = moran_df.copy()\nmoran_long.insert(0, &quot;section&quot;, &quot;spatial_residual_diagnostics&quot;)\n\nanalysis_results_long = pd.concat([mediation_long, moran_long], ignore_index=True)\nanalysis_results_long.to_csv(OUTPUT_NODE_PATH, index=False)\n\n# Also save as a promoted table for manuscript use\nresults_table_path = os.path.join(tables_dir, &quot;analysis_results_key_quantitative.csv&quot;)\nanalysis_results_long.to_csv(results_table_path, index=False)\nrecord_table(\n    output_dir=OUTPUT_DIR,\n    file_path=results_table_path,\n    caption=&quot;Key quantitative results: mediation estimates (a, b, c, c&#x27;, indirect effect with Sobel test) and Moran&#x27;s I residual autocorrelation diagnostics.&quot;,\n    role=&quot;promoted&quot;,\n)\n\n# ------------------------------------------------------------------------------\n# Visualizations\n#   1) Choropleth: depression prevalence\n#   2) Choropleth: SES index\n#   3) Choropleth: mobility (log total visits)\n#   4) Scatter: SES vs depression with color by mobility\n# ------------------------------------------------------------------------------\nviz_gdf = analysis[[&quot;GEOID&quot;, &quot;geometry&quot;, &quot;Depression_prev&quot;, &quot;SES_index&quot;, &quot;log_mobility_total_visits&quot;, &quot;mobility_entropy&quot;]].copy()\nviz_gdf = viz_gdf.dropna(subset=[&quot;geometry&quot;]).copy()\nviz_gdf = viz_gdf[viz_gdf.geometry.is_valid &amp; ~viz_gdf.geometry.is_empty].copy()\n\ndef save_choropleth(gdf, col, title, cmap, fname, step_index):\n    fig, ax = plt.subplots(1, 1, figsize=(8, 7))\n    gdf.plot(column=col, ax=ax, legend=True, cmap=cmap, missing_kwds={&quot;color&quot;: &quot;lightgrey&quot;, &quot;label&quot;: &quot;Missing&quot;})\n    ax.set_title(title)\n    ax.set_axis_off()\n    out = os.path.join(OUTPUT_DIR, fname)\n    plt.tight_layout()\n    plt.savefig(out, dpi=300)\n    plt.close(fig)\n    record_figure(\n        output_dir=OUTPUT_DIR,\n        file_path=out,\n        caption=title,\n        role=&quot;final&quot; if col == &quot;Depression_prev&quot; else &quot;promoted&quot;,\n        objective_key=&quot;objective_1&quot;,\n        step_index=step_index,\n    )\n    return out\n\nsave_choropleth(\n    viz_gdf, &quot;Depression_prev&quot;,\n    &quot;County-level depression prevalence (PLACES) across South Carolina&quot;,\n    &quot;Reds&quot;, &quot;choropleth_depression_prev.png&quot;, step_index=1\n)\nsave_choropleth(\n    viz_gdf, &quot;SES_index&quot;,\n    &quot;County-level socioeconomic status (SES) index across South Carolina (higher = higher SES)&quot;,\n    &quot;viridis&quot;, &quot;choropleth_SES_index.png&quot;, step_index=2\n)\nsave_choropleth(\n    viz_gdf, &quot;log_mobility_total_visits&quot;,\n    &quot;County-level mobility intensity: log(1 + total place visitation) across South Carolina&quot;,\n    &quot;Blues&quot;, &quot;choropleth_mobility_log_total_visits.png&quot;, step_index=3\n)\n\n# Scatterplot: SES vs depression colored by mobility intensity\nscatter_df = viz_gdf.dropna(subset=[&quot;SES_index&quot;, &quot;Depression_prev&quot;, &quot;log_mobility_total_visits&quot;]).copy()\nfig, ax = plt.subplots(1, 1, figsize=(7.5, 6))\nsc = ax.scatter(\n    scatter_df[&quot;SES_index&quot;], scatter_df[&quot;Depression_prev&quot;],\n    c=scatter_df[&quot;log_mobility_total_visits&quot;], cmap=&quot;Blues&quot;, edgecolor=&quot;k&quot;, linewidth=0.3, s=55\n)\nax.set_xlabel(&quot;SES index (z-scored composite)&quot;)\nax.set_ylabel(&quot;Depression prevalence&quot;)\nax.set_title(&quot;SES vs depression by county (color = mobility intensity)&quot;)\ncb = plt.colorbar(sc, ax=ax)\ncb.set_label(&quot;log(1 + total visits)&quot;)\nax.grid(True, alpha=0.25)\nout_scatter = os.path.join(OUTPUT_DIR, &quot;scatter_SES_vs_depression_colored_by_mobility.png&quot;)\nplt.tight_layout()\nplt.savefig(out_scatter, dpi=300)\nplt.close(fig)\nrecord_figure(\n    output_dir=OUTPUT_DIR,\n    file_path=out_scatter,\n    caption=&quot;Scatterplot of county SES index versus depression prevalence; point color indicates mobility intensity (log total visits).&quot;,\n    role=&quot;promoted&quot;,\n    objective_key=&quot;objective_1&quot;,\n    step_index=4,\n)\n\n# ------------------------------------------------------------------------------\n# Save an analysis-ready geospatial dataset for optional deferred rendering\n# ------------------------------------------------------------------------------\ngpkg_path = os.path.join(OUTPUT_DIR, &quot;county_analysis_with_SES_mobility_depression.gpkg&quot;)\nviz_gdf.to_file(gpkg_path, layer=&quot;county_analysis&quot;, driver=&quot;GPKG&quot;)\nrecord_data_to_viz(\n    output_dir=OUTPUT_DIR,\n    file_path=gpkg_path,\n    caption=&quot;County-level analysis layer containing depression prevalence, SES index, and mobility metrics for South Carolina.&quot;,\n    viz_hint={&quot;type&quot;: &quot;choropleth&quot;, &quot;column&quot;: &quot;Depression_prev&quot;, &quot;cmap&quot;: &quot;Reds&quot;},\n    role=&quot;intermediate&quot;,\n)</pre></div><div class=\"code-section\"><h4>Created Files</h4><div class=\"files-list\"><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\bb8805e4-6c34-49e8-aa70-b49981b7c56e\\analysis_results.csv</span><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\bb8805e4-6c34-49e8-aa70-b49981b7c56e\\choropleth_SES_index.png</span><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\bb8805e4-6c34-49e8-aa70-b49981b7c56e\\choropleth_depression_prev.png</span><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\bb8805e4-6c34-49e8-aa70-b49981b7c56e\\choropleth_mobility_log_total_visits.png</span><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\bb8805e4-6c34-49e8-aa70-b49981b7c56e\\county_analysis_with_SES_mobility_depression.gpkg</span><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\bb8805e4-6c34-49e8-aa70-b49981b7c56e\\manifest.json</span><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\bb8805e4-6c34-49e8-aa70-b49981b7c56e\\scatter_SES_vs_depression_colored_by_mobility.png</span><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\bb8805e4-6c34-49e8-aa70-b49981b7c56e\\tables\\analysis_results_key_quantitative.csv</span><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\bb8805e4-6c34-49e8-aa70-b49981b7c56e\\tables\\mediation_ols_coefficients_robustHC1.csv</span><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\bb8805e4-6c34-49e8-aa70-b49981b7c56e\\tables\\model_fit_stats.csv</span><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\bb8805e4-6c34-49e8-aa70-b49981b7c56e\\tables\\vif_MobilityDiversity_entropy.csv</span><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\bb8805e4-6c34-49e8-aa70-b49981b7c56e\\tables\\vif_MobilityTotalVisits_log1p.csv</span></div></div>", "result_collation": "<h3 style=\"border-bottom-color:#D4A017;\">Result Collation</h3><div class=\"meta-item\"><span class=\"meta-label\">Status</span><span class=\"meta-value\" style=\"color:#28a745;font-weight:bold;\">Completed</span></div><div class=\"meta-item\" style=\"margin-top:8px\"><span class=\"meta-label\">Figures</span><span class=\"meta-value\">9 figure(s) cataloged</span></div>", "manuscript": "<h3 style=\"border-bottom-color:#7B2D8E;\">Manuscript</h3><div class=\"meta-item\"><span class=\"meta-label\">Status</span><span class=\"meta-value\" style=\"color:#28a745;font-weight:bold;\">Completed</span></div><div class=\"meta-item\" style=\"margin-top:8px\"><span class=\"meta-label\">File</span><span class=\"meta-value\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\bb8805e4-6c34-49e8-aa70-b49981b7c56e\\manuscript.md</span></div><div class=\"code-section\"><h4>Exported Formats</h4><div class=\"files-list\"><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\bb8805e4-6c34-49e8-aa70-b49981b7c56e\\manuscript.docx</span><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\bb8805e4-6c34-49e8-aa70-b49981b7c56e\\manuscript.pdf</span></div></div><div class=\"code-section\"><h4>Content Preview</h4><pre style=\"color:#e2e8f0;max-height:400px;\"># Spatial Mediation of Socioeconomic Status\u2013Depression Associations by Place Visitation Across South Carolina Counties\n\n## Abstract\n\n**Background and Purpose:** County-level depression prevalence exhibits pronounced geographic variability, yet the extent to which everyday mobility (place visitation) explains socioeconomic gradients in depression remains unclear. This study evaluates whether spatial patterns of mobility mediate the association between neighborhood socioeconomic status and depression prevalence across South Carolina counties. **Methods:** County-level depression prevalence was compiled from the PLACES dataset and linked to a standardized socioeconomic status (SES) index derived from American Community Survey indicators, alongside aggregated place visitation metrics from points-of-interest visitor data for all 46 counties in South Carolina. Two candidate mediators were tested using ordinary least squares mediation models: (i) total place visitation intensity (log-transformed total visits) and (ii) mobility diversity (entropy of visitation distribution). Model performance was summarized with $R^2$, and spatial dependence was assessed using Moran\u2019s $I$ on model residuals for the direct-plus-mediator specification. **Results:** Across counties ($n=46$), SES was strongly and inversely associated with depression prevalence, with a total effect of $c=-0.943$ (depression percentage-point change per one-unit SES increase). Mediation through total visitation intensity wa</pre></div>"};
+
+// Zoom & Pan state
+let scale = 1;
+let panX = 0, panY = 0;
+let isPanning = false;
+let _wasDragged = false;
+let panStartX = 0, panStartY = 0;
+let _mdX = 0, _mdY = 0;
+const PAN_THRESHOLD = 4;
+const MIN_SCALE = 0.2;
+const MAX_SCALE = 5;
+const ZOOM_STEP = 0.15;
+const svg = document.getElementById('flowchartSvg');
+const zoomGroup = document.getElementById('zoomGroup');
+const graphPanel = document.getElementById('graphPanel');
+
+function applyTransform() {
+  zoomGroup.setAttribute('transform', `translate(${panX}, ${panY}) scale(${scale})`);
+  document.getElementById('zoomLevel').textContent = Math.round(scale * 100) + '%';
+}
+
+function zoomIn() {
+  scale = Math.min(MAX_SCALE, scale + ZOOM_STEP);
+  applyTransform();
+}
+
+function zoomOut() {
+  scale = Math.max(MIN_SCALE, scale - ZOOM_STEP);
+  applyTransform();
+}
+
+function zoomReset() {
+  scale = 1; panX = 0; panY = 0;
+  applyTransform();
+}
+
+function zoomFit() {
+  const bbox = zoomGroup.getBBox();
+  const vb = svg.viewBox.baseVal;
+  const pad = 30;
+  const scaleX = (vb.width - pad * 2) / bbox.width;
+  const scaleY = (vb.height - pad * 2) / bbox.height;
+  scale = Math.min(scaleX, scaleY, MAX_SCALE);
+  panX = (vb.width / scale - bbox.width) / 2 - bbox.x + pad / scale;
+  panY = (vb.height / scale - bbox.height) / 2 - bbox.y + pad / scale;
+  applyTransform();
+}
+
+function toggleFullscreen() {
+  const elem = document.documentElement;
+  if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if (elem.webkitRequestFullscreen) {
+      elem.webkitRequestFullscreen();
+    }
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    }
+  }
+}
+
+document.addEventListener('fullscreenchange', function() {
+  const btn = document.getElementById('fullscreenBtn');
+  if (document.fullscreenElement) {
+    btn.innerHTML = '&#x2716;';
+    btn.title = 'Exit fullscreen';
+  } else {
+    btn.innerHTML = '&#x26F6;';
+    btn.title = 'Toggle fullscreen';
+  }
+  setTimeout(zoomFit, 200);
+});
+
+// Mouse wheel zoom (centered on cursor)
+graphPanel.addEventListener('wheel', function(e) {
+  e.preventDefault();
+  const rect = svg.getBoundingClientRect();
+  const mouseX = e.clientX - rect.left;
+  const mouseY = e.clientY - rect.top;
+  const vb = svg.viewBox.baseVal;
+  const svgX = (mouseX / rect.width) * vb.width;
+  const svgY = (mouseY / rect.height) * vb.height;
+  const oldScale = scale;
+  if (e.deltaY < 0) {
+    scale = Math.min(MAX_SCALE, scale + ZOOM_STEP);
+  } else {
+    scale = Math.max(MIN_SCALE, scale - ZOOM_STEP);
+  }
+  panX = svgX / scale - svgX / oldScale + panX;
+  panY = svgY / scale - svgY / oldScale + panY;
+  applyTransform();
+}, { passive: false });
+
+// Pan with left-click drag (or middle mouse)
+graphPanel.addEventListener('mousedown', function(e) {
+  if (e.button === 0 || e.button === 1) {
+    e.preventDefault();
+    isPanning = true;
+    _wasDragged = false;
+    panStartX = e.clientX;
+    panStartY = e.clientY;
+    _mdX = e.clientX;
+    _mdY = e.clientY;
+    graphPanel.style.cursor = 'grabbing';
+  }
+});
+
+window.addEventListener('mousemove', function(e) {
+  if (!isPanning) return;
+  const dist = Math.abs(e.clientX - _mdX) + Math.abs(e.clientY - _mdY);
+  if (dist > PAN_THRESHOLD) _wasDragged = true;
+  const vb = svg.viewBox.baseVal;
+  const rect = svg.getBoundingClientRect();
+  const dx = (e.clientX - panStartX) * (vb.width / rect.width) / scale;
+  const dy = (e.clientY - panStartY) * (vb.height / rect.height) / scale;
+  panX += dx;
+  panY += dy;
+  panStartX = e.clientX;
+  panStartY = e.clientY;
+  applyTransform();
+});
+
+window.addEventListener('mouseup', function() {
+  if (isPanning) {
+    isPanning = false;
+    graphPanel.style.cursor = '';
+  }
+});
+
+// Suppress node clicks after a drag
+graphPanel.addEventListener('click', function(e) {
+  if (_wasDragged) {
+    e.stopPropagation();
+    _wasDragged = false;
+  }
+}, true);
+
+// Node popup
+function showPopup(nodeId) {
+  const content = document.getElementById('popupContent');
+  const overlay = document.getElementById('popupOverlay');
+  if (details[nodeId]) {
+    content.innerHTML = details[nodeId];
+  } else {
+    content.innerHTML = '<p style="color:#999; font-style:italic;">No details available.</p>';
+  }
+  overlay.classList.add('visible');
+
+  // Highlight selected node
+  document.querySelectorAll('.node-box rect, .node-box polygon').forEach(el => {
+    el.setAttribute('stroke-width', el.tagName === 'polygon' ? '2' : '1.5');
+    el.setAttribute('stroke', el.dataset.origStroke || '#333');
+  });
+  const clicked = event.currentTarget.querySelector('rect, polygon');
+  if (clicked) {
+    clicked.setAttribute('stroke-width', '3.5');
+    clicked.setAttribute('stroke', '#FFD700');
+  }
+}
+
+function closePopup(e) {
+  if (e && e.target !== document.getElementById('popupOverlay')) return;
+  document.getElementById('popupOverlay').classList.remove('visible');
+  document.querySelectorAll('.node-box rect, .node-box polygon').forEach(el => {
+    el.setAttribute('stroke-width', el.tagName === 'polygon' ? '2' : '1.5');
+    el.setAttribute('stroke', el.dataset.origStroke || '#333');
+  });
+}
+
+// Navigate to the step card in the parent WebUI
+function goToStepCard(phase) {
+  closePopup();
+  // If inside an iframe, post message to parent; otherwise try directly
+  if (window.parent && window.parent !== window) {
+    window.parent.postMessage({ type: 'scrollToStepCard', phase: phase }, '*');
+  } else {
+    // Standalone — try finding the card in this document
+    const card = document.getElementById('wf-card-' + phase);
+    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closePopup();
+});
+
+// Store original stroke colors
+document.querySelectorAll('.node-box rect, .node-box polygon').forEach(el => {
+  el.dataset.origStroke = el.getAttribute('stroke') || '#333';
+});
+
+// Fit to view on initial load
+window.addEventListener('DOMContentLoaded', function() {
+  setTimeout(zoomFit, 100);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Spatial Inequalities in PM2.5 Exposure and Income Inequality in California, 2019 - Execution Flowchart</title>
+<style>
+  body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: #f8f9fa; display: flex; flex-direction: column; height: 100vh; }
+  h1 { text-align: center; padding: 12px 0 4px 0; margin: 0; font-size: 18px; color: #2C3E50; }
+  .legend {
+    display: flex; gap: 16px; padding: 8px 24px; background: #fff; font-size: 0.8em;
+    border-bottom: 1px solid #dee2e6; align-items: center; flex-wrap: wrap;
+  }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+  .graph-panel { flex: 1; overflow: hidden; position: relative; cursor: grab; }
+  svg { display: block; width: 100%; height: 100%; }
+  .node-box { cursor: pointer; transition: filter 0.15s; }
+  .node-box:hover { filter: brightness(1.12); }
+  marker { overflow: visible; }
+
+  /* Zoom controls toolbar */
+  .zoom-toolbar {
+    position: absolute; top: 10px; right: 10px;
+    display: flex; flex-direction: column; gap: 4px; z-index: 50;
+    background: white; border-radius: 8px; padding: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15); border: 1px solid #ddd;
+  }
+  .zoom-btn {
+    width: 32px; height: 32px; border: 1px solid #ddd; border-radius: 6px;
+    background: #fff; cursor: pointer; font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    color: #444; transition: all 0.15s; padding: 0;
+  }
+  .zoom-btn:hover { background: #e9ecef; color: #111; }
+  .zoom-btn:active { background: #dee2e6; }
+  .zoom-level { font-size: 10px; text-align: center; color: #888; padding: 2px 0; user-select: none; }
+  .zoom-divider { height: 1px; background: #e0e0e0; margin: 2px 0; }
+
+  /* Popup overlay */
+  .popup-overlay {
+    display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.35); z-index: 100; justify-content: center; align-items: center;
+  }
+  .popup-overlay.visible { display: flex; }
+
+  /* Popup box */
+  .popup-box {
+    background: white; border-radius: 10px; padding: 24px 28px;
+    max-width: 800px; width: 92%; max-height: 80vh; overflow-y: auto;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25); position: relative;
+    animation: popIn 0.18s ease-out;
+  }
+  @keyframes popIn {
+    from { transform: scale(0.92); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .popup-box h3 { margin-top: 0; color: #2C3E50; border-bottom: 2px solid #4C72B0; padding-bottom: 8px; }
+  .popup-box p { line-height: 1.6; color: #333; font-size: 13px; }
+  .popup-close {
+    position: absolute; top: 10px; right: 14px;
+    background: none; border: none; font-size: 20px; color: #999;
+    cursor: pointer; line-height: 1; padding: 4px 8px; border-radius: 4px;
+  }
+  .popup-close:hover { background: #f0f0f0; color: #333; }
+
+  /* Execution popup specifics */
+  .meta-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px;
+  }
+  .meta-item {
+    background: #f1f3f5; padding: 8px 12px; border-radius: 6px; font-size: 0.85em;
+  }
+  .meta-label { display: block; color: #6c757d; font-size: 0.8em; }
+  .meta-value { display: block; color: #212529; margin-top: 2px; }
+  .code-section { margin-top: 12px; }
+  .code-section h4 { font-size: 0.95em; color: #495057; margin-bottom: 8px; margin-top: 0; }
+  pre {
+    background: #1e293b; padding: 14px; border-radius: 8px; overflow-x: auto;
+    font-size: 0.82em; line-height: 1.5; color: #e2e8f0;
+    font-family: 'Fira Code', 'Consolas', monospace; white-space: pre-wrap; word-wrap: break-word;
+    max-height: 350px; overflow-y: auto;
+  }
+  .output-section pre { color: #a3e635; background: #0c1222; }
+  .error-section pre { color: #f87171; background: #1c0c0c; }
+  .files-list { display: flex; flex-wrap: wrap; gap: 4px; }
+  .file-tag {
+    display: inline-block; background: #e7f5ff; color: #1971c2;
+    padding: 2px 8px; border-radius: 4px; font-size: 0.8em;
+  }
+</style>
+</head>
+<body>
+<h1>Spatial Inequalities in PM2.5 Exposure and Income Inequality in California, 2019 — Execution Flowchart</h1>
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#2C3E50;"></div> Research Question</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#4C72B0;"></div> Objective</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#28a745;"></div> Step (OK)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#dc3545;"></div> Step (Error)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#6c757d;"></div> Step (Pending)</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#58a6ff;"></div> Dependency</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#40916C;"></div> Analysis Stage</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#7B2D8E;"></div> Manuscript</div>
+  <span style="margin-left:auto; color:#94a3b8;">Click any node to view details</span>
+</div>
+<div class="graph-panel" id="graphPanel">
+<!-- Zoom controls -->
+<div class="zoom-toolbar">
+  <button class="zoom-btn" onclick="zoomIn()" title="Zoom in">+</button>
+  <button class="zoom-btn" onclick="zoomOut()" title="Zoom out">&minus;</button>
+  <div class="zoom-divider"></div>
+  <span class="zoom-level" id="zoomLevel">100%</span>
+  <div class="zoom-divider"></div>
+  <button class="zoom-btn" onclick="zoomReset()" title="Reset view">&#8634;</button>
+  <button class="zoom-btn" onclick="zoomFit()" title="Fit to view">&#11036;</button>
+  <div class="zoom-divider"></div>
+  <button class="zoom-btn" id="fullscreenBtn" onclick="toggleFullscreen()" title="Toggle fullscreen">&#x26F6;</button>
+</div>
+<svg id="flowchartSvg" width="1000" height="750" viewBox="0 0 1000 750">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#666"/>
+    </marker>
+    <marker id="arrowblue" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#58a6ff"/>
+    </marker>
+  </defs>
+  <g id="zoomGroup">
+    <line x1="500" y1="80" x2="500" y2="153" stroke="#555" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="500" y1="207" x2="500" y2="285" stroke="#4C72B0" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="500" y1="335" x2="500" y2="443" stroke="#555" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="500" y1="497" x2="500" y2="543" stroke="#555" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <g class="node-box" onclick="showPopup('RQ')">
+      <rect x="200" y="20" width="600" height="60" rx="10" ry="10" fill="#2C3E50" stroke="#333" stroke-width="1.5"/>
+      <text x="500" y="47.2" text-anchor="middle" fill="white" font-size="13" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">How do spatial inequalities in PM2.5 exposure across California counties vary wi</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj_1')">
+      <rect x="380" y="153" width="240" height="55" rx="10" ry="10" fill="#4C72B0" stroke="#333" stroke-width="1.5"/>
+      <text x="500" y="170.4" text-anchor="middle" fill="white" font-size="11" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">Obj 1: How do spatial inequalities in</text>
+      <text x="500" y="184.4" text-anchor="middle" fill="white" font-size="11" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">PM2.5 e</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj1_s1')">
+      <polygon points="400,285 615,285 600,335 385,335" fill="#85e29b" stroke="#28a745" stroke-width="2"/>
+      <text x="500" y="301.0" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">[OK] S1.1: Direct code generation</text>
+      <text x="500" y="314.0" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">(ModelingAgent)</text>
+    </g>
+    <g class="node-box" onclick="showPopup('result_collation')">
+      <rect x="350" y="443" width="300" height="55" rx="10" ry="10" fill="#D4A017" stroke="#28a745" stroke-width="1.5"/>
+      <text x="500" y="467.3" text-anchor="middle" fill="white" font-size="12" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">Result Collation [OK]</text>
+    </g>
+    <g class="node-box" onclick="showPopup('manuscript')">
+      <rect x="350" y="543" width="300" height="55" rx="10" ry="10" fill="#7B2D8E" stroke="#28a745" stroke-width="1.5"/>
+      <text x="500" y="567.3" text-anchor="middle" fill="white" font-size="12" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">Manuscript [OK]</text>
+    </g>
+  </g>
+</svg>
+</div>
+
+<!-- Popup overlay -->
+<div class="popup-overlay" id="popupOverlay" onclick="closePopup(event)">
+  <div class="popup-box" id="popupBox" onclick="event.stopPropagation()">
+    <button class="popup-close" onclick="closePopup()">&times;</button>
+    <div id="popupContent"></div>
+  </div>
+</div>
+
+<script>
+const details = {"RQ": "<h3>Research Question</h3><p>How do spatial inequalities in PM2.5 exposure across California counties vary with income inequality (Gini) in 2019, and does the spatial relationship vary by urban\u2013rural classification?</p>", "obj_1": "<h3>Objective 1</h3><p><b>Title:</b> How do spatial inequalities in PM2.5 exposure across California counties vary with income inequality (Gini) in 2019, and does the spatial relationship vary by urban\u2013rural classification?</p><p><b>Hypothesis:</b> </p>", "obj1_s1": "<h3 style=\"border-bottom-color:#4C72B0; display:flex; align-items:center; justify-content:space-between; gap:8px;\"><span style=\"cursor:pointer;\" onclick=\"goToStepCard('exec_obj1_step1')\">OBJECTIVE 1 | Step 1</span><button onclick=\"goToStepCard('exec_obj1_step1')\" style=\"font-size:0.65em; padding:3px 10px; border:1px solid #4a90d9; border-radius:4px; background:#f0f6ff; color:#2a6cb6; cursor:pointer; white-space:nowrap;\">Go to Card</button></h3><div class=\"meta-grid\"><div class=\"meta-item\"><span class=\"meta-label\">Status</span><span class=\"meta-value\" style=\"color:#28a745;font-weight:bold;\">Completed</span></div><div class=\"meta-item\"><span class=\"meta-label\">Agent</span><span class=\"meta-value\">ModelingAgent</span></div><div class=\"meta-item\" style=\"grid-column:span 2\"><span class=\"meta-label\">Description</span><span class=\"meta-value\">Answer the research question end to end: How do spatial inequalities in PM2.5 exposure across California counties vary with income inequality (Gini) in 2019, and does the spatial relationship vary by urban\u2013rural classification?\n\nResearch question breakdown:\n- Intent: The research aims to investigate how inequalities in PM2.5 exposure in California counties are associated with income inequalities, measured by the Gini index, and how these relationships differ across urban and rural classifications.\n- Brief description: This research seeks to understand the spatial variations in PM2.5 pollution relative to income inequality, examining whether these spatial patterns differ based on urban-rural classifications in California counties for the year 2019. It involves analyzing relationships between PM2.5 exposure levels, income distribution (Gini index), and urban-rural status.\n- Category: explanatory\n- Spatial scale: county\n- Temporal scale: 2019\n- Data requirement: [&quot;County-level PM2.5 exposure data&quot;, &quot;County-level Gini index (income inequality) data&quot;, &quot;County-level urban-rural classification&quot;, &quot;California counties geometry data for spatial analysis&quot;]\n\nDo all data preparation, analysis, and visualization this requires in one script, and save the key quantitative results to analysis_results.csv.</span></div></div><div class=\"meta-item\" style=\"margin-bottom:12px\"><span class=\"meta-label\">Code File</span><span class=\"meta-value\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\dd5922b8-6439-4369-b784-21a662f7c30c\\generated_code\\debug_74b90dcb.py</span></div><div class=\"code-section\"><h4>Executed Code</h4><pre>import os\nimport warnings\nimport numpy as np\nimport pandas as pd\nimport geopandas as gpd\nimport matplotlib.pyplot as plt\n\nimport statsmodels.api as sm\nfrom statsmodels.stats.outliers_influence import variance_inflation_factor\nfrom scipy.stats import pearsonr, spearmanr\n\nfrom libpysal.weights import Queen\nfrom esda.moran import Moran\n\n# Pre-imported by framework (do not re-import): record_figure, record_table, record_data_to_viz\n\n# -----------------------------\n# Paths\n# -----------------------------\nCOUNTIES_GPKG = r&quot;C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\WebUI\\uploads\\dd5922b8-6439-4369-b784-21a662f7c30c\\california_counties_2019.gpkg&quot;\nURBANRURAL_CSV = r&quot;C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\WebUI\\uploads\\dd5922b8-6439-4369-b784-21a662f7c30c\\California_UrbanRural_Classification_2019.csv&quot;\nGINI_CSV = r&quot;C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\WebUI\\uploads\\dd5922b8-6439-4369-b784-21a662f7c30c\\California_Counties_Gini_2019.csv&quot;\nPM25_CSV = r&quot;C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\WebUI\\uploads\\dd5922b8-6439-4369-b784-21a662f7c30c\\PM2.5_Annual_California_2019_1.csv&quot;\n\nOUTPUT_NODE_PATH = r&quot;C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\dd5922b8-6439-4369-b784-21a662f7c30c\\analysis_results.csv&quot;\nOUTPUT_DIR = os.path.dirname(OUTPUT_NODE_PATH)\nos.makedirs(OUTPUT_DIR, exist_ok=True)\n\ntables_dir = os.path.join(OUTPUT_DIR, &quot;tables&quot;)\nos.makedirs(tables_dir, exist_ok=True)\n\nwarnings.filterwarnings(&quot;ignore&quot;, category=UserWarning)\nwarnings.filterwarnings(&quot;ignore&quot;, category=FutureWarning)\n\n# -----------------------------\n# Helpers\n# -----------------------------\ndef to_numeric(series):\n    return pd.to_numeric(series, errors=&quot;coerce&quot;)\n\ndef safe_str(series):\n    return series.astype(str).str.strip()\n\ndef sem_ols(y, X, add_const=True):\n    if add_const:\n        X = sm.add_constant(X, has_constant=&quot;add&quot;)\n    model = sm.OLS(y, X).fit()\n    return model\n\ndef model_summary_row(model, model_name, group_label, nobs):\n    rmse = float(np.sqrt(np.mean(model.resid ** 2)))\n    return {\n        &quot;analysis&quot;: &quot;ols_model_fit&quot;,\n        &quot;model&quot;: model_name,\n        &quot;group&quot;: group_label,\n        &quot;n&quot;: int(nobs),\n        &quot;R2&quot;: float(model.rsquared),\n        &quot;adj_R2&quot;: float(model.rsquared_adj),\n        &quot;AIC&quot;: float(model.aic),\n        &quot;BIC&quot;: float(model.bic),\n        &quot;F&quot;: float(model.fvalue) if model.fvalue is not None else np.nan,\n        &quot;F_pvalue&quot;: float(model.f_pvalue) if model.f_pvalue is not None else np.nan,\n        &quot;RMSE&quot;: rmse,\n    }\n\n# -----------------------------\n# STEP 3: DATA PREP + ANALYSIS + VISUALIZATION\n# -----------------------------\n\n# Load geometry\ncounties_gdf = gpd.read_file(COUNTIES_GPKG)\n\n# Validate geometry\ncounties_gdf = counties_gdf[counties_gdf.geometry.notnull()]\ncounties_gdf = counties_gdf[counties_gdf.geometry.is_valid &amp; ~counties_gdf.geometry.is_empty].copy()\n\n# Ensure join keys\ncounties_gdf[&quot;STATEFP&quot;] = safe_str(counties_gdf[&quot;STATEFP&quot;])\ncounties_gdf[&quot;COUNTYFP&quot;] = safe_str(counties_gdf[&quot;COUNTYFP&quot;])\ncounties_gdf[&quot;GEOID&quot;] = safe_str(counties_gdf[&quot;GEOID&quot;])\n\n# Load attribute tables\nurban_df = pd.read_csv(URBANRURAL_CSV, dtype=str)\ngini_df = pd.read_csv(GINI_CSV, dtype=str)\npm_df = pd.read_csv(PM25_CSV, dtype=str)\n\n# Prepare Gini\ngini_df[&quot;state_fips&quot;] = safe_str(gini_df[&quot;state_fips&quot;])\ngini_df[&quot;county_fips&quot;] = safe_str(gini_df[&quot;county_fips&quot;]).str.zfill(3)\ngini_df[&quot;year&quot;] = safe_str(gini_df[&quot;year&quot;])\ngini_df[&quot;gini&quot;] = to_numeric(gini_df[&quot;B19083_001E:Gini Index&quot;])\ngini2019 = gini_df[gini_df[&quot;year&quot;] == &quot;2019&quot;].copy()\ngini2019[&quot;GEOID&quot;] = gini2019[&quot;state_fips&quot;].str.zfill(2) + gini2019[&quot;county_fips&quot;].str.zfill(3)\ngini2019 = gini2019[[&quot;GEOID&quot;, &quot;gini&quot;]].drop_duplicates()\n\n# Prepare urban-rural classification\nurban_df[&quot;FIPSTXT&quot;] = safe_str(urban_df[&quot;FIPSTXT&quot;]).str.zfill(5)\nurban2019 = urban_df.copy()\nurban2019[&quot;GEOID&quot;] = urban2019[&quot;FIPSTXT&quot;]\nurban2019[&quot;rucc_2013&quot;] = to_numeric(urban2019[&quot;RuralUrbanContinuumCode2013&quot;])\nurban2019[&quot;metro2013&quot;] = safe_str(urban2019[&quot;Metro2013&quot;])\nurban2019[&quot;nonmetro2013&quot;] = safe_str(urban2019[&quot;Nonmetro2013&quot;])\n\ndef classify_urban_rural(row):\n    m = str(row.get(&quot;metro2013&quot;, &quot;&quot;)).strip().lower()\n    n = str(row.get(&quot;nonmetro2013&quot;, &quot;&quot;)).strip().lower()\n    rucc = row.get(&quot;rucc_2013&quot;, np.nan)\n    if m in [&quot;1&quot;, &quot;true&quot;, &quot;yes&quot;, &quot;metro&quot;]:\n        return &quot;Metro&quot;\n    if n in [&quot;1&quot;, &quot;true&quot;, &quot;yes&quot;, &quot;nonmetro&quot;]:\n        return &quot;Nonmetro&quot;\n    if pd.notnull(rucc):\n        return &quot;Metro&quot; if rucc &lt;= 3 else &quot;Nonmetro&quot;\n    return &quot;Unknown&quot;\n\nurban2019[&quot;urban_rural&quot;] = urban2019.apply(classify_urban_rural, axis=1)\nurban2019 = urban2019[[&quot;GEOID&quot;, &quot;urban_rural&quot;, &quot;rucc_2013&quot;]].drop_duplicates()\n\n# Prepare PM2.5\npm_df[&quot;year&quot;] = safe_str(pm_df[&quot;year&quot;])\npm2019 = pm_df[pm_df[&quot;year&quot;] == &quot;2019&quot;].copy()\npm2019[&quot;state_code&quot;] = safe_str(pm2019[&quot;state_code&quot;]).str.zfill(2)\npm2019[&quot;county_code&quot;] = safe_str(pm2019[&quot;county_code&quot;]).str.zfill(3)\npm2019[&quot;GEOID&quot;] = pm2019[&quot;state_code&quot;] + pm2019[&quot;county_code&quot;]\npm2019[&quot;pm25&quot;] = to_numeric(pm2019[&quot;arithmetic_mean&quot;])\n\npm_agg = (\n    pm2019.dropna(subset=[&quot;GEOID&quot;, &quot;pm25&quot;])\n    .groupby(&quot;GEOID&quot;, as_index=False)\n    .agg(pm25_mean=(&quot;pm25&quot;, &quot;mean&quot;), pm25_n_sites=(&quot;pm25&quot;, &quot;size&quot;))\n)\n\n# Merge attributes\nanalysis_gdf = counties_gdf.merge(pm_agg, on=&quot;GEOID&quot;, how=&quot;left&quot;, validate=&quot;1:1&quot;)\nanalysis_gdf = analysis_gdf.merge(gini2019, on=&quot;GEOID&quot;, how=&quot;left&quot;, validate=&quot;1:1&quot;)\nanalysis_gdf = analysis_gdf.merge(urban2019, on=&quot;GEOID&quot;, how=&quot;left&quot;, validate=&quot;1:1&quot;)\n\nanalysis_gdf = gpd.GeoDataFrame(analysis_gdf, geometry=counties_gdf.geometry.name, crs=counties_gdf.crs)\n\nanalysis_gdf[&quot;pm25_mean&quot;] = to_numeric(analysis_gdf[&quot;pm25_mean&quot;])\nanalysis_gdf[&quot;pm25_n_sites&quot;] = to_numeric(analysis_gdf[&quot;pm25_n_sites&quot;])\nanalysis_gdf[&quot;gini&quot;] = to_numeric(analysis_gdf[&quot;gini&quot;])\nanalysis_gdf[&quot;rucc_2013&quot;] = to_numeric(analysis_gdf[&quot;rucc_2013&quot;])\n\nanalysis_gdf = analysis_gdf[analysis_gdf[&quot;STATEFP&quot;] == &quot;06&quot;].copy()\nanalysis_gdf_valid = analysis_gdf.dropna(subset=[&quot;pm25_mean&quot;, &quot;gini&quot;]).copy()\n\n# Inequality metrics\ndef gini_coefficient(x):\n    x = np.asarray(x, dtype=float)\n    x = x[~np.isnan(x)]\n    if len(x) == 0:\n        return np.nan\n    if np.all(x == 0):\n        return 0.0\n    x_sorted = np.sort(x)\n    n = len(x_sorted)\n    cumx = np.cumsum(x_sorted)\n    g = (n + 1 - 2 * np.sum(cumx) / cumx[-1]) / n\n    return float(g)\n\ndef theil_t(x):\n    x = np.asarray(x, dtype=float)\n    x = x[~np.isnan(x)]\n    if len(x) == 0:\n        return np.nan\n    mu = x.mean()\n    if mu == 0:\n        return np.nan\n    ratio = x / mu\n    ratio = ratio[ratio &gt; 0]\n    return float(np.mean(ratio * np.log(ratio)))\n\ndef inequality_metrics(df, label):\n    x = df[&quot;pm25_mean&quot;].to_numpy(dtype=float)\n    n = int(np.sum(~np.isnan(x)))\n    meanx = float(np.nanmean(x)) if n &gt; 0 else np.nan\n    cv = float(np.nanstd(x, ddof=0) / meanx) if (n &gt; 0 and meanx != 0 and np.isfinite(meanx)) else np.nan\n    return [\n        {&quot;analysis&quot;: &quot;pm25_inequality&quot;, &quot;metric&quot;: &quot;gini_pm25_across_counties&quot;, &quot;group&quot;: label, &quot;value&quot;: gini_coefficient(x), &quot;n&quot;: n},\n        {&quot;analysis&quot;: &quot;pm25_inequality&quot;, &quot;metric&quot;: &quot;cv_pm25_across_counties&quot;, &quot;group&quot;: label, &quot;value&quot;: cv, &quot;n&quot;: n},\n        {&quot;analysis&quot;: &quot;pm25_inequality&quot;, &quot;metric&quot;: &quot;theilT_pm25_across_counties&quot;, &quot;group&quot;: label, &quot;value&quot;: theil_t(x), &quot;n&quot;: n},\n        {&quot;analysis&quot;: &quot;pm25_inequality&quot;, &quot;metric&quot;: &quot;mean_pm25&quot;, &quot;group&quot;: label, &quot;value&quot;: meanx, &quot;n&quot;: n},\n    ]\n\nresults_rows = []\nresults_rows.extend(inequality_metrics(analysis_gdf_valid, &quot;All&quot;))\nfor grp, sub in analysis_gdf_valid.groupby(&quot;urban_rural&quot;, dropna=False):\n    grp_label = str(grp) if pd.notnull(grp) else &quot;NA&quot;\n    results_rows.extend(inequality_metrics(sub, grp_label))\n\n# Association\nx = analysis_gdf_valid[&quot;gini&quot;].astype(float).to_numpy()\ny = analysis_gdf_valid[&quot;pm25_mean&quot;].astype(float).to_numpy()\npear_r, pear_p = pearsonr(x, y)\nspear_r, spear_p = spearmanr(x, y)\n\nresults_rows.append({&quot;analysis&quot;: &quot;association&quot;, &quot;metric&quot;: &quot;pearson_r_pm25_vs_gini&quot;, &quot;group&quot;: &quot;All&quot;, &quot;value&quot;: float(pear_r), &quot;n&quot;: int(len(x))})\nresults_rows.append({&quot;analysis&quot;: &quot;association&quot;, &quot;metric&quot;: &quot;pearson_p_pm25_vs_gini&quot;, &quot;group&quot;: &quot;All&quot;, &quot;value&quot;: float(pear_p), &quot;n&quot;: int(len(x))})\nresults_rows.append({&quot;analysis&quot;: &quot;association&quot;, &quot;metric&quot;: &quot;spearman_r_pm25_vs_gini&quot;, &quot;group&quot;: &quot;All&quot;, &quot;value&quot;: float(spear_r), &quot;n&quot;: int(len(x))})\nresults_rows.append({&quot;analysis&quot;: &quot;association&quot;, &quot;metric&quot;: &quot;spearman_p_pm25_vs_gini&quot;, &quot;group&quot;: &quot;All&quot;, &quot;value&quot;: float(spear_p), &quot;n&quot;: int(len(x))})\n\nfor grp, sub in analysis_gdf_valid.groupby(&quot;urban_rural&quot;, dropna=False):\n    sub = sub.dropna(subset=[&quot;gini&quot;, &quot;pm25_mean&quot;]).copy()\n    if len(sub) &gt;= 3:\n        xr = sub[&quot;gini&quot;].astype(float).to_numpy()\n        yr = sub[&quot;pm25_mean&quot;].astype(float).to_numpy()\n        pr, pp = pearsonr(xr, yr)\n        sr, sp = spearmanr(xr, yr)\n        grp_label = str(grp) if pd.notnull(grp) else &quot;NA&quot;\n        results_rows.append({&quot;analysis&quot;: &quot;association&quot;, &quot;metric&quot;: &quot;pearson_r_pm25_vs_gini&quot;, &quot;group&quot;: grp_label, &quot;value&quot;: float(pr), &quot;n&quot;: int(len(sub))})\n        results_rows.append({&quot;analysis&quot;: &quot;association&quot;, &quot;metric&quot;: &quot;pearson_p_pm25_vs_gini&quot;, &quot;group&quot;: grp_label, &quot;value&quot;: float(pp), &quot;n&quot;: int(len(sub))})\n        results_rows.append({&quot;analysis&quot;: &quot;association&quot;, &quot;metric&quot;: &quot;spearman_r_pm25_vs_gini&quot;, &quot;group&quot;: grp_label, &quot;value&quot;: float(sr), &quot;n&quot;: int(len(sub))})\n        results_rows.append({&quot;analysis&quot;: &quot;association&quot;, &quot;metric&quot;: &quot;spearman_p_pm25_vs_gini&quot;, &quot;group&quot;: grp_label, &quot;value&quot;: float(sp), &quot;n&quot;: int(len(sub))})\n\n# OLS models\nmodel_df = analysis_gdf_valid.dropna(subset=[&quot;pm25_mean&quot;, &quot;gini&quot;, &quot;urban_rural&quot;]).copy()\nmodel_df[&quot;is_nonmetro&quot;] = (model_df[&quot;urban_rural&quot;].astype(str).str.lower() == &quot;nonmetro&quot;).astype(int)\n\ny_ols = model_df[&quot;pm25_mean&quot;].astype(float).to_numpy()\ngini_num = model_df[&quot;gini&quot;].astype(float).to_numpy()\nnonmetro = model_df[&quot;is_nonmetro&quot;].astype(int).to_numpy()\ninteraction = gini_num * nonmetro\n\nX1 = pd.DataFrame({&quot;gini&quot;: gini_num})\nm1 = sem_ols(y_ols, X1, add_const=True)\n\nX2 = pd.DataFrame({&quot;gini&quot;: gini_num, &quot;is_nonmetro&quot;: nonmetro, &quot;gini_x_nonmetro&quot;: interaction})\nm2 = sem_ols(y_ols, X2, add_const=True)\n\ndef coef_table(model, model_name, x_cols):\n    ci = model.conf_int()\n    if isinstance(ci, pd.DataFrame):  # CHANGED: conf_int can be a DataFrame\n        ci_low = ci.iloc[:, 0].to_numpy()  # CHANGED\n        ci_high = ci.iloc[:, 1].to_numpy()  # CHANGED\n    else:\n        ci_low = ci[:, 0]\n        ci_high = ci[:, 1]\n\n    df = pd.DataFrame({\n        &quot;model&quot;: model_name,\n        &quot;variable&quot;: [&quot;const&quot;] + x_cols,\n        &quot;beta&quot;: model.params,\n        &quot;std_err&quot;: model.bse,\n        &quot;t&quot;: model.tvalues,\n        &quot;p&quot;: model.pvalues,\n        &quot;ci_low&quot;: ci_low,    # CHANGED\n        &quot;ci_high&quot;: ci_high,  # CHANGED\n    })\n    return df\n\ncoef_df = pd.concat(\n    [\n        coef_table(m1, &quot;Model1_pm25~gini&quot;, [&quot;gini&quot;]),\n        coef_table(m2, &quot;Model2_pm25~gini+UR+interaction&quot;, [&quot;gini&quot;, &quot;is_nonmetro&quot;, &quot;gini_x_nonmetro&quot;]),\n    ],\n    ignore_index=True,\n)\n\ncoef_path = os.path.join(tables_dir, &quot;ols_coefficients_pm25_gini_urbanrural_2019.csv&quot;)\ncoef_df.to_csv(coef_path, index=False)\nrecord_table(\n    output_dir=OUTPUT_DIR,\n    file_path=coef_path,\n    caption=&quot;OLS coefficients for county PM2.5 (2019) regressed on Gini and urban\u2013rural classification with interaction.&quot;,\n    role=&quot;promoted&quot;,\n    columns=[&quot;model&quot;, &quot;variable&quot;, &quot;beta&quot;, &quot;std_err&quot;, &quot;t&quot;, &quot;p&quot;, &quot;ci_low&quot;, &quot;ci_high&quot;],\n)\n\nfit_df = pd.DataFrame([\n    model_summary_row(m1, &quot;Model1_pm25~gini&quot;, &quot;All (with urban_rural)&quot;, m1.nobs),\n    model_summary_row(m2, &quot;Model2_pm25~gini+UR+interaction&quot;, &quot;All (with urban_rural)&quot;, m2.nobs),\n])\nfit_path = os.path.join(tables_dir, &quot;ols_fit_stats_pm25_gini_urbanrural_2019.csv&quot;)\nfit_df.to_csv(fit_path, index=False)\nrecord_table(\n    output_dir=OUTPUT_DIR,\n    file_path=fit_path,\n    caption=&quot;OLS model fit statistics comparing baseline and interaction models for PM2.5 vs Gini (2019).&quot;,\n    role=&quot;promoted&quot;,\n    columns=list(fit_df.columns),\n)\n\nX2_const = sm.add_constant(X2, has_constant=&quot;add&quot;).to_numpy()\nvif_vals = []\nfor i, var in enumerate([&quot;gini&quot;, &quot;is_nonmetro&quot;, &quot;gini_x_nonmetro&quot;], start=1):\n    vif_vals.append(variance_inflation_factor(X2_const, i))\nvif_df = pd.DataFrame({&quot;variable&quot;: [&quot;gini&quot;, &quot;is_nonmetro&quot;, &quot;gini_x_nonmetro&quot;], &quot;VIF&quot;: vif_vals})\n\nvif_path = os.path.join(tables_dir, &quot;ols_vif_model2_pm25_gini_urbanrural_2019.csv&quot;)\nvif_df.to_csv(vif_path, index=False)\nrecord_table(\n    output_dir=OUTPUT_DIR,\n    file_path=vif_path,\n    caption=&quot;Variance inflation factors (VIF) for predictors in the PM2.5~Gini urban\u2013rural interaction model (2019).&quot;,\n    role=&quot;promoted&quot;,\n    columns=[&quot;variable&quot;, &quot;VIF&quot;],\n)\n\nmodel_df[&quot;ols1_resid&quot;] = m1.resid\nmodel_df[&quot;ols2_resid&quot;] = m2.resid\n\n# Moran&#x27;s I diagnostics\ndiag_gdf = analysis_gdf_valid[analysis_gdf_valid[&quot;GEOID&quot;].isin(model_df[&quot;GEOID&quot;])].copy()\ndiag_gdf = diag_gdf.set_index(&quot;GEOID&quot;)\nmodel_df_idx = model_df.set_index(&quot;GEOID&quot;)\ndiag_gdf[&quot;pm25_mean&quot;] = model_df_idx[&quot;pm25_mean&quot;].astype(float)\ndiag_gdf[&quot;ols1_resid&quot;] = model_df_idx[&quot;ols1_resid&quot;].astype(float)\ndiag_gdf[&quot;ols2_resid&quot;] = model_df_idx[&quot;ols2_resid&quot;].astype(float)\n\ntry:\n    diag_gdf_proj = diag_gdf.to_crs(epsg=3310)\nexcept Exception:\n    diag_gdf_proj = diag_gdf.copy()\n\ndiag_gdf_proj = diag_gdf_proj[diag_gdf_proj.geometry.is_valid &amp; ~diag_gdf_proj.geometry.is_empty].copy()\n\nw = Queen.from_dataframe(diag_gdf_proj, use_index=True)\nw.transform = &quot;R&quot;\n\ndef moran_row(varname, values, group_label):\n    mi = Moran(values, w, permutations=999)\n    return {\n        &quot;analysis&quot;: &quot;spatial_autocorrelation&quot;,\n        &quot;metric&quot;: f&quot;moran_I_{varname}&quot;,\n        &quot;group&quot;: group_label,\n        &quot;value&quot;: float(mi.I),\n        &quot;n&quot;: int(len(values)),\n        &quot;p_sim&quot;: float(mi.p_sim),\n        &quot;z_sim&quot;: float(mi.z_sim),\n    }\n\nresults_rows.append(moran_row(&quot;pm25&quot;, diag_gdf_proj[&quot;pm25_mean&quot;].to_numpy(), &quot;All (model sample)&quot;))\nresults_rows.append(moran_row(&quot;ols1_resid&quot;, diag_gdf_proj[&quot;ols1_resid&quot;].to_numpy(), &quot;All (model sample)&quot;))\nresults_rows.append(moran_row(&quot;ols2_resid&quot;, diag_gdf_proj[&quot;ols2_resid&quot;].to_numpy(), &quot;All (model sample)&quot;))\n\n# Visualizations\ndef choropleth(gdf, column, title, out_path):\n    fig, ax = plt.subplots(1, 1, figsize=(9, 9))\n    gdf.plot(column=column, ax=ax, legend=True, cmap=&quot;viridis&quot;, linewidth=0.2, edgecolor=&quot;white&quot;,\n             missing_kwds={&quot;color&quot;: &quot;lightgrey&quot;})\n    ax.set_axis_off()\n    ax.set_title(title)\n    plt.tight_layout()\n    plt.savefig(out_path, dpi=150, bbox_inches=&quot;tight&quot;)  # CHANGED: required savefig signature\n    plt.close(fig)\n\npm_map_path = os.path.join(OUTPUT_DIR, &quot;fig_pm25_choropleth_2019.png&quot;)\nchoropleth(analysis_gdf, &quot;pm25_mean&quot;, &quot;California counties: PM2.5 annual mean (2019) from site averages&quot;, pm_map_path)\nrecord_figure(\n    output_dir=OUTPUT_DIR,\n    file_path=pm_map_path,\n    caption=&quot;County choropleth of PM2.5 annual mean concentration (2019) aggregated from monitoring sites.&quot;,\n    role=&quot;final&quot;,\n    objective_key=&quot;objective_1&quot;,\n    step_index=1,\n)\n\ngini_map_path = os.path.join(OUTPUT_DIR, &quot;fig_gini_choropleth_2019.png&quot;)\nchoropleth(analysis_gdf, &quot;gini&quot;, &quot;California counties: Income inequality (Gini index, 2019)&quot;, gini_map_path)\nrecord_figure(\n    output_dir=OUTPUT_DIR,\n    file_path=gini_map_path,\n    caption=&quot;County choropleth of income inequality (Gini index) in 2019.&quot;,\n    role=&quot;final&quot;,\n    objective_key=&quot;objective_1&quot;,\n    step_index=2,\n)\n\nscatter_df = analysis_gdf_valid.dropna(subset=[&quot;pm25_mean&quot;, &quot;gini&quot;]).copy()\nscatter_df[&quot;urban_rural&quot;] = scatter_df[&quot;urban_rural&quot;].fillna(&quot;Unknown&quot;).astype(str)\n\nfig, ax = plt.subplots(1, 1, figsize=(8, 6))\ncolors = {&quot;Metro&quot;: &quot;#1f77b4&quot;, &quot;Nonmetro&quot;: &quot;#ff7f0e&quot;, &quot;Unknown&quot;: &quot;#7f7f7f&quot;}\nfor grp, sub in scatter_df.groupby(&quot;urban_rural&quot;):\n    ax.scatter(sub[&quot;gini&quot;], sub[&quot;pm25_mean&quot;], s=30, alpha=0.85, label=f&quot;{grp} (n={len(sub)})&quot;,\n               c=colors.get(grp, &quot;#2ca02c&quot;))\n    if len(sub) &gt;= 3:\n        xs = sub[&quot;gini&quot;].astype(float).to_numpy()\n        ys = sub[&quot;pm25_mean&quot;].astype(float).to_numpy()\n        mg = sm.OLS(ys, sm.add_constant(xs)).fit()\n        xline = np.linspace(xs.min(), xs.max(), 50)\n        yline = mg.predict(sm.add_constant(xline))\n        ax.plot(xline, yline, linewidth=2, color=colors.get(grp, &quot;#2ca02c&quot;))\n\nax.set_xlabel(&quot;Gini index (2019)&quot;)\nax.set_ylabel(&quot;PM2.5 annual mean (2019)&quot;)\nax.set_title(&quot;County PM2.5 vs income inequality (Gini), stratified by urban\u2013rural class&quot;)\nax.legend(frameon=True, fontsize=9)\nax.grid(True, linestyle=&quot;--&quot;, alpha=0.3)\nplt.tight_layout()\n\nscatter_path = os.path.join(OUTPUT_DIR, &quot;fig_scatter_pm25_vs_gini_by_urbanrural_2019.png&quot;)\nplt.savefig(scatter_path, dpi=150, bbox_inches=&quot;tight&quot;)  # CHANGED: required savefig signature\nplt.close(fig)\n\nrecord_figure(\n    output_dir=OUTPUT_DIR,\n    file_path=scatter_path,\n    caption=&quot;Scatterplot of county PM2.5 (2019) versus Gini (2019), colored by urban\u2013rural class with groupwise OLS trend lines.&quot;,\n    role=&quot;final&quot;,\n    objective_key=&quot;objective_1&quot;,\n    step_index=3,\n)\n\nfig, ax = plt.subplots(1, 1, figsize=(7, 5))\norder = [&quot;Metro&quot;, &quot;Nonmetro&quot;, &quot;Unknown&quot;]\nbox_data = []\nlabels = []\nfor grp in order:\n    vals = scatter_df.loc[scatter_df[&quot;urban_rural&quot;] == grp, &quot;pm25_mean&quot;].astype(float).to_numpy()\n    if len(vals) &gt; 0:\n        box_data.append(vals)\n        labels.append(f&quot;{grp}\\n(n={len(vals)})&quot;)\nif len(box_data) &gt; 0:\n    ax.boxplot(box_data, labels=labels, showfliers=True)\nax.set_ylabel(&quot;PM2.5 annual mean (2019)&quot;)\nax.set_title(&quot;PM2.5 distribution by urban\u2013rural classification&quot;)\nax.grid(True, axis=&quot;y&quot;, linestyle=&quot;--&quot;, alpha=0.3)\nplt.tight_layout()\n\nbox_path = os.path.join(OUTPUT_DIR, &quot;fig_box_pm25_by_urbanrural_2019.png&quot;)\nplt.savefig(box_path, dpi=150, bbox_inches=&quot;tight&quot;)  # CHANGED: required savefig signature\nplt.close(fig)\n\nrecord_figure(\n    output_dir=OUTPUT_DIR,\n    file_path=box_path,\n    caption=&quot;Boxplots of county PM2.5 annual mean (2019) by urban\u2013rural classification.&quot;,\n    role=&quot;promoted&quot;,\n    objective_key=&quot;objective_1&quot;,\n    step_index=4,\n)\n\ndesc_cols = [&quot;GEOID&quot;, &quot;NAME&quot;, &quot;pm25_mean&quot;, &quot;pm25_n_sites&quot;, &quot;gini&quot;, &quot;urban_rural&quot;, &quot;rucc_2013&quot;]\ndesc_df = analysis_gdf[desc_cols].copy()\ndesc_path = os.path.join(tables_dir, &quot;table_county_pm25_gini_urbanrural_2019.csv&quot;)\ndesc_df.to_csv(desc_path, index=False)\nrecord_table(\n    output_dir=OUTPUT_DIR,\n    file_path=desc_path,\n    caption=&quot;County-level dataset (2019) merging PM2.5 annual mean, Gini index, and urban\u2013rural classification.&quot;,\n    role=&quot;intermediate&quot;,\n    columns=desc_cols,\n)\n\nresults_df = pd.DataFrame(results_rows)\n\ncoef_map = dict(zip([&quot;const&quot;, &quot;gini&quot;, &quot;is_nonmetro&quot;, &quot;gini_x_nonmetro&quot;], m2.params))\np_map = dict(zip([&quot;const&quot;, &quot;gini&quot;, &quot;is_nonmetro&quot;, &quot;gini_x_nonmetro&quot;], m2.pvalues))\nresults_df = pd.concat(\n    [\n        results_df,\n        pd.DataFrame(\n            [\n                {&quot;analysis&quot;: &quot;interaction_test&quot;, &quot;metric&quot;: &quot;beta_gini_x_nonmetro&quot;, &quot;group&quot;: &quot;All&quot;, &quot;value&quot;: float(coef_map.get(&quot;gini_x_nonmetro&quot;, np.nan)), &quot;n&quot;: int(m2.nobs)},\n                {&quot;analysis&quot;: &quot;interaction_test&quot;, &quot;metric&quot;: &quot;p_gini_x_nonmetro&quot;, &quot;group&quot;: &quot;All&quot;, &quot;value&quot;: float(p_map.get(&quot;gini_x_nonmetro&quot;, np.nan)), &quot;n&quot;: int(m2.nobs)},\n            ]\n        ),\n    ],\n    ignore_index=True,\n)\n\nos.makedirs(os.path.dirname(OUTPUT_NODE_PATH), exist_ok=True)\nresults_df.to_csv(OUTPUT_NODE_PATH, index=False)\n\nmerged_gpkg_path = os.path.join(OUTPUT_DIR, &quot;merged_county_pm25_gini_urbanrural_2019.gpkg&quot;)\ntry:\n    analysis_gdf.to_file(merged_gpkg_path, driver=&quot;GPKG&quot;)\n    record_data_to_viz(\n        output_dir=OUTPUT_DIR,\n        file_path=merged_gpkg_path,\n        caption=&quot;California counties with merged 2019 PM2.5, Gini, and urban\u2013rural attributes for mapping.&quot;,\n        viz_hint={&quot;type&quot;: &quot;choropleth&quot;, &quot;column&quot;: &quot;pm25_mean&quot;, &quot;cmap&quot;: &quot;viridis&quot;},\n        role=&quot;intermediate&quot;,\n    )\nexcept Exception:\n    pass</pre></div><div class=\"code-section\"><h4>Created Files</h4><div class=\"files-list\"><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\dd5922b8-6439-4369-b784-21a662f7c30c\\analysis_results.csv</span><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\dd5922b8-6439-4369-b784-21a662f7c30c\\fig_box_pm25_by_urbanrural_2019.png</span><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\dd5922b8-6439-4369-b784-21a662f7c30c\\fig_gini_choropleth_2019.png</span><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\dd5922b8-6439-4369-b784-21a662f7c30c\\fig_pm25_choropleth_2019.png</span><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\dd5922b8-6439-4369-b784-21a662f7c30c\\fig_scatter_pm25_vs_gini_by_urbanrural_2019.png</span><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\dd5922b8-6439-4369-b784-21a662f7c30c\\manifest.json</span><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\dd5922b8-6439-4369-b784-21a662f7c30c\\merged_county_pm25_gini_urbanrural_2019.gpkg</span><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\dd5922b8-6439-4369-b784-21a662f7c30c\\tables\\ols_coefficients_pm25_gini_urbanrural_2019.csv</span><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\dd5922b8-6439-4369-b784-21a662f7c30c\\tables\\ols_fit_stats_pm25_gini_urbanrural_2019.csv</span><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\dd5922b8-6439-4369-b784-21a662f7c30c\\tables\\ols_vif_model2_pm25_gini_urbanrural_2019.csv</span><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\dd5922b8-6439-4369-b784-21a662f7c30c\\tables\\table_county_pm25_gini_urbanrural_2019.csv</span></div></div>", "result_collation": "<h3 style=\"border-bottom-color:#D4A017;\">Result Collation</h3><div class=\"meta-item\"><span class=\"meta-label\">Status</span><span class=\"meta-value\" style=\"color:#28a745;font-weight:bold;\">Completed</span></div><div class=\"meta-item\" style=\"margin-top:8px\"><span class=\"meta-label\">Figures</span><span class=\"meta-value\">14 figure(s) cataloged</span></div>", "manuscript": "<h3 style=\"border-bottom-color:#7B2D8E;\">Manuscript</h3><div class=\"meta-item\"><span class=\"meta-label\">Status</span><span class=\"meta-value\" style=\"color:#28a745;font-weight:bold;\">Completed</span></div><div class=\"meta-item\" style=\"margin-top:8px\"><span class=\"meta-label\">File</span><span class=\"meta-value\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\dd5922b8-6439-4369-b784-21a662f7c30c\\manuscript.md</span></div><div class=\"code-section\"><h4>Exported Formats</h4><div class=\"files-list\"><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\dd5922b8-6439-4369-b784-21a662f7c30c\\manuscript.docx</span><span class=\"file-tag\">C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\dd5922b8-6439-4369-b784-21a662f7c30c\\manuscript.pdf</span></div></div><div class=\"code-section\"><h4>Content Preview</h4><pre style=\"color:#e2e8f0;max-height:400px;\"># Spatial Inequalities in Fine Particulate Matter Exposure and Income Inequality Across California Counties in 2019\n\n## Abstract\n\n**Background and Purpose:** Spatial inequities in air pollution exposure are central to environmental justice research, yet county-scale evidence on how exposure inequality covaries with income inequality\u2014and whether this relationship differs by urban\u2013rural context\u2014remains limited. This study quantifies inequalities in county-level fine particulate matter (PM2.5) exposure across California and tests associations with county income inequality (Gini) in 2019, including effect modification by metro versus nonmetro status. **Methods:** County boundaries (58 counties) were integrated with 2019 annual mean PM2.5 (available for $n=44$ counties with monitoring coverage; mean sites per county $=29.34$, range $8$\u2013$155$), county income inequality (Gini; available for all 58), and an urban\u2013rural classification (Metro vs Nonmetro). Inequality in PM2.5 across counties was summarized using the Gini coefficient, coefficient of variation, and Theil\u2019s $T$, computed overall and by urban\u2013rural group. Associations between PM2.5 and income inequality were evaluated using bivariate correlation and ordinary least squares models, including an urban\u2013rural interaction term; multicollinearity was assessed using variance inflation factors (VIF). **Results:** Across counties with PM2.5 data, mean PM2.5 was $7.44$ (units as reported by the PM2.5 dataset) and exposure inequality </pre></div>"};
+
+// Zoom & Pan state
+let scale = 1;
+let panX = 0, panY = 0;
+let isPanning = false;
+let _wasDragged = false;
+let panStartX = 0, panStartY = 0;
+let _mdX = 0, _mdY = 0;
+const PAN_THRESHOLD = 4;
+const MIN_SCALE = 0.2;
+const MAX_SCALE = 5;
+const ZOOM_STEP = 0.15;
+const svg = document.getElementById('flowchartSvg');
+const zoomGroup = document.getElementById('zoomGroup');
+const graphPanel = document.getElementById('graphPanel');
+
+function applyTransform() {
+  zoomGroup.setAttribute('transform', `translate(${panX}, ${panY}) scale(${scale})`);
+  document.getElementById('zoomLevel').textContent = Math.round(scale * 100) + '%';
+}
+
+function zoomIn() {
+  scale = Math.min(MAX_SCALE, scale + ZOOM_STEP);
+  applyTransform();
+}
+
+function zoomOut() {
+  scale = Math.max(MIN_SCALE, scale - ZOOM_STEP);
+  applyTransform();
+}
+
+function zoomReset() {
+  scale = 1; panX = 0; panY = 0;
+  applyTransform();
+}
+
+function zoomFit() {
+  const bbox = zoomGroup.getBBox();
+  const vb = svg.viewBox.baseVal;
+  const pad = 30;
+  const scaleX = (vb.width - pad * 2) / bbox.width;
+  const scaleY = (vb.height - pad * 2) / bbox.height;
+  scale = Math.min(scaleX, scaleY, MAX_SCALE);
+  panX = (vb.width / scale - bbox.width) / 2 - bbox.x + pad / scale;
+  panY = (vb.height / scale - bbox.height) / 2 - bbox.y + pad / scale;
+  applyTransform();
+}
+
+function toggleFullscreen() {
+  const elem = document.documentElement;
+  if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if (elem.webkitRequestFullscreen) {
+      elem.webkitRequestFullscreen();
+    }
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    }
+  }
+}
+
+document.addEventListener('fullscreenchange', function() {
+  const btn = document.getElementById('fullscreenBtn');
+  if (document.fullscreenElement) {
+    btn.innerHTML = '&#x2716;';
+    btn.title = 'Exit fullscreen';
+  } else {
+    btn.innerHTML = '&#x26F6;';
+    btn.title = 'Toggle fullscreen';
+  }
+  setTimeout(zoomFit, 200);
+});
+
+// Mouse wheel zoom (centered on cursor)
+graphPanel.addEventListener('wheel', function(e) {
+  e.preventDefault();
+  const rect = svg.getBoundingClientRect();
+  const mouseX = e.clientX - rect.left;
+  const mouseY = e.clientY - rect.top;
+  const vb = svg.viewBox.baseVal;
+  const svgX = (mouseX / rect.width) * vb.width;
+  const svgY = (mouseY / rect.height) * vb.height;
+  const oldScale = scale;
+  if (e.deltaY < 0) {
+    scale = Math.min(MAX_SCALE, scale + ZOOM_STEP);
+  } else {
+    scale = Math.max(MIN_SCALE, scale - ZOOM_STEP);
+  }
+  panX = svgX / scale - svgX / oldScale + panX;
+  panY = svgY / scale - svgY / oldScale + panY;
+  applyTransform();
+}, { passive: false });
+
+// Pan with left-click drag (or middle mouse)
+graphPanel.addEventListener('mousedown', function(e) {
+  if (e.button === 0 || e.button === 1) {
+    e.preventDefault();
+    isPanning = true;
+    _wasDragged = false;
+    panStartX = e.clientX;
+    panStartY = e.clientY;
+    _mdX = e.clientX;
+    _mdY = e.clientY;
+    graphPanel.style.cursor = 'grabbing';
+  }
+});
+
+window.addEventListener('mousemove', function(e) {
+  if (!isPanning) return;
+  const dist = Math.abs(e.clientX - _mdX) + Math.abs(e.clientY - _mdY);
+  if (dist > PAN_THRESHOLD) _wasDragged = true;
+  const vb = svg.viewBox.baseVal;
+  const rect = svg.getBoundingClientRect();
+  const dx = (e.clientX - panStartX) * (vb.width / rect.width) / scale;
+  const dy = (e.clientY - panStartY) * (vb.height / rect.height) / scale;
+  panX += dx;
+  panY += dy;
+  panStartX = e.clientX;
+  panStartY = e.clientY;
+  applyTransform();
+});
+
+window.addEventListener('mouseup', function() {
+  if (isPanning) {
+    isPanning = false;
+    graphPanel.style.cursor = '';
+  }
+});
+
+// Suppress node clicks after a drag
+graphPanel.addEventListener('click', function(e) {
+  if (_wasDragged) {
+    e.stopPropagation();
+    _wasDragged = false;
+  }
+}, true);
+
+// Node popup
+function showPopup(nodeId) {
+  const content = document.getElementById('popupContent');
+  const overlay = document.getElementById('popupOverlay');
+  if (details[nodeId]) {
+    content.innerHTML = details[nodeId];
+  } else {
+    content.innerHTML = '<p style="color:#999; font-style:italic;">No details available.</p>';
+  }
+  overlay.classList.add('visible');
+
+  // Highlight selected node
+  document.querySelectorAll('.node-box rect, .node-box polygon').forEach(el => {
+    el.setAttribute('stroke-width', el.tagName === 'polygon' ? '2' : '1.5');
+    el.setAttribute('stroke', el.dataset.origStroke || '#333');
+  });
+  const clicked = event.currentTarget.querySelector('rect, polygon');
+  if (clicked) {
+    clicked.setAttribute('stroke-width', '3.5');
+    clicked.setAttribute('stroke', '#FFD700');
+  }
+}
+
+function closePopup(e) {
+  if (e && e.target !== document.getElementById('popupOverlay')) return;
+  document.getElementById('popupOverlay').classList.remove('visible');
+  document.querySelectorAll('.node-box rect, .node-box polygon').forEach(el => {
+    el.setAttribute('stroke-width', el.tagName === 'polygon' ? '2' : '1.5');
+    el.setAttribute('stroke', el.dataset.origStroke || '#333');
+  });
+}
+
+// Navigate to the step card in the parent WebUI
+function goToStepCard(phase) {
+  closePopup();
+  // If inside an iframe, post message to parent; otherwise try directly
+  if (window.parent && window.parent !== window) {
+    window.parent.postMessage({ type: 'scrollToStepCard', phase: phase }, '*');
+  } else {
+    // Standalone — try finding the card in this document
+    const card = document.getElementById('wf-card-' + phase);
+    if (card) card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closePopup();
+});
+
+// Store original stroke colors
+document.querySelectorAll('.node-box rect, .node-box polygon').forEach(el => {
+  el.dataset.origStroke = el.getAttribute('stroke') || '#333';
+});
+
+// Fit to view on initial load
+window.addEventListener('DOMContentLoaded', function() {
+  setTimeout(zoomFit, 100);
+});
+</script>
+</body>
+</html>

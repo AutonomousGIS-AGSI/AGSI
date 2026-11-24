@@ -1,0 +1,820 @@
+{
+  "steps": [
+    {
+      "objective_key": "objective_1",
+      "objective_title": "Assess how PM2.5 exposure varies across California counties in 2019 and whether county-level PM2.5 is spatially clustered",
+      "objective_number": 1,
+      "step_index": 1,
+      "step_description": "Filter `PM2.5_Annual_California_2019` to rows where `year == 2019` and `pollutant_standard == 'PM25 Annual 2006'`, keeping only `state_code`, `county_code`, `site_number`, and `arithmetic_mean`.",
+      "status": "completed",
+      "agent_name": "DataAgent",
+      "task_complexity": "simple",
+      "code": "import os\nimport pandas as pd\n\n# Paths\nINPUT_PATH = \"/bigdata/s0/tea5209/AGM/outputs/DataRetrieverOutput/PM2.5_Annual_California_2019.csv\"\nOUTPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/pm25_2019_annual_records.csv\"\nOUTPUT_DIR = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787\"\n\n# Load\ndf = pd.read_csv(INPUT_PATH, dtype=str)\n\n# Filter (columns confirmed by get_columns)\nmask = (df[\"year\"].astype(str).str.strip() == \"2019\") & (\n    df[\"pollutant_standard\"].astype(str).str.strip() == \"PM25 Annual 2006\"\n)\n\nout_df = df.loc[mask, [\"state_code\", \"county_code\", \"site_number\", \"arithmetic_mean\"]].copy()\n\n# Save\nos.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)\nout_df.to_csv(OUTPUT_PATH, index=False)\n\n# Record artifact (intermediate dataset)\nrecord_data_to_viz(\n    output_dir=OUTPUT_DIR,\n    file_path=OUTPUT_PATH,\n    caption=\"Filtered PM2.5 annual 2019 records for California under the 'PM25 Annual 2006' standard, retaining site identifiers and arithmetic mean.\",\n    viz_hint={\"type\": \"table\"},\n    role=\"intermediate\",\n)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/generated_code/op_row_filter_e2406369.py",
+      "output": "",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/manifest.json",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/manifest.json",
+          "filename": "manifest.json",
+          "size": 6855,
+          "type": "json",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/pm25_2019_annual_records.csv",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/pm25_2019_annual_records.csv",
+          "filename": "pm25_2019_annual_records.csv",
+          "size": 3181,
+          "type": "csv",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_1",
+      "objective_title": "Assess how PM2.5 exposure varies across California counties in 2019 and whether county-level PM2.5 is spatially clustered",
+      "objective_number": 1,
+      "step_index": 2,
+      "step_description": "Create county `GEOID` as a 5-character string by concatenating zero-padded `state_code` (2 digits) and zero-padded `county_code` (3 digits).",
+      "status": "completed",
+      "agent_name": "DataAgent",
+      "task_complexity": "simple",
+      "code": "import os\nimport pandas as pd\n\nINPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/pm25_2019_annual_records.csv\"\nOUTPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/pm25_2019_with_geoid.csv\"\nOUTPUT_DIR = os.path.dirname(OUTPUT_PATH)\n\n# ---- Load ----------------------------------------------------------------\ndf = pd.read_csv(INPUT_PATH)\n\n# ---- Create county GEOID (state_code zfill(2) + county_code zfill(3)) ----\nrequired_cols = [\"state_code\", \"county_code\"]\nmissing = [c for c in required_cols if c not in df.columns]\nif missing:\n    raise KeyError(f\"Missing required columns: {missing}. Available columns: {df.columns.tolist()}\")\n\nstate = df[\"state_code\"].astype(str).str.strip()\ncounty = df[\"county_code\"].astype(str).str.strip()\n\n# Treat common \"missing\" string tokens as NA after string conversion\nna_tokens = {\"\", \"nan\", \"none\", \"null\", \"<na>\"}\nstate_is_na = state.str.lower().isin(na_tokens)\ncounty_is_na = county.str.lower().isin(na_tokens)\n\ndf[\"GEOID\"] = pd.NA\nmask = (~state_is_na) & (~county_is_na)\ndf.loc[mask, \"GEOID\"] = state.loc[mask].str.zfill(2) + county.loc[mask].str.zfill(3)\n\n# ---- Save ----------------------------------------------------------------\nos.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)\ndf.to_csv(OUTPUT_PATH, index=False)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/generated_code/op_derive_column_52b7df40.py",
+      "output": "",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/pm25_2019_with_geoid.csv",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/pm25_2019_with_geoid.csv",
+          "filename": "pm25_2019_with_geoid.csv",
+          "size": 3576,
+          "type": "csv",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_1",
+      "objective_title": "Assess how PM2.5 exposure varies across California counties in 2019 and whether county-level PM2.5 is spatially clustered",
+      "objective_number": 1,
+      "step_index": 3,
+      "step_description": "Group by `GEOID` and compute `pm25_mean_2019 = mean(arithmetic_mean)` and `pm25_site_count_2019 = count(site_number)`.",
+      "status": "completed",
+      "agent_name": "DataAgent",
+      "task_complexity": "simple",
+      "code": "import os\nimport numpy as np\nimport pandas as pd\n\nINPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/pm25_2019_with_geoid.csv\"\nOUTPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/pm25_county_2019.csv\"\nOUTPUT_DIR = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787\"\n\n# ---- Load ----------------------------------------------------------------\ndf = pd.read_csv(INPUT_PATH, dtype=str)\n\n# ---- Clean/normalize needed fields ---------------------------------------\n# GEOID: strip; zfill to modal width to preserve leading zeros (county GEOID usually width=5)\ndf[\"GEOID\"] = df[\"GEOID\"].astype(str).str.strip()\ngeoid_len = df[\"GEOID\"].dropna().str.len()\nif not geoid_len.empty:\n    key_width = int(geoid_len.mode().iloc[0])\n    df[\"GEOID\"] = df[\"GEOID\"].str.zfill(key_width)\n\n# arithmetic_mean: numeric for mean aggregation\ndf[\"arithmetic_mean\"] = pd.to_numeric(df[\"arithmetic_mean\"], errors=\"coerce\")\n\n# site_number: keep as string; count non-null per GEOID\ndf[\"site_number\"] = df[\"site_number\"].astype(str).replace({\"nan\": np.nan}).str.strip()\n\n# Drop rows without GEOID (cannot aggregate)\ndf = df.dropna(subset=[\"GEOID\"])\n\n# ---- Aggregate ------------------------------------------------------------\nout = (\n    df.groupby(\"GEOID\", as_index=False)\n    .agg(\n        pm25_mean_2019=(\"arithmetic_mean\", \"mean\"),\n        pm25_site_count_2019=(\"site_number\", \"count\"),\n    )\n)\n\n# ---- Save ----------------------------------------------------------------\nos.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)\nout.to_csv(OUTPUT_PATH, index=False)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/generated_code/op_groupby_aggregate_mean_and_cou_bd711148.py",
+      "output": "",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/pm25_county_2019.csv",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/pm25_county_2019.csv",
+          "filename": "pm25_county_2019.csv",
+          "size": 905,
+          "type": "csv",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_1",
+      "objective_title": "Assess how PM2.5 exposure varies across California counties in 2019 and whether county-level PM2.5 is spatially clustered",
+      "objective_number": 1,
+      "step_index": 4,
+      "step_description": "Left-join `pm25_county_2019.csv` to `california_counties_2019` on `GEOID` to attach `pm25_mean_2019` and `pm25_site_count_2019` to county polygons.",
+      "status": "completed",
+      "agent_name": "DataAgent",
+      "task_complexity": "simple",
+      "code": "import os\nimport numpy as np\nimport pandas as pd\nimport geopandas as gpd\n\n# Manuscript artifact helpers are pre-imported:\n# record_figure, record_table, record_data_to_viz\n\nINPUT_COUNTIES = \"/bigdata/s0/tea5209/AGM/outputs/DataRetrieverOutput/california_counties_2019.gpkg\"\nINPUT_PM25 = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/pm25_county_2019.csv\"\nOUTPUT_GPKG = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_2019.gpkg\"\nOUTPUT_DIR = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787\"\n\nos.makedirs(os.path.dirname(OUTPUT_GPKG), exist_ok=True)\nos.makedirs(OUTPUT_DIR, exist_ok=True)\n\n# -----------------------\n# Load\n# -----------------------\ncounties = gpd.read_file(INPUT_COUNTIES)\npm25 = pd.read_csv(INPUT_PM25)\n\n# -----------------------\n# Validate/clean geometry\n# -----------------------\ncounties = counties[counties.geometry.notna()]\ncounties = counties[counties.geometry.is_valid & ~counties.geometry.is_empty].copy()\n\n# -----------------------\n# Prepare join keys\n# -----------------------\nJOIN_KEY = \"GEOID\"\nKEY_WIDTH = 5  # County GEOID is state(2)+county(3)\n\ncounties[JOIN_KEY] = counties[JOIN_KEY].astype(str).str.strip().str.zfill(KEY_WIDTH)\npm25[JOIN_KEY] = pm25[JOIN_KEY].astype(str).str.strip().str.zfill(KEY_WIDTH)\n\n# Keep only the required right-side columns\npm25_keep = [\"GEOID\", \"pm25_mean_2019\", \"pm25_site_count_2019\"]\nmissing_right = [c for c in pm25_keep if c not in pm25.columns]\nif missing_right:\n    raise KeyError(\n        f\"Missing required columns in pm25 CSV: {missing_right}. \"\n        f\"Available columns: {list(pm25.columns)}\"\n    )\npm25 = pm25[pm25_keep].copy()\n\n# Coerce PM2.5 fields to numeric (they arrived as object)\npm25[\"pm25_mean_2019\"] = pd.to_numeric(pm25[\"pm25_mean_2019\"], errors=\"coerce\")\npm25[\"pm25_site_count_2019\"] = pd.to_numeric(pm25[\"pm25_site_count_2019\"], errors=\"coerce\")\n\n# Replace common sentinel values if present\npm25 = pm25.replace([-666666666, -888888888, -999999999], np.nan)\n\n# Ensure right-side key uniqueness (avoid exploding row counts)\npm25 = pm25.drop_duplicates(subset=[\"GEOID\"]).copy()\n\n# -----------------------\n# Left join\n# -----------------------\nout = counties.merge(pm25, on=\"GEOID\", how=\"left\")\n\n# -----------------------\n# Join audit\n# -----------------------\ntotal = len(out)\nmatched = int(out[\"pm25_mean_2019\"].notna().sum())\nmatch_rate = (matched / total) if total else 0.0\nunmatched = total - matched\n\naudit_lines = [\n    \"[JOIN AUDIT] Left join pm25_county_2019 to california_counties_2019 on GEOID\",\n    f\"  left rows (counties): {total}\",\n    f\"  matched (non-null pm25_mean_2019): {matched}/{total} ({match_rate:.1%})\",\n    f\"  unmatched (null pm25_mean_2019): {unmatched}\",\n]\nif match_rate < 0.9:\n    audit_lines.append(\"  WARNING: match rate below 90% — inspect GEOID formatting/coverage.\")\n    audit_lines.append(f\"    left GEOID sample: {counties['GEOID'].head(5).tolist()}\")\n    audit_lines.append(f\"    right GEOID sample: {pm25['GEOID'].head(5).tolist()}\")\n    audit_lines.append(\n        f\"    example unmatched left GEOIDs: {out.loc[out['pm25_mean_2019'].isna(), 'GEOID'].head(10).tolist()}\"\n    )\n\naudit_text = \"\\n\".join(audit_lines)\nprint(audit_text)\n\naudit_path = os.path.join(OUTPUT_DIR, \"join_audit_pm25_2019_counties.txt\")\nwith open(audit_path, \"w\") as f:\n    f.write(audit_text + \"\\n\")\n\n# -----------------------\n# Save output\n# -----------------------\nout.to_file(OUTPUT_GPKG, driver=\"GPKG\")\n\n# Defer rendering: allow presentation layer to auto-choropleth PM2.5\nrecord_data_to_viz(\n    output_dir=OUTPUT_DIR,\n    file_path=OUTPUT_GPKG,\n    caption=\"California county polygons enriched with 2019 county-level PM2.5 mean and monitoring site counts via GEOID left join.\",\n    viz_hint={\"type\": \"choropleth\", \"column\": \"pm25_mean_2019\"},\n    role=\"intermediate\",\n)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/generated_code/op_attribute_join_8d1d2c13.py",
+      "output": "[JOIN AUDIT] Left join pm25_county_2019 to california_counties_2019 on GEOID\n  left rows (counties): 58\n  matched (non-null pm25_mean_2019): 44/58 (75.9%)\n  unmatched (null pm25_mean_2019): 14\n  WARNING: match rate below 90% — inspect GEOID formatting/coverage.\n    left GEOID sample: ['06001', '06061', '06037', '06095', '06093']\n    right GEOID sample: ['06001', '06009', '06011', '06013', '06019']\n    example unmatched left GEOIDs: ['06115', '06007', '06003', '06105', '06043', '06113', '06005', '06015', '06017', '06091']\n",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_2019.gpkg",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_2019.gpkg",
+          "filename": "counties_pm25_2019.gpkg",
+          "size": 778240,
+          "type": "gpkg",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/join_audit_pm25_2019_counties.txt",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/join_audit_pm25_2019_counties.txt",
+          "filename": "join_audit_pm25_2019_counties.txt",
+          "size": 529,
+          "type": "txt",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/manifest.json",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/manifest.json",
+          "filename": "manifest.json",
+          "size": 6855,
+          "type": "json",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_1",
+      "objective_title": "Assess how PM2.5 exposure varies across California counties in 2019 and whether county-level PM2.5 is spatially clustered",
+      "objective_number": 1,
+      "step_index": 5,
+      "step_description": "Create `pm25_missing_2019` as a boolean indicator where `pm25_mean_2019` is null to identify counties with no monitor-derived PM2.5 summary in 2019.",
+      "status": "completed",
+      "agent_name": "DataAgent",
+      "task_complexity": "simple",
+      "code": "import os\n\nimport geopandas as gpd\n\nINPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_2019.gpkg\"\nOUTPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_2019_qc.gpkg\"\nOUTPUT_DIR = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787\"\n\n# ---- Load ----\ngdf = gpd.read_file(INPUT_PATH)\n\n# ---- Validate geometry (required workflow rule) ----\ngdf = gdf[gdf.geometry.is_valid & ~gdf.geometry.is_empty].copy()\n\n# ---- Create missingness indicator ----\ngdf[\"pm25_missing_2019\"] = gdf[\"pm25_mean_2019\"].isna()\n\n# ---- Optional quick QA log (secondary output) ----\nmissing_n = int(gdf[\"pm25_missing_2019\"].sum())\ntotal_n = int(len(gdf))\nqa_text = (\n    \"[QC] pm25_missing_2019 created as (pm25_mean_2019 is null)\\n\"\n    f\"  counties total: {total_n}\\n\"\n    f\"  missing pm25_mean_2019: {missing_n} ({(missing_n/total_n if total_n else 0):.1%})\\n\"\n)\nprint(qa_text)\n\nqa_path = os.path.join(OUTPUT_DIR, \"pm25_missing_2019_qc.txt\")\nwith open(qa_path, \"w\") as f:\n    f.write(qa_text)\n\n# ---- Save ----\nos.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)\ngdf.to_file(OUTPUT_PATH, driver=\"GPKG\")",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/generated_code/op_derive_column_96c20688.py",
+      "output": "[QC] pm25_missing_2019 created as (pm25_mean_2019 is null)\n  counties total: 58\n  missing pm25_mean_2019: 14 (24.1%)\n\n",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_2019_qc.gpkg",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_2019_qc.gpkg",
+          "filename": "counties_pm25_2019_qc.gpkg",
+          "size": 778240,
+          "type": "gpkg",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/pm25_missing_2019_qc.txt",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/pm25_missing_2019_qc.txt",
+          "filename": "pm25_missing_2019_qc.txt",
+          "size": 117,
+          "type": "txt",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_1",
+      "objective_title": "Assess how PM2.5 exposure varies across California counties in 2019 and whether county-level PM2.5 is spatially clustered",
+      "objective_number": 1,
+      "step_index": 6,
+      "step_description": "Construct Queen contiguity spatial weights from county `geometry`, keyed by `GEOID`.",
+      "status": "completed",
+      "agent_name": "ModelingAgent",
+      "task_complexity": "complex",
+      "code": "import os\n\nimport geopandas as gpd\nimport pandas as pd\nfrom shapely.geometry import LineString\nfrom libpysal.weights import Queen\n\n# ---------------------------------------------------------------------\n# Paths\n# ---------------------------------------------------------------------\nINPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_2019_qc.gpkg\"\nOUTPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/ca_county_queen_weights_2019.gpkg\"\nOUTPUT_DIR = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787\"\n\nos.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)\n\n# ---------------------------------------------------------------------\n# Load counties and validate\n# ---------------------------------------------------------------------\ncounties = gpd.read_file(INPUT_PATH)\n\nrequired_cols = [\"GEOID\", \"geometry\"]\nmissing = [c for c in required_cols if c not in counties.columns]\nif missing:\n    raise KeyError(f\"Missing required columns: {missing}. Available: {list(counties.columns)}\")\n\n# Ensure key is string, drop missing keys\ncounties[\"GEOID\"] = counties[\"GEOID\"].astype(str)\ncounties = counties.dropna(subset=[\"GEOID\"]).copy()\n\n# Validate geometry\ncounties = counties[counties.geometry.notna()].copy()\ncounties = counties[counties.geometry.is_valid & ~counties.geometry.is_empty].copy()\n\n# Reset index to ensure alignment for weights construction\ncounties = counties.reset_index(drop=True)\n\nif counties.empty:\n    raise ValueError(\"No valid county geometries remain after validation.\")\n\n# ---------------------------------------------------------------------\n# Construct Queen contiguity weights keyed by GEOID\n# ---------------------------------------------------------------------\nw = Queen.from_dataframe(counties, ids=counties[\"GEOID\"].tolist())\nw.transform = \"r\"  # row-standardize\n\n# Attach neighbor count to polygons for easy inspection\nneighbor_counts = pd.Series({k: len(v) for k, v in w.neighbors.items()}, name=\"queen_nbrs\")\ncounties = counties.merge(neighbor_counts.rename(\"queen_nbrs\"), left_on=\"GEOID\", right_index=True, how=\"left\")\ncounties[\"queen_nbrs\"] = counties[\"queen_nbrs\"].fillna(0).astype(int)\n\n# ---------------------------------------------------------------------\n# Create a spatial \"links\" layer (LineStrings between centroids)\n# ---------------------------------------------------------------------\n# Using centroids for visualization/QA; weights themselves are encoded by GEOID pairs.\ncentroids = counties.set_index(\"GEOID\").geometry.centroid\n\npairs = []\nfor i, nbrs in w.neighbors.items():\n    for j in nbrs:\n        # store each undirected edge once\n        if str(i) < str(j):\n            pairs.append((str(i), str(j)))\n\nlinks_records = []\nfor i, j in pairs:\n    if i in centroids.index and j in centroids.index:\n        geom = LineString([centroids.loc[i], centroids.loc[j]])\n        links_records.append({\"GEOID_i\": i, \"GEOID_j\": j, \"geometry\": geom})\n\nlinks_gdf = gpd.GeoDataFrame(links_records, geometry=\"geometry\", crs=counties.crs)\n\n# ---------------------------------------------------------------------\n# Save to GeoPackage (polygons + queen links)\n# ---------------------------------------------------------------------\nif os.path.exists(OUTPUT_PATH):\n    os.remove(OUTPUT_PATH)\n\ncounties.to_file(OUTPUT_PATH, layer=\"counties\", driver=\"GPKG\")\nlinks_gdf.to_file(OUTPUT_PATH, layer=\"queen_links\", driver=\"GPKG\")\n\n# ---------------------------------------------------------------------\n# Record artifact for manuscript pipeline (auto-render choropleth)\n# ---------------------------------------------------------------------\nrecord_data_to_viz(\n    output_dir=OUTPUT_DIR,\n    file_path=OUTPUT_PATH,\n    caption=\"California county polygons with Queen contiguity summary (neighbor counts) and centroid-to-centroid neighbor links keyed by GEOID.\",\n    viz_hint={\"type\": \"choropleth\", \"column\": \"queen_nbrs\", \"cmap\": \"viridis\", \"scheme\": \"Quantiles\"},\n    role=\"final\",\n)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/generated_code/op_spatial_weights_queen_contigui_adf38080.py",
+      "output": "",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/ca_county_queen_weights_2019.gpkg",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/ca_county_queen_weights_2019.gpkg",
+          "filename": "ca_county_queen_weights_2019.gpkg",
+          "size": 823296,
+          "type": "gpkg",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/manifest.json",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/manifest.json",
+          "filename": "manifest.json",
+          "size": 6855,
+          "type": "json",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_1",
+      "objective_title": "Assess how PM2.5 exposure varies across California counties in 2019 and whether county-level PM2.5 is spatially clustered",
+      "objective_number": 1,
+      "step_index": 7,
+      "step_description": "Compute global Moran’s I for `pm25_mean_2019` using the Queen contiguity weights.",
+      "status": "completed",
+      "agent_name": "ModelingAgent",
+      "task_complexity": "complex",
+      "code": "import os\nimport numpy as np\nimport pandas as pd\nimport geopandas as gpd\nfrom libpysal.weights import Queen, KNN\nfrom esda.moran import Moran\n\n# ----------------------------\n# Paths (given)\n# ----------------------------\nCOUNTIES_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_2019_qc.gpkg\"\nWEIGHTS_REF_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/ca_county_queen_weights_2019.gpkg\"\nOUTPUT_NODE_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/pm25_global_moransI_2019.csv\"\nOUTPUT_DIR = os.path.dirname(OUTPUT_NODE_PATH)\n\nos.makedirs(OUTPUT_DIR, exist_ok=True)\n\n# ----------------------------\n# Load inputs\n# ----------------------------\ngdf = gpd.read_file(COUNTIES_PATH)\n_ = gpd.read_file(WEIGHTS_REF_PATH)  # reference input (not required to compute Queen weights)\n\ntarget_col = \"pm25_mean_2019\"\n\n# ----------------------------\n# Validate / clean geometry & target values\n# ----------------------------\ngdf = gdf[gdf.geometry.notna()]\ngdf = gdf[gdf.geometry.is_valid & ~gdf.geometry.is_empty].copy()\n\ngdf = gdf.dropna(subset=[target_col]).reset_index(drop=True)\n\nif len(gdf) == 0:\n    raise ValueError(f\"No rows available after dropping NA in '{target_col}' and invalid/empty geometries.\")\nif len(gdf) < 3:\n    raise ValueError(f\"Need at least 3 observations for Moran's I; got n={len(gdf)}.\")\n\n# ----------------------------\n# Build Queen contiguity weights (row-standardized), handle islands\n# ----------------------------\nw = Queen.from_dataframe(gdf, use_index=False)\n\n# If islands exist, fall back to KNN to ensure all observations have neighbors\nused_weights = \"queen\"\nif getattr(w, \"islands\", None):\n    if len(w.islands) > 0:\n        w = KNN.from_dataframe(gdf, k=5)\n        used_weights = \"knn_k5_fallback_from_queen_islands\"\n\nw.transform = \"r\"\n\n# ----------------------------\n# Global Moran's I (permutation inference)\n# ----------------------------\npermutations = 999\ny = gdf[target_col].to_numpy(dtype=float)\n\nmi = Moran(y, w, permutations=permutations)\n\nresults = pd.DataFrame(\n    [\n        {\n            \"variable\": target_col,\n            \"weights\": used_weights,\n            \"n\": int(len(gdf)),\n            \"permutations\": int(permutations),\n            \"morans_I\": float(mi.I),\n            \"expected_I\": float(mi.EI),\n            \"variance\": float(mi.VI_sim),\n            \"z_score\": float(mi.z_sim),\n            \"p_value\": float(mi.p_sim),\n        }\n    ]\n)\n\n# ----------------------------\n# Save primary output\n# ----------------------------\nresults.to_csv(OUTPUT_NODE_PATH, index=False)\n\n# Also save a manuscript-table copy and register it\ntables_dir = os.path.join(OUTPUT_DIR, \"tables\")\nos.makedirs(tables_dir, exist_ok=True)\ntable_path = os.path.join(tables_dir, \"pm25_global_moransI_2019.csv\")\nresults.to_csv(table_path, index=False)\n\nrecord_table(\n    output_dir=OUTPUT_DIR,\n    file_path=table_path,\n    caption=\"Global Moran’s I (Queen contiguity; row-standardized) for county-level PM2.5 mean in 2019, reporting permutation-based variance, z-score, and p-value.\",\n    role=\"final\",\n    columns=[\"variable\", \"weights\", \"n\", \"permutations\", \"morans_I\", \"expected_I\", \"variance\", \"z_score\", \"p_value\"],\n)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/generated_code/op_global_morans_I_dfe36038.py",
+      "output": "",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/manifest.json",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/manifest.json",
+          "filename": "manifest.json",
+          "size": 6855,
+          "type": "json",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/pm25_global_moransI_2019.csv",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/pm25_global_moransI_2019.csv",
+          "filename": "pm25_global_moransI_2019.csv",
+          "size": 192,
+          "type": "csv",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/tables/pm25_global_moransI_2019.csv",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/tables/pm25_global_moransI_2019.csv",
+          "filename": "pm25_global_moransI_2019.csv",
+          "size": 192,
+          "type": "csv",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_2",
+      "objective_title": "Estimate the county-level association between PM2.5 exposure and income inequality (Gini) in 2019 and test whether residual spatial autocorrelation remains",
+      "objective_number": 2,
+      "step_index": 1,
+      "step_description": "Filter `California_Counties_Gini_2019` to rows where `year == 2019`, keeping only `state_fips`, `county_fips`, and `B19083_001E:Gini Index`.",
+      "status": "completed",
+      "agent_name": "DataAgent",
+      "task_complexity": "simple",
+      "code": "import os\nimport pandas as pd\n\nINPUT_PATH = \"/bigdata/s0/tea5209/AGM/outputs/DataRetrieverOutput/California_Counties_Gini_2019.csv\"\nOUTPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/gini_2019_filtered.csv\"\nOUTPUT_DIR = os.path.dirname(OUTPUT_PATH)\n\n# ---- Load ---------------------------------------------------------------\ndf = pd.read_csv(INPUT_PATH, dtype=\"object\")\n\n# ---- Filter year == 2019 (handle object dtype robustly) -----------------\nyear_str = df[\"year\"].astype(str).str.strip()\ndf_2019 = df.loc[year_str.eq(\"2019\")].copy()\n\n# ---- Keep only required columns ----------------------------------------\nkeep_cols = [\"state_fips\", \"county_fips\", \"B19083_001E:Gini Index\"]\ndf_2019 = df_2019[keep_cols]\n\n# ---- Save ---------------------------------------------------------------\nos.makedirs(OUTPUT_DIR, exist_ok=True)\ndf_2019.to_csv(OUTPUT_PATH, index=False)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/generated_code/op_row_filter_9d9f02d8.py",
+      "output": "",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/gini_2019_filtered.csv",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/gini_2019_filtered.csv",
+          "filename": "gini_2019_filtered.csv",
+          "size": 858,
+          "type": "csv",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_2",
+      "objective_title": "Estimate the county-level association between PM2.5 exposure and income inequality (Gini) in 2019 and test whether residual spatial autocorrelation remains",
+      "objective_number": 2,
+      "step_index": 2,
+      "step_description": "Create county `GEOID` as a 5-character string by concatenating zero-padded `state_fips` (2 digits) and zero-padded `county_fips` (3 digits), and retain `GEOID` and `B19083_001E:Gini Index`.",
+      "status": "completed",
+      "agent_name": "DataAgent",
+      "task_complexity": "simple",
+      "code": "import os\nimport pandas as pd\n\nINPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/gini_2019_filtered.csv\"\nOUTPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/gini_2019_with_geoid.csv\"\nOUTPUT_DIR = os.path.dirname(OUTPUT_PATH)\n\n# Helpers are pre-imported in the environment:\n# record_figure, record_table, record_data_to_viz\n\n# ----------------------------\n# Load\n# ----------------------------\ndf = pd.read_csv(INPUT_PATH)\n\n# ----------------------------\n# Create GEOID (county) = state_fips (2) + county_fips (3)\n# ----------------------------\ndf[\"state_fips\"] = df[\"state_fips\"].astype(str).str.strip().str.zfill(2)\ndf[\"county_fips\"] = df[\"county_fips\"].astype(str).str.strip().str.zfill(3)\ndf[\"GEOID\"] = df[\"state_fips\"] + df[\"county_fips\"]\n\n# ----------------------------\n# Retain only requested columns\n# ----------------------------\nout = df[[\"GEOID\", \"B19083_001E:Gini Index\"]].copy()\nout[\"GEOID\"] = out[\"GEOID\"].astype(str).str.strip().str.zfill(5)\n\n# Drop rows where GEOID is missing/invalid after formatting\nout = out.dropna(subset=[\"GEOID\"])\nout = out.loc[out[\"GEOID\"].str.len() == 5].reset_index(drop=True)\n\n# ----------------------------\n# Save\n# ----------------------------\nos.makedirs(OUTPUT_DIR, exist_ok=True)\nout.to_csv(OUTPUT_PATH, index=False)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/generated_code/op_derive_column_f8c6c5b4.py",
+      "output": "",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/gini_2019_with_geoid.csv",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/gini_2019_with_geoid.csv",
+          "filename": "gini_2019_with_geoid.csv",
+          "size": 777,
+          "type": "csv",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_2",
+      "objective_title": "Estimate the county-level association between PM2.5 exposure and income inequality (Gini) in 2019 and test whether residual spatial autocorrelation remains",
+      "objective_number": 2,
+      "step_index": 3,
+      "step_description": "Left-join `gini_2019_with_geoid.csv` to `counties_pm25_2019_qc.gpkg` on `GEOID` to attach `B19083_001E:Gini Index` to each county.",
+      "status": "completed",
+      "agent_name": "DataAgent",
+      "task_complexity": "simple",
+      "code": "import os\nimport numpy as np\nimport pandas as pd\nimport geopandas as gpd\n\nOUTPUT_DIR = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787\"\n\nINPUT_COUNTIES_GPKG = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_2019_qc.gpkg\"\nINPUT_GINI_CSV = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/gini_2019_with_geoid.csv\"\n\nOUTPUT_GPKG = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_2019.gpkg\"\n\n# ---- Load inputs ----\ncounties = gpd.read_file(INPUT_COUNTIES_GPKG)\ngini = pd.read_csv(INPUT_GINI_CSV)\n\n# ---- Validate required columns (from Step 1 inspection) ----\nLEFT_KEY = \"GEOID\"\nRIGHT_KEY = \"GEOID\"\nGINI_COL = \"B19083_001E:Gini Index\"\n\nmissing_left = [c for c in [LEFT_KEY, \"geometry\"] if c not in counties.columns]\nmissing_right = [c for c in [RIGHT_KEY, GINI_COL] if c not in gini.columns]\nif missing_left:\n    raise KeyError(f\"Missing columns in counties layer: {missing_left}. Available: {list(counties.columns)}\")\nif missing_right:\n    raise KeyError(f\"Missing columns in gini CSV: {missing_right}. Available: {list(gini.columns)}\")\n\n# ---- Geometry QC (required) ----\ncounties = counties[counties.geometry.notna()]\ncounties = counties[~counties.geometry.is_empty]\ncounties = counties[counties.geometry.is_valid].copy()\n\n# ---- Normalize join keys ----\n# County GEOID is 5 chars (state+county FIPS)\nKEY_WIDTH = 5\ncounties[LEFT_KEY] = counties[LEFT_KEY].astype(str).str.strip().str.zfill(KEY_WIDTH)\ngini[RIGHT_KEY] = gini[RIGHT_KEY].astype(str).str.strip().str.zfill(KEY_WIDTH)\n\n# ---- Clean/convert Gini column to numeric ----\ngini[GINI_COL] = pd.to_numeric(gini[GINI_COL], errors=\"coerce\")\ngini = gini.replace([-666666666, -888888888, -999999999], np.nan)\n\n# ---- Deduplicate right side on join key (defensive) ----\ngini = gini.drop_duplicates(subset=[RIGHT_KEY]).copy()\n\n# ---- Left join ----\nmerged = counties.merge(gini[[RIGHT_KEY, GINI_COL]], left_on=LEFT_KEY, right_on=RIGHT_KEY, how=\"left\")\n\n# ---- Join audit ----\nmatched = int(merged[GINI_COL].notna().sum())\ntotal = int(len(merged))\nmatch_rate = matched / total if total else 0.0\nunmatched = total - matched\n\naudit_lines = [\n    \"[JOIN AUDIT] counties_pm25_2019_qc.gpkg (left) + gini_2019_with_geoid.csv (right)\",\n    f\"  left rows: {total}\",\n    f\"  matched '{GINI_COL}': {matched}/{total} ({match_rate:.1%})\",\n    f\"  unmatched (NaN in right): {unmatched}\",\n]\nif match_rate < 0.9:\n    audit_lines.append(\"  WARNING: match rate below 90% — inspect GEOID formatting/coverage.\")\n    audit_lines.append(f\"    left GEOID sample: {counties[LEFT_KEY].head(5).tolist()}\")\n    audit_lines.append(f\"    right GEOID sample: {gini[RIGHT_KEY].head(5).tolist()}\")\n    audit_lines.append(\n        f\"    example unmatched left GEOIDs: {merged.loc[merged[GINI_COL].isna(), LEFT_KEY].head(10).tolist()}\"\n    )\n\naudit_text = \"\\n\".join(audit_lines)\nprint(audit_text)\nos.makedirs(OUTPUT_DIR, exist_ok=True)\naudit_path = os.path.join(OUTPUT_DIR, \"join_audit_gini_2019_counties.txt\")\nwith open(audit_path, \"w\") as f:\n    f.write(audit_text + \"\\n\")\n\n# ---- Save output ----\nos.makedirs(os.path.dirname(OUTPUT_GPKG), exist_ok=True)\nmerged.to_file(OUTPUT_GPKG, driver=\"GPKG\")\n\n# ---- Record artifact for deferred visualization ----\nrecord_data_to_viz(\n    output_dir=OUTPUT_DIR,\n    file_path=OUTPUT_GPKG,\n    caption=\"California counties with 2019 PM2.5 mean and 2019 ACS Gini Index joined by GEOID.\",\n    viz_hint={\"type\": \"choropleth\", \"column\": GINI_COL},\n    role=\"intermediate\",\n)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/generated_code/op_attribute_join_0426ce47.py",
+      "output": "[JOIN AUDIT] counties_pm25_2019_qc.gpkg (left) + gini_2019_with_geoid.csv (right)\n  left rows: 58\n  matched 'B19083_001E:Gini Index': 58/58 (100.0%)\n  unmatched (NaN in right): 0\n",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_2019.gpkg",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_2019.gpkg",
+          "filename": "counties_pm25_gini_2019.gpkg",
+          "size": 778240,
+          "type": "gpkg",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/join_audit_gini_2019_counties.txt",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/join_audit_gini_2019_counties.txt",
+          "filename": "join_audit_gini_2019_counties.txt",
+          "size": 179,
+          "type": "txt",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/manifest.json",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/manifest.json",
+          "filename": "manifest.json",
+          "size": 6855,
+          "type": "json",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_2",
+      "objective_title": "Estimate the county-level association between PM2.5 exposure and income inequality (Gini) in 2019 and test whether residual spatial autocorrelation remains",
+      "objective_number": 2,
+      "step_index": 4,
+      "step_description": "Fit an OLS model with dependent variable `pm25_mean_2019` and predictor `B19083_001E:Gini Index`, and append model outputs to features as `ols_fitted_pm25` and `ols_residual_pm25` keyed by `GEOID`.",
+      "status": "completed",
+      "agent_name": "ModelingAgent",
+      "task_complexity": "complex",
+      "code": "import os\nimport numpy as np\nimport pandas as pd\nimport geopandas as gpd\nimport statsmodels.api as sm\n\n# -------------------------------\n# Paths (per instructions)\n# -------------------------------\nINPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_2019.gpkg\"\nOUTPUT_NODE_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_2019_olsresid.gpkg\"\nOUTPUT_DIR = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787\"\n\nos.makedirs(os.path.dirname(OUTPUT_NODE_PATH), exist_ok=True)\nos.makedirs(OUTPUT_DIR, exist_ok=True)\n\n# -------------------------------\n# Load + basic geometry validation\n# -------------------------------\ngdf = gpd.read_file(INPUT_PATH)\ngdf = gdf[gdf.geometry.is_valid & ~gdf.geometry.is_empty].copy()\n\n# -------------------------------\n# OLS setup\n# -------------------------------\ny_col = \"pm25_mean_2019\"\nx_col = \"B19083_001E:Gini Index\"\nkey_col = \"GEOID\"\n\nneeded = [key_col, y_col, x_col]\nmissing = [c for c in needed if c not in gdf.columns]\nif missing:\n    raise KeyError(f\"Missing required columns: {missing}. Available: {list(gdf.columns)}\")\n\n# Ensure join key is string-like (robustness)\ngdf[key_col] = gdf[key_col].astype(str)\n\n# Coerce y/x to numeric and drop rows missing either\ngdf[y_col] = pd.to_numeric(gdf[y_col], errors=\"coerce\")\ngdf[x_col] = pd.to_numeric(gdf[x_col], errors=\"coerce\")\nmodel_df = gdf[[key_col, y_col, x_col]].dropna(subset=[y_col, x_col]).copy()\n\nif model_df.shape[0] < 3:\n    raise ValueError(f\"Not enough complete cases to fit OLS after dropping NA: n={model_df.shape[0]}\")\n\ny = model_df[y_col].to_numpy()\nX = sm.add_constant(model_df[[x_col]].to_numpy())  # intercept + single predictor\n\n# -------------------------------\n# Fit OLS\n# -------------------------------\nols_model = sm.OLS(y, X).fit()\n\n# Fitted values and residuals\nmodel_df[\"ols_fitted_pm25\"] = ols_model.fittedvalues\nmodel_df[\"ols_residual_pm25\"] = ols_model.resid\n\n# -------------------------------\n# Append outputs back to full GeoDataFrame keyed by GEOID\n# (rows without model data remain NaN for fitted/residual)\n# -------------------------------\nattach = model_df[[key_col, \"ols_fitted_pm25\", \"ols_residual_pm25\"]].copy()\ngdf = gdf.merge(attach, on=key_col, how=\"left\", validate=\"1:1\")\n\n# -------------------------------\n# Save manuscript-ready coefficient + fit-stat tables\n# -------------------------------\ntables_dir = os.path.join(OUTPUT_DIR, \"tables\")\nos.makedirs(tables_dir, exist_ok=True)\n\ncoef_df = pd.DataFrame({\n    \"variable\": [\"const\", x_col],\n    \"coef\": ols_model.params,\n    \"std_err\": ols_model.bse,\n    \"t\": ols_model.tvalues,\n    \"p_value\": ols_model.pvalues,\n    \"ci_low\": ols_model.conf_int()[:, 0],\n    \"ci_high\": ols_model.conf_int()[:, 1],\n})\ncoef_path = os.path.join(tables_dir, \"ols_pm25_gini_coefficients.csv\")\ncoef_df.to_csv(coef_path, index=False)\n\nfit_stats_df = pd.DataFrame([{\n    \"n\": int(ols_model.nobs),\n    \"R2\": float(ols_model.rsquared),\n    \"adj_R2\": float(ols_model.rsquared_adj),\n    \"AIC\": float(ols_model.aic),\n    \"BIC\": float(ols_model.bic),\n    \"RMSE\": float(np.sqrt(np.mean(np.square(ols_model.resid)))),\n}])\nfit_stats_path = os.path.join(tables_dir, \"ols_pm25_gini_fit_stats.csv\")\nfit_stats_df.to_csv(fit_stats_path, index=False)\n\n# Record tables for manuscript\nrecord_table(\n    output_dir=OUTPUT_DIR,\n    file_path=coef_path,\n    caption=\"OLS coefficients for PM2.5 (2019) regressed on county Gini Index.\",\n    role=\"promoted\",\n    columns=[\"variable\", \"coef\", \"std_err\", \"p_value\", \"ci_low\", \"ci_high\"],\n)\nrecord_table(\n    output_dir=OUTPUT_DIR,\n    file_path=fit_stats_path,\n    caption=\"OLS fit statistics for PM2.5 (2019) ~ Gini Index model.\",\n    role=\"promoted\",\n    columns=[\"n\", \"R2\", \"adj_R2\", \"AIC\", \"BIC\", \"RMSE\"],\n)\n\n# -------------------------------\n# Save primary output GeoPackage\n# -------------------------------\ngdf.to_file(OUTPUT_NODE_PATH, driver=\"GPKG\")\n\n# Optionally register the output dataset for downstream auto-rendering (not required)\nrecord_data_to_viz(\n    output_dir=OUTPUT_DIR,\n    file_path=OUTPUT_NODE_PATH,\n    caption=\"County-level OLS fitted PM2.5 (2019) and residuals from regression on Gini Index.\",\n    viz_hint={\"type\": \"choropleth\", \"column\": \"ols_residual_pm25\", \"cmap\": \"RdBu\", \"scheme\": \"Quantiles\"},\n    role=\"final\",\n)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/generated_code/op_ordinary_least_squares_append__295decbf.py",
+      "output": "",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_2019_olsresid.gpkg",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_2019_olsresid.gpkg",
+          "filename": "counties_pm25_gini_2019_olsresid.gpkg",
+          "size": 778240,
+          "type": "gpkg",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/manifest.json",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/manifest.json",
+          "filename": "manifest.json",
+          "size": 6855,
+          "type": "json",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/tables/ols_pm25_gini_coefficients.csv",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/tables/ols_pm25_gini_coefficients.csv",
+          "filename": "ols_pm25_gini_coefficients.csv",
+          "size": 303,
+          "type": "csv",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/tables/ols_pm25_gini_fit_stats.csv",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/tables/ols_pm25_gini_fit_stats.csv",
+          "filename": "ols_pm25_gini_fit_stats.csv",
+          "size": 129,
+          "type": "csv",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_2",
+      "objective_title": "Estimate the county-level association between PM2.5 exposure and income inequality (Gini) in 2019 and test whether residual spatial autocorrelation remains",
+      "objective_number": 2,
+      "step_index": 5,
+      "step_description": "Compute global Moran’s I for `ols_residual_pm25` using the Queen contiguity weights keyed by `GEOID`.",
+      "status": "completed",
+      "agent_name": "ModelingAgent",
+      "task_complexity": "complex",
+      "code": "import os\nimport warnings\n\nimport geopandas as gpd\nimport numpy as np\nimport pandas as pd\nfrom esda.moran import Moran\nfrom libpysal.weights import Queen\n\n# ---------------------------\n# Paths\n# ---------------------------\nRESID_GPKG = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_2019_olsresid.gpkg\"\nWQ_GPKG = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/ca_county_queen_weights_2019.gpkg\"\n\nOUT_CSV = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/ols_residuals_moransI_2019.csv\"\nOUTPUT_DIR = os.path.dirname(OUT_CSV)\nos.makedirs(OUTPUT_DIR, exist_ok=True)\n\n# ---------------------------\n# Load data\n# ---------------------------\nresid_gdf = gpd.read_file(RESID_GPKG)\nwgeom_gdf = gpd.read_file(WQ_GPKG)\n\n# ---------------------------\n# Basic geometry validation\n# ---------------------------\nresid_gdf = resid_gdf[resid_gdf.geometry.notna()]\nresid_gdf = resid_gdf[resid_gdf.geometry.is_valid & ~resid_gdf.geometry.is_empty].copy()\n\nwgeom_gdf = wgeom_gdf[wgeom_gdf.geometry.notna()]\nwgeom_gdf = wgeom_gdf[wgeom_gdf.geometry.is_valid & ~wgeom_gdf.geometry.is_empty].copy()\n\n# ---------------------------\n# CRS harmonization (reproject weights geometry to match residuals)\n# ---------------------------\nif resid_gdf.crs is not None and wgeom_gdf.crs is not None and resid_gdf.crs != wgeom_gdf.crs:\n    wgeom_gdf = wgeom_gdf.to_crs(resid_gdf.crs)\n\n# ---------------------------\n# Prepare analysis frame keyed by GEOID\n# (Use weight geometry as the spatial support; attach residuals by GEOID)\n# ---------------------------\nresid_df = resid_gdf[[\"GEOID\", \"ols_residual_pm25\"]].copy()\nresid_df[\"GEOID\"] = resid_df[\"GEOID\"].astype(str)\nwgeom_gdf = wgeom_gdf.copy()\nwgeom_gdf[\"GEOID\"] = wgeom_gdf[\"GEOID\"].astype(str)\n\ngdf = wgeom_gdf.merge(resid_df, on=\"GEOID\", how=\"left\")\n\n# Drop missing residuals (and reset index BEFORE building weights)\ngdf = gdf.dropna(subset=[\"ols_residual_pm25\"]).reset_index(drop=True)\n\nif len(gdf) == 0:\n    raise ValueError(\"No rows available after dropping NA in 'ols_residual_pm25'.\")\n\n# Ensure numeric array\ny = pd.to_numeric(gdf[\"ols_residual_pm25\"], errors=\"coerce\")\ngdf = gdf.assign(ols_residual_pm25=y).dropna(subset=[\"ols_residual_pm25\"]).reset_index(drop=True)\nif len(gdf) == 0:\n    raise ValueError(\"All values in 'ols_residual_pm25' became NA after numeric coercion.\")\n\n# ---------------------------\n# Build Queen contiguity weights keyed by GEOID\n# ---------------------------\nw = Queen.from_dataframe(gdf, ids=gdf[\"GEOID\"].tolist())\n\n# Handle islands while preserving Queen contiguity requirement:\n# drop islands and rebuild Queen weights on the remaining units\nif getattr(w, \"islands\", None):\n    islands = list(w.islands)\n    if len(islands) > 0:\n        warnings.warn(\n            f\"Queen weights contain {len(islands)} island(s). Dropping island GEOID(s) and rebuilding Queen weights.\"\n        )\n        gdf = gdf[~gdf[\"GEOID\"].isin(islands)].reset_index(drop=True)\n        if len(gdf) == 0:\n            raise ValueError(\"All observations are islands under Queen contiguity; cannot compute Moran's I.\")\n        w = Queen.from_dataframe(gdf, ids=gdf[\"GEOID\"].tolist())\n\nw.transform = \"r\"\n\n# ---------------------------\n# Compute Global Moran's I (permutation inference)\n# ---------------------------\nmi = Moran(gdf[\"ols_residual_pm25\"].to_numpy(dtype=float), w, permutations=999)\n\nresults = pd.DataFrame(\n    [\n        {\n            \"variable\": \"ols_residual_pm25\",\n            \"morans_I\": float(mi.I),\n            \"z_sim\": float(mi.z_sim),\n            \"p_sim\": float(mi.p_sim),\n            \"n\": int(len(gdf)),\n        }\n    ]\n)\n\n# Primary output (as specified)\nresults.to_csv(OUT_CSV, index=False)\n\n# Manuscript table copy (opt-in via tables/ directory) + record\ntables_dir = os.path.join(OUTPUT_DIR, \"tables\")\nos.makedirs(tables_dir, exist_ok=True)\ntable_path = os.path.join(tables_dir, \"ols_residuals_moransI_2019.csv\")\nresults.to_csv(table_path, index=False)\n\nrecord_table(\n    output_dir=OUTPUT_DIR,\n    file_path=table_path,\n    caption=\"Global Moran’s I (permutation-based) for spatial autocorrelation in OLS residuals of PM2.5 across California counties using Queen contiguity.\",\n    role=\"final\",\n    columns=[\"variable\", \"morans_I\", \"z_sim\", \"p_sim\", \"n\"],\n)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/generated_code/op_global_morans_I_eb4934d2.py",
+      "output": "",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/manifest.json",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/manifest.json",
+          "filename": "manifest.json",
+          "size": 6855,
+          "type": "json",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/ols_residuals_moransI_2019.csv",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/ols_residuals_moransI_2019.csv",
+          "filename": "ols_residuals_moransI_2019.csv",
+          "size": 97,
+          "type": "csv",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/tables/ols_residuals_moransI_2019.csv",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/tables/ols_residuals_moransI_2019.csv",
+          "filename": "ols_residuals_moransI_2019.csv",
+          "size": 97,
+          "type": "csv",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_2",
+      "objective_title": "Estimate the county-level association between PM2.5 exposure and income inequality (Gini) in 2019 and test whether residual spatial autocorrelation remains",
+      "objective_number": 2,
+      "step_index": 6,
+      "step_description": "Fit a maximum-likelihood spatial lag (SAR) model with dependent variable `pm25_mean_2019` and predictor `B19083_001E:Gini Index` using the Queen contiguity weights keyed by `GEOID`.",
+      "status": "completed",
+      "agent_name": "ModelingAgent",
+      "task_complexity": "complex",
+      "code": "import os\nimport numpy as np\nimport pandas as pd\nimport geopandas as gpd\n\nfrom libpysal.weights import Queen, KNN\nfrom spreg import ML_Lag\n\n# Helpers are pre-imported in the environment:\n# record_table, record_figure, record_data_to_viz\n\nCOUNTIES_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_2019.gpkg\"\nWEIGHTS_GPKG_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/ca_county_queen_weights_2019.gpkg\"\n\nOUTPUT_NODE_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/spatial_lag_pm25_on_gini_2019.csv\"\nOUTPUT_DIR = os.path.dirname(OUTPUT_NODE_PATH)\n\ny_col = \"pm25_mean_2019\"\nx_col = \"B19083_001E:Gini Index\"\nid_col = \"GEOID\"\n\nos.makedirs(os.path.dirname(OUTPUT_NODE_PATH), exist_ok=True)\nos.makedirs(OUTPUT_DIR, exist_ok=True)\n\n# ----------------------------\n# Load inputs\n# ----------------------------\ngdf = gpd.read_file(COUNTIES_PATH)\nwgdf = gpd.read_file(WEIGHTS_GPKG_PATH)\n\n# Validate geometry\ngdf = gdf[gdf.geometry.is_valid & ~gdf.geometry.is_empty].copy()\nwgdf = wgdf[wgdf.geometry.is_valid & ~wgdf.geometry.is_empty].copy()\n\n# Align CRS (if present on both)\nif gdf.crs is not None and wgdf.crs is not None and gdf.crs != wgdf.crs:\n    wgdf = wgdf.to_crs(gdf.crs)\n\n# Ensure join key dtype\ngdf[id_col] = gdf[id_col].astype(str)\nwgdf[id_col] = wgdf[id_col].astype(str)\n\n# Numeric coercion\ngdf[y_col] = pd.to_numeric(gdf[y_col], errors=\"coerce\")\ngdf[x_col] = pd.to_numeric(gdf[x_col], errors=\"coerce\")\n\n# Keep model columns, drop NAs\nmodel_df = gdf[[id_col, y_col, x_col]].dropna(subset=[y_col, x_col]).copy()\n\nif len(model_df) == 0:\n    raise ValueError(f\"No rows available after dropping NA in [{y_col}, {x_col}].\")\n\n# Restrict weights geometry to modeled GEOIDs and ensure unique IDs\nkeep_ids = model_df[id_col].unique().tolist()\nwgdf_sub = wgdf[wgdf[id_col].isin(keep_ids)].copy()\nwgdf_sub = wgdf_sub.drop_duplicates(subset=[id_col]).copy()\n\n# Enforce consistent ordering (keyed by GEOID)\nmodel_df = model_df[model_df[id_col].isin(wgdf_sub[id_col])].copy()\nmodel_df = model_df.sort_values(by=id_col).reset_index(drop=True)\nwgdf_sub = wgdf_sub[wgdf_sub[id_col].isin(model_df[id_col])].copy()\nwgdf_sub = wgdf_sub.sort_values(by=id_col).reset_index(drop=True)\n\nif len(model_df) != len(wgdf_sub):\n    raise ValueError(\n        f\"Row mismatch after GEOID alignment: model_df={len(model_df)}, weights_gdf={len(wgdf_sub)}\"\n    )\nif model_df[id_col].tolist() != wgdf_sub[id_col].tolist():\n    raise ValueError(\"GEOID ordering mismatch between regression data and weights geometry after sorting.\")\n\n# ----------------------------\n# Build Queen contiguity weights (keyed by GEOID)\n# ----------------------------\nids = wgdf_sub[id_col].tolist()\nw = Queen.from_dataframe(wgdf_sub, ids=ids)\n\n# Handle islands by switching to KNN (common pitfall)\nif getattr(w, \"islands\", []):\n    # Use geometry-based neighbors; KNN requires projected CRS for meaningful distances,\n    # but it's used here only as a connectivity fallback for islands.\n    w = KNN.from_dataframe(wgdf_sub, k=5, ids=ids)\n\nw.transform = \"r\"\n\n# ----------------------------\n# Fit ML spatial lag (SAR) model\n# ----------------------------\ny = model_df[[y_col]].values.astype(float)  # (n, 1)\nX = model_df[[x_col]].values.astype(float)  # (n, k) without intercept\n\nsar = ML_Lag(y, X, w=w, name_y=y_col, name_x=[x_col])\n\n# ----------------------------\n# Assemble output table (parameters + fit stats)\n# ----------------------------\nbetas = np.asarray(sar.betas).flatten().tolist()  # constant + X\nrho = float(getattr(sar, \"rho\", np.nan))\nparam_names = list(getattr(sar, \"name_x\", [\"CONSTANT\", x_col])) + [\"rho\"]\n\n# Standard errors / z / p: robustly extract, accounting for different spreg versions\nstd_err_raw = np.asarray(getattr(sar, \"std_err\", [])).flatten().tolist()\nz_stat_raw = getattr(sar, \"z_stat\", [])\n\nz_vals = []\np_vals = []\nfor zp in z_stat_raw:\n    try:\n        z_vals.append(float(zp[0]))\n        p_vals.append(float(zp[1]))\n    except Exception:\n        z_vals.append(np.nan)\n        p_vals.append(np.nan)\n\n# Build estimates in the correct order: [betas..., rho]\nestimates = betas + [rho]\n\n# Std errors: if rho SE not explicitly present, infer from z-stat if possible\nstd_err = []\nif len(std_err_raw) >= len(estimates):\n    std_err = std_err_raw[: len(estimates)]\nelse:\n    std_err = (std_err_raw[: len(betas)] if len(std_err_raw) >= len(betas) else [np.nan] * len(betas))\n    # Infer rho SE from z (if the last z corresponds to rho)\n    rho_se = np.nan\n    if len(z_vals) >= len(estimates):\n        z_rho = z_vals[len(estimates) - 1]\n        if z_rho not in (0, np.nan) and np.isfinite(z_rho):\n            rho_se = rho / z_rho\n    std_err = std_err + [rho_se]\n\n# z/p: if lengths mismatch, pad\nif len(z_vals) < len(estimates):\n    z_vals = z_vals + [np.nan] * (len(estimates) - len(z_vals))\nif len(p_vals) < len(estimates):\n    p_vals = p_vals + [np.nan] * (len(estimates) - len(p_vals))\n\ncoef_df = pd.DataFrame(\n    {\n        \"section\": \"parameters\",\n        \"variable\": param_names,\n        \"estimate\": estimates,\n        \"std_err\": std_err,\n        \"z_value\": z_vals[: len(estimates)],\n        \"p_value\": p_vals[: len(estimates)],\n    }\n)\n\nfit_items = {\n    \"n\": int(getattr(sar, \"n\", len(model_df))),\n    \"k\": int(getattr(sar, \"k\", 1)),\n    \"log_likelihood\": float(getattr(sar, \"logll\", np.nan)),\n    \"aic\": float(getattr(sar, \"aic\", np.nan)),\n    \"bic_schwarz\": float(getattr(sar, \"schwarz\", np.nan)),\n    \"pseudo_r2\": float(getattr(sar, \"pr2\", np.nan)),\n    \"sigma2\": float(getattr(sar, \"sig2\", np.nan)),\n}\nfit_df = pd.DataFrame(\n    {\"section\": [\"fit_stats\"] * len(fit_items), \"variable\": list(fit_items.keys()), \"estimate\": list(fit_items.values())}\n)\n\nout_df = pd.concat([coef_df, fit_df], ignore_index=True)\n\n# Primary output (required node path)\nout_df.to_csv(OUTPUT_NODE_PATH, index=False)\n\n# Manuscript-ready promoted table copy\ntables_dir = os.path.join(OUTPUT_DIR, \"tables\")\nos.makedirs(tables_dir, exist_ok=True)\ntable_path = os.path.join(tables_dir, \"spatial_lag_pm25_on_gini_2019.csv\")\nout_df.to_csv(table_path, index=False)\n\nrecord_table(\n    output_dir=OUTPUT_DIR,\n    file_path=table_path,\n    caption=\"Maximum-likelihood spatial lag (SAR) model results for county PM2.5 (2019) regressed on Gini Index with Queen contiguity weights (GEOID-keyed).\",\n    role=\"promoted\",\n    columns=[\"section\", \"variable\", \"estimate\", \"std_err\", \"z_value\", \"p_value\"],\n)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/generated_code/op_spatial_lag_model_maximum_like_a559e0c9.py",
+      "output": "ML_Lag\n",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/manifest.json",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/manifest.json",
+          "filename": "manifest.json",
+          "size": 6855,
+          "type": "json",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/spatial_lag_pm25_on_gini_2019.csv",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/spatial_lag_pm25_on_gini_2019.csv",
+          "filename": "spatial_lag_pm25_on_gini_2019.csv",
+          "size": 647,
+          "type": "csv",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/tables/spatial_lag_pm25_on_gini_2019.csv",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/tables/spatial_lag_pm25_on_gini_2019.csv",
+          "filename": "spatial_lag_pm25_on_gini_2019.csv",
+          "size": 647,
+          "type": "csv",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_2",
+      "objective_title": "Estimate the county-level association between PM2.5 exposure and income inequality (Gini) in 2019 and test whether residual spatial autocorrelation remains",
+      "objective_number": 2,
+      "step_index": 7,
+      "step_description": "Construct K-nearest-neighbors (KNN) spatial weights with k=5 from county `geometry` centroids, keyed by `GEOID`.",
+      "status": "completed",
+      "agent_name": "ModelingAgent",
+      "task_complexity": "complex",
+      "code": "import os\nimport warnings\n\nimport geopandas as gpd\nimport numpy as np\nimport pandas as pd\nfrom shapely.geometry import LineString\nfrom libpysal.weights import KNN\n\n# Pre-imported helpers (available in the environment):\n# record_data_to_viz\n\nINPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_2019.gpkg\"\nOUTPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/ca_county_knn_weights_2019.gpkg\"\nOUTPUT_DIR = os.path.dirname(OUTPUT_PATH)\n\nos.makedirs(OUTPUT_DIR, exist_ok=True)\n\n# -----------------------------\n# Load + validate input geometry\n# -----------------------------\ngdf = gpd.read_file(INPUT_PATH)\n\nrequired_cols = [\"GEOID\", \"geometry\"]\nmissing = [c for c in required_cols if c not in gdf.columns]\nif missing:\n    raise KeyError(f\"Missing required columns: {missing}. Available columns: {list(gdf.columns)}\")\n\ngdf[\"GEOID\"] = gdf[\"GEOID\"].astype(str)\ngdf = gdf.dropna(subset=[\"GEOID\", \"geometry\"]).copy()\ngdf = gdf[gdf.geometry.is_valid & ~gdf.geometry.is_empty].copy()\n\n# Ensure unique IDs (KNN 'ids' must be unique)\ndupes = gdf[\"GEOID\"].duplicated()\nif dupes.any():\n    duped_ids = gdf.loc[dupes, \"GEOID\"].unique().tolist()\n    raise ValueError(f\"Duplicate GEOID values found; cannot key weights uniquely. Examples: {duped_ids[:10]}\")\n\ngdf = gdf.reset_index(drop=True)\n\n# -----------------------------\n# Build centroids in projected CRS\n# -----------------------------\nsource_crs = gdf.crs\nif source_crs is None:\n    raise ValueError(\"Input GeoPackage has no CRS; cannot construct distance-based KNN weights reliably.\")\n\n# Use a metric CRS for centroid coordinates/distances\nif getattr(source_crs, \"is_geographic\", False):\n    metric_epsg = 3857\n    gdf_metric = gdf.to_crs(epsg=metric_epsg)\nelse:\n    gdf_metric = gdf.copy()\n\n# Centroids (in metric CRS)\ngdf_metric[\"centroid\"] = gdf_metric.geometry.centroid\ncentroids_metric = gpd.GeoDataFrame(\n    gdf_metric[[\"GEOID\"]].copy(),\n    geometry=gdf_metric[\"centroid\"],\n    crs=gdf_metric.crs,\n)\n\n# -----------------------------\n# KNN weights (k=5) keyed by GEOID\n# -----------------------------\nk = 5\nn = len(centroids_metric)\nif n <= k:\n    raise ValueError(f\"Not enough observations to build KNN with k={k}. n={n}\")\n\n# libpysal KNN uses geometry; ids ensures weights keyed by GEOID\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\")\n    w = KNN.from_dataframe(centroids_metric, k=k, ids=centroids_metric[\"GEOID\"].tolist())\n\n# Row-standardization is common, but output requested is weights construction;\n# keep as binary (default) unless you explicitly need standardized weights later.\n# w.transform = \"r\"\n\n# -----------------------------\n# Serialize weights as an edges layer (LineStrings between centroids)\n# -----------------------------\n# Build a centroid lookup for coordinates\ncentroids_xy = centroids_metric.copy()\ncentroids_xy[\"x\"] = centroids_xy.geometry.x\ncentroids_xy[\"y\"] = centroids_xy.geometry.y\nxy_lookup = centroids_xy.set_index(\"GEOID\")[[\"x\", \"y\"]].to_dict(orient=\"index\")\n\nrecords = []\nfor origin_id, neigh_ids in w.neighbors.items():\n    ox, oy = xy_lookup[origin_id][\"x\"], xy_lookup[origin_id][\"y\"]\n    for rank, dest_id in enumerate(neigh_ids, start=1):\n        dx, dy = xy_lookup[dest_id][\"x\"], xy_lookup[dest_id][\"y\"]\n        geom = LineString([(ox, oy), (dx, dy)])\n        # KNN is typically binary weights=1; keep explicit column\n        records.append(\n            {\n                \"origin_id\": str(origin_id),\n                \"dest_id\": str(dest_id),\n                \"rank\": int(rank),\n                \"weight\": 1.0,\n                \"geometry\": geom,\n            }\n        )\n\nedges = gpd.GeoDataFrame(records, geometry=\"geometry\", crs=centroids_metric.crs)\n\n# Also save centroids as a nodes layer (in original CRS for interpretability)\ncentroids_out = centroids_metric[[\"GEOID\", \"geometry\"]].copy()\nif centroids_out.crs != source_crs:\n    centroids_out = centroids_out.to_crs(source_crs)\n\nedges_out = edges.copy()\nif edges_out.crs != source_crs:\n    edges_out = edges_out.to_crs(source_crs)\n\n# -----------------------------\n# Save to GeoPackage (multiple layers)\n# -----------------------------\n# Overwrite if exists to ensure clean layers\nif os.path.exists(OUTPUT_PATH):\n    os.remove(OUTPUT_PATH)\n\ncentroids_out.to_file(OUTPUT_PATH, layer=\"centroids\", driver=\"GPKG\")\nedges_out.to_file(OUTPUT_PATH, layer=\"knn_edges_k5\", driver=\"GPKG\")\n\n# -----------------------------\n# Record artifact for manuscript pipeline auto-rendering\n# -----------------------------\nrecord_data_to_viz(\n    output_dir=OUTPUT_DIR,\n    file_path=OUTPUT_PATH,\n    caption=\"K-nearest-neighbor (k=5) spatial weights for counties, represented as centroid-to-centroid edges keyed by GEOID.\",\n    viz_hint={\"type\": \"geopackage_layers\", \"layers\": [\"centroids\", \"knn_edges_k5\"]},\n    role=\"final\",\n)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/generated_code/op_spatial_weights_knn_c3ff61c0.py",
+      "output": "",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/ca_county_knn_weights_2019.gpkg",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/ca_county_knn_weights_2019.gpkg",
+          "filename": "ca_county_knn_weights_2019.gpkg",
+          "size": 167936,
+          "type": "gpkg",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/manifest.json",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/manifest.json",
+          "filename": "manifest.json",
+          "size": 6855,
+          "type": "json",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_2",
+      "objective_title": "Estimate the county-level association between PM2.5 exposure and income inequality (Gini) in 2019 and test whether residual spatial autocorrelation remains",
+      "objective_number": 2,
+      "step_index": 8,
+      "step_description": "Fit a maximum-likelihood spatial error (SEM) model with dependent variable `pm25_mean_2019` and predictor `B19083_001E:Gini Index` using KNN weights (k=5) keyed by `GEOID`.",
+      "status": "completed",
+      "agent_name": "ModelingAgent",
+      "task_complexity": "complex",
+      "code": "import os\nimport numpy as np\nimport pandas as pd\nimport geopandas as gpd\nimport matplotlib.pyplot as plt\n\nfrom libpysal.weights import KNN\nfrom esda.moran import Moran\nfrom spreg import ML_Error\n\n# Pre-imported helpers assumed available in this environment:\n# record_table, record_figure, record_data_to_viz\n\nINPUT_COUNTIES_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_2019.gpkg\"\nINPUT_WEIGHTS_GEOM_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/ca_county_knn_weights_2019.gpkg\"\n\nOUTPUT_NODE_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/spatial_error_pm25_on_gini_2019.csv\"\nOUTPUT_DIR = os.path.dirname(OUTPUT_NODE_PATH)\nos.makedirs(OUTPUT_DIR, exist_ok=True)\n\n# -----------------------------\n# Load inputs\n# -----------------------------\ncounties = gpd.read_file(INPUT_COUNTIES_PATH)\nwgeom = gpd.read_file(INPUT_WEIGHTS_GEOM_PATH)\n\n# Validate geometry before spatial operations\ncounties = counties[counties.geometry.is_valid & ~counties.geometry.is_empty].copy()\nwgeom = wgeom[wgeom.geometry.is_valid & ~wgeom.geometry.is_empty].copy()\n\n# Ensure join key dtype consistency\ncounties[\"GEOID\"] = counties[\"GEOID\"].astype(str)\nwgeom[\"GEOID\"] = wgeom[\"GEOID\"].astype(str)\n\n# Reproject to common CRS (use counties as primary)\nif counties.crs is not None and wgeom.crs is not None and counties.crs != wgeom.crs:\n    wgeom = wgeom.to_crs(counties.crs)\n\ny_col = \"pm25_mean_2019\"\nx_col = \"B19083_001E:Gini Index\"\n\n# Coerce to numeric and drop missing\nfor c in [y_col, x_col]:\n    counties[c] = pd.to_numeric(counties[c], errors=\"coerce\")\n\n# Align to weights geometry by GEOID (keyed by GEOID)\n# Keep only counties present in the weights geometry layer, and order exactly like wgeom\nwgeom_keyed = wgeom[[\"GEOID\", \"geometry\"]].drop_duplicates(subset=[\"GEOID\"]).copy()\n\ndata = counties[[\"GEOID\", y_col, x_col]].copy()\ndata = data.dropna(subset=[y_col, x_col]).copy()\n\naligned = wgeom_keyed.merge(data, on=\"GEOID\", how=\"inner\")\naligned = aligned.reset_index(drop=True)\n\nif len(aligned) == 0:\n    raise ValueError(\n        \"No rows available after aligning on GEOID and dropping NA for required variables.\"\n    )\nif len(aligned) <= 5:\n    raise ValueError(\n        f\"Need more than k=5 observations to build KNN weights; got n={len(aligned)}.\"\n    )\n\n# -----------------------------\n# Build KNN weights (k=5), keyed by GEOID\n# -----------------------------\n# Use ids to ensure the weights object is keyed by GEOID and matches the aligned order\nids = aligned[\"GEOID\"].tolist()\nw = KNN.from_dataframe(aligned, k=5, ids=ids)\nw.transform = \"r\"\n\n# -----------------------------\n# Fit maximum-likelihood Spatial Error Model (SEM)\n# -----------------------------\ny = aligned[[y_col]].values.astype(float)          # (n, 1)\nX = aligned[[x_col]].values.astype(float)          # (n, 1) no intercept; spreg adds it\n\nmodel = ML_Error(\n    y=y,\n    x=X,\n    w=w,\n    name_y=y_col,\n    name_x=[x_col],\n)\n\n# -----------------------------\n# Extract results into a manuscript-ready table\n# -----------------------------\n# Coefficients: betas includes [CONSTANT, x...]\nbetas = np.asarray(model.betas).flatten()\nstd_err = np.asarray(model.std_err).flatten()\n\n# z_stat is list of tuples (z, p) for coefficients only (incl constant)\nz_list = np.asarray([t[0] for t in model.z_stat], dtype=float)\np_list = np.asarray([t[1] for t in model.z_stat], dtype=float)\n\ncoef_vars = [\"CONSTANT\", x_col]\ncoef_df = pd.DataFrame(\n    {\n        \"variable\": coef_vars,\n        \"coef\": betas[: len(coef_vars)],\n        \"std_err\": std_err[: len(coef_vars)],\n        \"z_value\": z_list[: len(coef_vars)],\n        \"p_value\": p_list[: len(coef_vars)],\n    }\n)\n\n# Model-level diagnostics / fit stats\nn = int(model.n)\nk = int(model.k)  # includes constant\ndiag = {\n    \"n\": n,\n    \"k\": k,\n    \"lambda\": float(model.lam),\n    \"log_likelihood\": float(model.logll),\n    \"aic\": float(model.aic),\n    \"bic\": float(model.schwarz),\n    \"pseudo_r2\": float(model.pr2) if getattr(model, \"pr2\", None) is not None else np.nan,\n}\n\ndiag_df = pd.DataFrame([diag])\n\n# Optional: residual Moran's I diagnostic (saved as intermediate)\nresid = np.asarray(model.u).flatten()\nmi = Moran(resid, w, permutations=999)\nresid_diag_df = pd.DataFrame(\n    [{\n        \"residual_morans_I\": float(mi.I),\n        \"residual_morans_p_sim\": float(mi.p_sim),\n        \"residual_morans_z_sim\": float(mi.z_sim),\n        \"permutations\": int(mi.permutations),\n    }]\n)\n\n# Combine into one output table (requested output node)\n# Repeat model-level stats on each coefficient row for a single flat table.\nout_df = coef_df.copy()\nfor key, val in diag.items():\n    out_df[key] = val\n\n# Save primary output\nos.makedirs(os.path.dirname(OUTPUT_NODE_PATH), exist_ok=True)\nout_df.to_csv(OUTPUT_NODE_PATH, index=False)\n\n# Save promoted manuscript table copy\ntables_dir = os.path.join(OUTPUT_DIR, \"tables\")\nos.makedirs(tables_dir, exist_ok=True)\ntable_path = os.path.join(tables_dir, \"spatial_error_pm25_on_gini_2019.csv\")\nout_df.to_csv(table_path, index=False)\n\nrecord_table(\n    output_dir=OUTPUT_DIR,\n    file_path=table_path,\n    caption=\"Spatial error (SEM) maximum-likelihood estimates for PM2.5 (2019) regressed on county Gini Index (KNN k=5 weights, keyed by GEOID).\",\n    role=\"final\",\n    columns=[\"variable\", \"coef\", \"std_err\", \"z_value\", \"p_value\", \"lambda\", \"aic\", \"bic\", \"log_likelihood\", \"pseudo_r2\", \"n\", \"k\"],\n)\n\n# Save intermediate residual spatial autocorrelation diagnostic\nresid_diag_path = os.path.join(OUTPUT_DIR, \"sem_residual_moransI_diagnostic.csv\")\nresid_diag_df.to_csv(resid_diag_path, index=False)\n\n# -----------------------------\n# Create a choropleth map showing the coefficient estimation\n# -----------------------------\n# Adding coefficient to aligned data for mapping\naligned['coef'] = betas[1]\n\n# Create a GeoDataFrame for mapping\ngdf = gpd.GeoDataFrame(aligned, geometry='geometry')\n\n# Plotting\nfig, ax = plt.subplots(1, 1, figsize=(10, 8))\ngdf.plot(column='coef', cmap='viridis', linewidth=0.8, ax=ax, edgecolor='0.8', legend=True)\nax.set_title(\"Coefficient of Gini Index Estimation Across Counties\")\nax.set_axis_off()\n\n# Save the figure\nmap_path = os.path.join(OUTPUT_DIR, \"coef_map_pm25_on_gini_2019.png\")\nplt.savefig(map_path, dpi=300, bbox_inches='tight')\n\nrecord_figure(\n    output_dir=OUTPUT_DIR,\n    file_path=map_path,\n    caption=\"Map showing the coefficient of estimation for Gini Index regressed on PM2.5 across counties.\",\n)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/generated_code/op_spatial_error_model_maximum_li_eeaef606.py",
+      "output": "ML_Error\n",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/coef_map_pm25_on_gini_2019.png",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/coef_map_pm25_on_gini_2019.png",
+          "filename": "coef_map_pm25_on_gini_2019.png",
+          "size": 108310,
+          "type": "png",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/manifest.json",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/manifest.json",
+          "filename": "manifest.json",
+          "size": 6855,
+          "type": "json",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/sem_residual_moransI_diagnostic.csv",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/sem_residual_moransI_diagnostic.csv",
+          "filename": "sem_residual_moransI_diagnostic.csv",
+          "size": 122,
+          "type": "csv",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/spatial_error_pm25_on_gini_2019.csv",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/spatial_error_pm25_on_gini_2019.csv",
+          "filename": "spatial_error_pm25_on_gini_2019.csv",
+          "size": 469,
+          "type": "csv",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/tables/spatial_error_pm25_on_gini_2019.csv",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/tables/spatial_error_pm25_on_gini_2019.csv",
+          "filename": "spatial_error_pm25_on_gini_2019.csv",
+          "size": 469,
+          "type": "csv",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_3",
+      "objective_title": "Test whether the 2019 PM2.5–income inequality association differs by metro status at the county level",
+      "objective_number": 3,
+      "step_index": 1,
+      "step_description": "Create county `GEOID` as a 5-character string from `FIPSTXT` using zero-padding, and keep `GEOID`, `Metro2013`, `Nonmetro2013`, and `RuralUrbanContinuumCode2013`.",
+      "status": "completed",
+      "agent_name": "DataAgent",
+      "task_complexity": "simple",
+      "code": "import os\nimport pandas as pd\n\nINPUT_PATH = \"/bigdata/s0/tea5209/AGM/outputs/DataRetrieverOutput/California_UrbanRural_Classification_2019.csv\"\nOUTPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/urban_rural_with_geoid.csv\"\nOUTPUT_DIR = os.path.dirname(OUTPUT_PATH)\n\n# --- Load -----------------------------------------------------------------\ndf = pd.read_csv(INPUT_PATH)\n\n# --- Create GEOID (county GEOID: 5-char, zero-padded) ---------------------\nif \"FIPSTXT\" not in df.columns:\n    raise KeyError(f\"Missing required column 'FIPSTXT'. Available columns: {list(df.columns)}\")\n\ndf[\"GEOID\"] = df[\"FIPSTXT\"].astype(str).str.strip().str.zfill(5)\n\n# --- Keep only requested fields ------------------------------------------\nkeep_cols = [\"GEOID\", \"Metro2013\", \"Nonmetro2013\", \"RuralUrbanContinuumCode2013\"]\nmissing = [c for c in keep_cols if c not in df.columns]\nif missing:\n    raise KeyError(f\"Missing required columns: {missing}. Available columns: {list(df.columns)}\")\n\nout_df = df[keep_cols].copy()\n\n# --- Save -----------------------------------------------------------------\nos.makedirs(OUTPUT_DIR, exist_ok=True)\nout_df.to_csv(OUTPUT_PATH, index=False)\n\n# Manuscript artifact logging (intermediate dataset)\nrecord_data_to_viz(\n    output_dir=OUTPUT_DIR,\n    file_path=OUTPUT_PATH,\n    caption=\"County-level urban–rural classification fields with standardized 5-character county GEOID.\",\n    viz_hint={\"type\": \"table\"},\n    role=\"intermediate\",\n)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/generated_code/op_derive_column_5309f4cc.py",
+      "output": "",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/manifest.json",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/manifest.json",
+          "filename": "manifest.json",
+          "size": 6855,
+          "type": "json",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/urban_rural_with_geoid.csv",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/urban_rural_with_geoid.csv",
+          "filename": "urban_rural_with_geoid.csv",
+          "size": 753,
+          "type": "csv",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_3",
+      "objective_title": "Test whether the 2019 PM2.5–income inequality association differs by metro status at the county level",
+      "objective_number": 3,
+      "step_index": 2,
+      "step_description": "Left-join `urban_rural_with_geoid.csv` to `counties_pm25_gini_2019.gpkg` on `GEOID` to attach `Metro2013` to each county.",
+      "status": "completed",
+      "agent_name": "DataAgent",
+      "task_complexity": "simple",
+      "code": "import os\n\nimport geopandas as gpd\nimport pandas as pd\n\n# ---------------------------\n# Paths (fixed by workflow)\n# ---------------------------\nCOUNTIES_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_2019.gpkg\"\nURBAN_RURAL_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/urban_rural_with_geoid.csv\"\nOUTPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_urbanrural_2019.gpkg\"\nOUTPUT_DIR = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787\"\n\nos.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)\n\n# ---------------------------\n# Load inputs\n# ---------------------------\ncounties_gdf = gpd.read_file(COUNTIES_PATH)\nurban_df = pd.read_csv(URBAN_RURAL_PATH, dtype={\"GEOID\": \"string\"})\n\n# ---------------------------\n# Basic geometry validity cleanup (no spatial ops, but keep pipeline robust)\n# ---------------------------\nif \"geometry\" in counties_gdf.columns:\n    counties_gdf = counties_gdf[counties_gdf.geometry.notnull()]\n    counties_gdf = counties_gdf[counties_gdf.geometry.is_valid & ~counties_gdf.geometry.is_empty].copy()\n\n# ---------------------------\n# Prepare join keys + right-side columns\n# ---------------------------\n# Ensure join keys are comparable (string, stripped)\ncounties_gdf[\"GEOID\"] = counties_gdf[\"GEOID\"].astype(\"string\").str.strip()\nurban_df[\"GEOID\"] = urban_df[\"GEOID\"].astype(\"string\").str.strip()\n\n# Only keep required attribute from right table for this operation\nurban_keep = urban_df[[\"GEOID\", \"Metro2013\"]].copy()\n\n# Avoid row explosions if right side has unexpected duplicates\nurban_keep = urban_keep.drop_duplicates(subset=[\"GEOID\"])\n\n# ---------------------------\n# Left join: attach Metro2013 to counties\n# ---------------------------\nout_gdf = counties_gdf.merge(urban_keep, on=\"GEOID\", how=\"left\", validate=\"1:1\")\n\n# ---------------------------\n# Save output\n# ---------------------------\n# Keep same CRS; GeoPackage driver preserves geometry + attributes\nout_gdf.to_file(OUTPUT_PATH, driver=\"GPKG\")\n\n# ---------------------------\n# Record as data-to-viz (optional auto-render)\n# ---------------------------\nrecord_data_to_viz(\n    output_dir=OUTPUT_DIR,\n    file_path=OUTPUT_PATH,\n    caption=\"California county polygons with PM2.5 mean (2019), Gini Index, and Metro2013 classification attached via GEOID.\",\n    viz_hint={\"type\": \"choropleth\", \"column\": \"Metro2013\"},\n    role=\"intermediate\",\n)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/generated_code/op_attribute_join_947cdad5.py",
+      "output": "",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_urbanrural_2019.gpkg",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_urbanrural_2019.gpkg",
+          "filename": "counties_pm25_gini_urbanrural_2019.gpkg",
+          "size": 782336,
+          "type": "gpkg",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/manifest.json",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/manifest.json",
+          "filename": "manifest.json",
+          "size": 6855,
+          "type": "json",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_3",
+      "objective_title": "Test whether the 2019 PM2.5–income inequality association differs by metro status at the county level",
+      "objective_number": 3,
+      "step_index": 3,
+      "step_description": "Create interaction term `gini_x_metro = (B19083_001E:Gini Index) * Metro2013`.",
+      "status": "completed",
+      "agent_name": "DataAgent",
+      "task_complexity": "simple",
+      "code": "import os\n\nimport geopandas as gpd\nimport numpy as np\nimport pandas as pd  # CHANGED: required for pd.to_numeric\n\nINPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_urbanrural_2019.gpkg\"\nOUTPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_urbanrural_interaction_2019.gpkg\"\nOUTPUT_DIR = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787\"\n\n# --- Load ---\ngdf = gpd.read_file(INPUT_PATH)\n\n# --- Validate geometry (required) ---\ngdf = gdf[gdf.geometry.is_valid & ~gdf.geometry.is_empty].copy()\n\n# --- Create interaction term ---\ngini_col = \"B19083_001E:Gini Index\"\nmetro_col = \"Metro2013\"\nout_col = \"gini_x_metro\"\n\nmissing = [c for c in [gini_col, metro_col] if c not in gdf.columns]\nif missing:\n    raise KeyError(\n        f\"Missing required columns: {missing}. Available columns: {list(gdf.columns)}\"\n    )\n\n# Coerce to numeric to avoid dtype issues; preserve NaNs\ngini = pd.to_numeric(gdf[gini_col], errors=\"coerce\")  # CHANGED: safer than astype(float)\nmetro = pd.to_numeric(gdf[metro_col], errors=\"coerce\")\n\ngdf[out_col] = gini * metro\n\n# --- Save ---\nos.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)\ngdf.to_file(OUTPUT_PATH, driver=\"GPKG\")",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/generated_code/debug_b19f9b72.py",
+      "output": "",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_urbanrural_interaction_2019.gpkg",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_urbanrural_interaction_2019.gpkg",
+          "filename": "counties_pm25_gini_urbanrural_interaction_2019.gpkg",
+          "size": 782336,
+          "type": "gpkg",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_3",
+      "objective_title": "Test whether the 2019 PM2.5–income inequality association differs by metro status at the county level",
+      "objective_number": 3,
+      "step_index": 4,
+      "step_description": "Fit an OLS model with dependent variable `pm25_mean_2019` and predictors `B19083_001E:Gini Index`, `Metro2013`, and `gini_x_metro`, and report coefficient estimates, standard errors, and p-values.",
+      "status": "completed",
+      "agent_name": "ModelingAgent",
+      "task_complexity": "complex",
+      "code": "import os\nimport numpy as np\nimport pandas as pd\nimport geopandas as gpd\nimport statsmodels.api as sm\n\n# Pre-imported helper (provided by the system)\n# record_table(...)\n\nINPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_urbanrural_interaction_2019.gpkg\"\nOUTPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/ols_pm25_gini_metro_interaction_2019.csv\"\nOUTPUT_DIR = os.path.dirname(OUTPUT_PATH)\n\n# -----------------------------\n# 1) Load & basic geometry QA\n# -----------------------------\ngdf = gpd.read_file(INPUT_PATH)\ngdf = gdf[gdf.geometry.notnull()]\ngdf = gdf[gdf.geometry.is_valid & ~gdf.geometry.is_empty].copy()\n\ny_col = \"pm25_mean_2019\"\nx_cols = [\"B19083_001E:Gini Index\", \"Metro2013\", \"gini_x_metro\"]\n\n# Ensure numeric types for modeling\nfor c in [y_col] + x_cols:\n    gdf[c] = pd.to_numeric(gdf[c], errors=\"coerce\")\n\ndf = gdf.dropna(subset=[y_col] + x_cols).copy()\n\n# -----------------------------\n# 2) Fit OLS\n# -----------------------------\ny = df[y_col].values.astype(float)\nX = df[x_cols].values.astype(float)\nX = sm.add_constant(X, has_constant=\"add\")\n\nmodel = sm.OLS(y, X).fit()\n\n# -----------------------------\n# 3) Coefficient table (coef, SE, p-value)\n# -----------------------------\nconf_int = model.conf_int()\ncoef_df = pd.DataFrame(\n    {\n        \"variable\": [\"const\"] + x_cols,\n        \"coef\": model.params,\n        \"std_err\": model.bse,\n        \"p_value\": model.pvalues,\n        \"ci_low_95\": conf_int[:, 0],\n        \"ci_high_95\": conf_int[:, 1],\n    }\n)\n\n# Primary output (as requested)\nos.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)\ncoef_df.to_csv(OUTPUT_PATH, index=False)\n\n# Manuscript-ready table artifact\ntables_dir = os.path.join(OUTPUT_DIR, \"tables\")\nos.makedirs(tables_dir, exist_ok=True)\ntable_path = os.path.join(tables_dir, \"ols_pm25_gini_metro_interaction_2019_coefficients.csv\")\ncoef_df.to_csv(table_path, index=False)\n\nrecord_table(\n    output_dir=OUTPUT_DIR,\n    file_path=table_path,\n    caption=\"OLS coefficient table for PM2.5 (2019) regressed on Gini Index, Metro2013, and their interaction (gini_x_metro).\",\n    role=\"promoted\",\n    columns=[\"variable\", \"coef\", \"std_err\", \"p_value\", \"ci_low_95\", \"ci_high_95\"],\n)\n\n# Optional: print summary to logs for traceability\nprint(model.summary())\nprint(\"\\nSaved primary coefficients table to:\", OUTPUT_PATH)\nprint(\"Saved manuscript-ready coefficients table to:\", table_path)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/generated_code/op_ordinary_least_squares_with_in_77826959.py",
+      "output": "                            OLS Regression Results                            \n==============================================================================\nDep. Variable:                      y   R-squared:                       0.212\nModel:                            OLS   Adj. R-squared:                  0.153\nMethod:                 Least Squares   F-statistic:                     3.588\nDate:                Tue, 21 Apr 2026   Prob (F-statistic):             0.0218\nTime:                        21:34:18   Log-Likelihood:                -90.242\nNo. Observations:                  44   AIC:                             188.5\nDf Residuals:                      40   BIC:                             195.6\nDf Model:                           3                                         \nCovariance Type:            nonrobust                                         \n==============================================================================\n                 coef    std err          t      P>|t|      [0.025      0.975]\n------------------------------------------------------------------------------\nconst          0.5282     11.283      0.047      0.963     -22.275      23.331\nx1            11.4837     24.602      0.467      0.643     -38.240      61.207\nx2             9.7732     13.228      0.739      0.464     -16.962      36.508\nx3           -16.4557     28.785     -0.572      0.571     -74.632      41.721\n==============================================================================\nOmnibus:                        1.344   Durbin-Watson:                   2.215\nProb(Omnibus):                  0.511   Jarque-Bera (JB):                1.024\nSkew:                           0.372   Prob(JB):                        0.599\nKurtosis:                       2.929   Cond. No.                         190.\n==============================================================================\n\nNotes:\n[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.\n\nSaved primary coefficients table to: /bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/ols_pm25_gini_metro_interaction_2019.csv\nSaved manuscript-ready coefficients table to: /bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/tables/ols_pm25_gini_metro_interaction_2019_coefficients.csv\n",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/manifest.json",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/manifest.json",
+          "filename": "manifest.json",
+          "size": 6855,
+          "type": "json",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/ols_pm25_gini_metro_interaction_2019.csv",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/ols_pm25_gini_metro_interaction_2019.csv",
+          "filename": "ols_pm25_gini_metro_interaction_2019.csv",
+          "size": 480,
+          "type": "csv",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/tables/ols_pm25_gini_metro_interaction_2019_coefficients.csv",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/tables/ols_pm25_gini_metro_interaction_2019_coefficients.csv",
+          "filename": "ols_pm25_gini_metro_interaction_2019_coefficients.csv",
+          "size": 480,
+          "type": "csv",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_3",
+      "objective_title": "Test whether the 2019 PM2.5–income inequality association differs by metro status at the county level",
+      "objective_number": 3,
+      "step_index": 5,
+      "step_description": "Fit a maximum-likelihood spatial lag (SAR) model with dependent variable `pm25_mean_2019` and predictors `B19083_001E:Gini Index`, `Metro2013`, and `gini_x_metro` using Queen contiguity weights keyed by `GEOID`.",
+      "status": "completed",
+      "agent_name": "ModelingAgent",
+      "task_complexity": "complex",
+      "code": "import os\nimport numpy as np\nimport pandas as pd\nimport geopandas as gpd\nimport matplotlib.pyplot as plt\n\nfrom libpysal.weights import Queen\nfrom spreg import ML_Lag\n\n# -----------------------------\n# Paths (as provided)\n# -----------------------------\nCOUNTIES_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_urbanrural_interaction_2019.gpkg\"\nWEIGHTS_GPKG_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/ca_county_queen_weights_2019.gpkg\"\n\nOUTPUT_NODE_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/spatial_lag_pm25_gini_metro_interaction_2019.csv\"\nOUTPUT_DIR = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787\"\n\nos.makedirs(os.path.dirname(OUTPUT_NODE_PATH), exist_ok=True)\nos.makedirs(OUTPUT_DIR, exist_ok=True)\n\n# -----------------------------\n# Load data\n# -----------------------------\ncounties = gpd.read_file(COUNTIES_PATH)\nw_gdf = gpd.read_file(WEIGHTS_GPKG_PATH)\n\n# -----------------------------\n# Validate / standardize geometry\n# -----------------------------\ncounties = counties[counties.geometry.is_valid & ~counties.geometry.is_empty].copy()\nw_gdf = w_gdf[w_gdf.geometry.is_valid & ~w_gdf.geometry.is_empty].copy()\n\n# Align CRS to weights layer CRS (primary for contiguity)\nif counties.crs != w_gdf.crs:\n    counties = counties.to_crs(w_gdf.crs)\n\n# -----------------------------\n# Required columns (confirmed by inspection)\n# -----------------------------\ny_col = \"pm25_mean_2019\"\nx_cols = [\"B19083_001E:Gini Index\", \"Metro2013\", \"gini_x_metro\"]\nkey_col = \"GEOID\"\n\n# Ensure join key dtype consistency\ncounties[key_col] = counties[key_col].astype(str)\nw_gdf[key_col] = w_gdf[key_col].astype(str)\n\n# Join predictors onto the weights geometry frame to ensure weights keyed by GEOID\nkeep_cols = [key_col, y_col] + x_cols\ncounties_sub = counties[keep_cols].copy()\ngdf = w_gdf[[key_col, \"geometry\"]].merge(counties_sub, on=key_col, how=\"inner\")\n\n# Coerce numeric fields (Metro2013 is int64 but keep robust coercion)\nfor c in [y_col] + x_cols:\n    gdf[c] = pd.to_numeric(gdf[c], errors=\"coerce\")\n\n# Drop rows with missing model inputs\ngdf = gdf.dropna(subset=[y_col] + x_cols).reset_index(drop=True)\n\nif len(gdf) == 0:\n    raise ValueError(f\"No rows available after dropping NA in {[y_col] + x_cols}.\")\nif len(gdf) < 10:\n    print(f\"[WARN] Only {len(gdf)} observations after cleaning; ML SAR estimates may be unstable.\")\n\n# -----------------------------\n# Build Queen contiguity weights keyed by GEOID\n# -----------------------------\nids = gdf[key_col].tolist()\nw = Queen.from_dataframe(gdf, ids=ids)\n\nif getattr(w, \"islands\", None):\n    if len(w.islands) > 0:\n        raise ValueError(\n            f\"Queen weights contain islands (no neighbors) for GEOID(s): {w.islands}. \"\n            \"Spatial lag (ML_Lag) may be invalid/unstable with islands; revise geography/weights.\"\n        )\n\nw.transform = \"r\"  # row-standardize\n\n# -----------------------------\n# Fit maximum-likelihood SAR (spatial lag) model\n# -----------------------------\ny = gdf[[y_col]].to_numpy(dtype=float)        # (n, 1)\nX = gdf[x_cols].to_numpy(dtype=float)         # (n, k) -- no intercept; spreg adds constant\n\nmodel = ML_Lag(\n    y=y,\n    x=X,\n    w=w,\n    name_y=y_col,\n    name_x=x_cols,\n    name_w=\"Queen(GEOID)\"\n)\n\n# -----------------------------\n# Build coefficient table\n# -----------------------------\n# betas includes: [CONSTANT, x1, x2, x3, rho]\nbetas = np.asarray(model.betas).flatten()\nstd_err = np.asarray(model.std_err).flatten()\n\n# z_stat entries correspond to betas (including rho)\nz_vals = np.array([zp[0] for zp in model.z_stat], dtype=float)\np_vals = np.array([zp[1] for zp in model.z_stat], dtype=float)\n\nvar_names = [\"CONSTANT\"] + x_cols + [\"rho\"]\ncoef_df = pd.DataFrame(\n    {\n        \"variable\": var_names,\n        \"coef\": betas[: len(var_names)],\n        \"std_err\": std_err[: len(var_names)],\n        \"z\": z_vals[: len(var_names)],\n        \"p_value\": p_vals[: len(var_names)],\n    }\n)\n\n# Add model fit stats as repeated columns for easy manuscript use\nfit_stats = {\n    \"n\": int(model.n),\n    \"k\": int(model.k),\n    \"aic\": float(getattr(model, \"aic\", np.nan)),\n    \"bic\": float(getattr(model, \"schwarz\", np.nan)),\n    \"pseudo_r2\": float(getattr(model, \"pr2\", np.nan)),\n}\nfor k, v in fit_stats.items():\n    coef_df[k] = v\n\n# -----------------------------\n# Save primary output\n# -----------------------------\ncoef_df.to_csv(OUTPUT_NODE_PATH, index=False)\n\n# Also save a manuscript-ready copy into tables/ and record it\ntables_dir = os.path.join(OUTPUT_DIR, \"tables\")\nos.makedirs(tables_dir, exist_ok=True)\ntable_path = os.path.join(tables_dir, \"spatial_lag_pm25_gini_metro_interaction_2019.csv\")\ncoef_df.to_csv(table_path, index=False)\n\n# Create a map showing the coefficients of estimation\ngdf['coefficients'] = np.dot(X, betas[1:len(var_names) - 1]) + betas[0]\n\nfig, ax = plt.subplots(1, 1, figsize=(10, 8))\ngdf.plot(column='coefficients', cmap='coolwarm', linewidth=0.8, ax=ax, edgecolor='0.8', legend=True)\nax.set_title('Coefficients of Estimation', fontsize=15)\nax.legend(title='Coefficient Value')  # Add legend title for better readability\nax.set_axis_off()\n\ncoeff_map_output_path = os.path.join(OUTPUT_DIR, \"spatial_lag_coefficients_map_2019.png\")\nplt.savefig(coeff_map_output_path, dpi=300)\n\nrecord_table(\n    output_dir=OUTPUT_DIR,\n    file_path=table_path,\n    caption=\"Maximum-likelihood spatial lag (SAR) model coefficients for county PM2.5 (2019) with Gini, Metro2013, and their interaction using Queen contiguity weights keyed by GEOID.\",\n    role=\"final\",\n    columns=list(coef_df.columns),\n)\n\n# -----------------------------\n# Create map showing residuals\n# -----------------------------\n# Calculate residuals\npredictions = model.predy\nresiduals = y.flatten() - predictions.flatten()\n\n# Add residuals to the GeoDataFrame\ngdf['residuals'] = residuals\n\n# Plot residuals\nfig, ax = plt.subplots(1, 1, figsize=(10, 8))\ngdf.plot(column='residuals', cmap='coolwarm', linewidth=0.8, ax=ax, edgecolor='0.8', legend=True)\nax.set_title('Residuals of Spatial Lag Model', fontsize=15)\nax.legend(title='Residual Value')  # Add legend title for better readability\nax.set_axis_off()\n\n# Save the map\nmap_output_path = os.path.join(OUTPUT_DIR, \"spatial_lag_residuals_map_2019.png\")\nplt.savefig(map_output_path, dpi=300)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/generated_code/op_spatial_lag_model_maximum_like_c70a1718.py",
+      "output": "ML_Lag\n",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/manifest.json",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/manifest.json",
+          "filename": "manifest.json",
+          "size": 6855,
+          "type": "json",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/spatial_lag_coefficients_map_2019.png",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/spatial_lag_coefficients_map_2019.png",
+          "filename": "spatial_lag_coefficients_map_2019.png",
+          "size": 268745,
+          "type": "png",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/spatial_lag_pm25_gini_metro_interaction_2019.csv",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/spatial_lag_pm25_gini_metro_interaction_2019.csv",
+          "filename": "spatial_lag_pm25_gini_metro_interaction_2019.csv",
+          "size": 812,
+          "type": "csv",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/spatial_lag_residuals_map_2019.png",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/spatial_lag_residuals_map_2019.png",
+          "filename": "spatial_lag_residuals_map_2019.png",
+          "size": 256270,
+          "type": "png",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/tables/spatial_lag_pm25_gini_metro_interaction_2019.csv",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/tables/spatial_lag_pm25_gini_metro_interaction_2019.csv",
+          "filename": "spatial_lag_pm25_gini_metro_interaction_2019.csv",
+          "size": 812,
+          "type": "csv",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_3",
+      "objective_title": "Test whether the 2019 PM2.5–income inequality association differs by metro status at the county level",
+      "objective_number": 3,
+      "step_index": 6,
+      "step_description": "Compute Spearman rank correlation between `pm25_mean_2019` and `B19083_001E:Gini Index` separately for counties where `Metro2013 == 1` and where `Metro2013 == 0`, reporting correlation and group sample size.",
+      "status": "completed",
+      "agent_name": "ModelingAgent",
+      "task_complexity": "medium",
+      "code": "import os\nimport pandas as pd\nimport geopandas as gpd\nfrom scipy.stats import spearmanr\n\nINPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/counties_pm25_gini_urbanrural_2019.gpkg\"\nOUTPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/pm25_gini_spearman_by_metro_2019.csv\"\nOUTPUT_DIR = os.path.dirname(OUTPUT_PATH)\n\nos.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)\n\n# ---- Load -----------------------------------------------------------------\ngdf = gpd.read_file(INPUT_PATH)\n\n# Validate geometry (rule), though not used in correlation\nif \"geometry\" in gdf.columns:\n    gdf = gdf[gdf.geometry.notna()]\n    gdf = gdf[gdf.geometry.is_valid & ~gdf.geometry.is_empty]\n\nx_col = \"pm25_mean_2019\"\ny_col = \"B19083_001E:Gini Index\"\ngroup_col = \"Metro2013\"\n\nneeded = [x_col, y_col, group_col]\nmissing = [c for c in needed if c not in gdf.columns]\nif missing:\n    raise KeyError(f\"Missing columns: {missing}. Available columns: {list(gdf.columns)}\")\n\n# ---- Prep: cast to numeric, pairwise drop NAs -----------------------------\ndf = gdf[[group_col, x_col, y_col]].copy()\ndf[group_col] = pd.to_numeric(df[group_col], errors=\"coerce\")\ndf[x_col] = pd.to_numeric(df[x_col], errors=\"coerce\")\ndf[y_col] = pd.to_numeric(df[y_col], errors=\"coerce\")\n\nrows = []\nfor metro_val, label in [(1, \"metro\"), (0, \"nonmetro\")]:\n    sub = df[df[group_col] == metro_val].copy()\n    sub = sub.dropna(subset=[x_col, y_col])\n    n = len(sub)\n\n    if n < 2:\n        rho, pval = float(\"nan\"), float(\"nan\")\n    else:\n        rho, pval = spearmanr(sub[x_col], sub[y_col])\n\n    rows.append(\n        {\n            \"group\": label,\n            \"Metro2013\": int(metro_val),\n            \"n\": int(n),\n            \"x\": x_col,\n            \"y\": y_col,\n            \"spearman_rho\": float(rho) if pd.notna(rho) else float(\"nan\"),\n            \"spearman_p\": float(pval) if pd.notna(pval) else float(\"nan\"),\n        }\n    )\n\nout_df = pd.DataFrame(rows)\nout_df.to_csv(OUTPUT_PATH, index=False)\n\n# Manuscript artifact (table)\ntables_dir = os.path.join(OUTPUT_DIR, \"tables\")\nos.makedirs(tables_dir, exist_ok=True)\ntable_path = os.path.join(tables_dir, \"pm25_gini_spearman_by_metro_2019.csv\")\nout_df.to_csv(table_path, index=False)\n\nrecord_table(\n    output_dir=OUTPUT_DIR,\n    file_path=table_path,\n    caption=\"Spearman rank correlation between 2019 county PM2.5 and Gini Index, stratified by Metro2013 status, with sample sizes.\",\n    role=\"final\",\n    columns=[\"group\", \"Metro2013\", \"n\", \"spearman_rho\", \"spearman_p\", \"x\", \"y\"],\n)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/generated_code/op_groupwise_spearman_rank_correl_f26970f6.py",
+      "output": "",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/manifest.json",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/manifest.json",
+          "filename": "manifest.json",
+          "size": 6855,
+          "type": "json",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/pm25_gini_spearman_by_metro_2019.csv",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/pm25_gini_spearman_by_metro_2019.csv",
+          "filename": "pm25_gini_spearman_by_metro_2019.csv",
+          "size": 226,
+          "type": "csv",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/a4c5a1b9-449e-440c-a2cf-003513b58787/tables/pm25_gini_spearman_by_metro_2019.csv",
+          "relative_path": "a4c5a1b9-449e-440c-a2cf-003513b58787/tables/pm25_gini_spearman_by_metro_2019.csv",
+          "filename": "pm25_gini_spearman_by_metro_2019.csv",
+          "size": 226,
+          "type": "csv",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    }
+  ],
+  "task_id": "a4c5a1b9-449e-440c-a2cf-003513b58787"
+}

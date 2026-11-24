@@ -1,0 +1,16 @@
+{
+  "success": true,
+  "conversations": [
+    {
+      "id": "dd5922b8-6439-4369-b784-21a662f7c30c",
+      "title": "How do spatial inequalities in PM2.5 exposure across California counties vary wi...",
+      "created_at": "2026-10-04T18:44:08.743951+00:00",
+      "updated_at": "2026-10-04T18:45:51.183612+00:00",
+      "task_id": "dd5922b8-6439-4369-b784-21a662f7c30c",
+      "user_id": "71fd3c1337847b51",
+      "deleted_at": null,
+      "mode": "research_no_planning",
+      "pinned": 0
+    }
+  ]
+}

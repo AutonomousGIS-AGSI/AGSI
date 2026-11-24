@@ -1,0 +1,16 @@
+{
+  "success": true,
+  "conversations": [
+    {
+      "id": "9a0ef1c1-f819-4f4a-98ec-df6aceaa15b2",
+      "title": "How does proximity to hazardous waste facilities influence spatial patterns of a...",
+      "created_at": "2026-10-05T01:47:12.837118+00:00",
+      "updated_at": "2026-10-05T01:47:22.179180+00:00",
+      "task_id": "9a0ef1c1-f819-4f4a-98ec-df6aceaa15b2",
+      "user_id": "71fd3c1337847b51",
+      "deleted_at": null,
+      "mode": "research_no_planning",
+      "pinned": 0
+    }
+  ]
+}

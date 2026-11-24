@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GIS Co-Scientist | Autonomous Geospatial Scientific Inquiry</title>
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #f6f8fa;
+    --panel: #fff;
+    --border: #d8e2e6;
+    --text: #142b3c;
+    --muted: #42596a;
+    --accent: #00675f;
+    --heading: Georgia, "Times New Roman", serif;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 1rem/1.6 system-ui, sans-serif;
+  }
+  a { color: var(--accent); }
+  a:focus-visible { outline: 3px solid #00675f; outline-offset: 4px; }
+  .wrap { width: min(1160px, calc(100% - 2.5rem)); margin-inline: auto; }
+  .skip-link { position: absolute; top: .75rem; left: .75rem; padding: .6rem 1rem; background: white; z-index: 1; }
+  .skip-link:not(:focus) { clip-path: inset(50%); }
+
+  .site-header { background: var(--panel); border-bottom: 1px solid var(--border); }
+  .header-inner, .site-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: .75rem 2rem;
+  }
+  .header-inner { padding-block: 1rem; }
+  .brand { display: inline-flex; align-items: center; gap: .55rem; color: var(--text); font-weight: 750; text-decoration: none; }
+  .brand img { display: block; height: 32px; width: auto; }
+  .site-nav { display: flex; align-items: center; flex-wrap: wrap; gap: .15rem 1.25rem; }
+  .site-nav .gibd-logo-link { display: inline-flex; align-items: center; }
+  .gibd-logo-link img { display: block; height: 27px; width: auto; }
+  .site-nav a { padding-block: .35rem; color: var(--muted); font-size: .94rem; font-weight: 600; text-decoration: none; }
+  .site-nav a:hover { color: var(--accent); text-decoration: underline; text-underline-offset: .25em; }
+
+  .hero {
+    background: linear-gradient(110deg, #edf7f3 20%, transparent), repeating-linear-gradient(90deg, transparent 0 47px, #d6e7e5 47px 48px), repeating-linear-gradient(0deg, #e8f3f2 0 47px, #d6e7e5 47px 48px);
+    border-bottom: 1px solid var(--border);
+    padding-block: clamp(3rem, 8vw, 6.25rem);
+  }
+  .eyebrow { margin: 0 0 .8rem; color: var(--accent); font-size: .875rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  h1, .section-title { font-family: var(--heading); font-weight: 400; line-height: 1.12; }
+  h1 { margin: 0; font-size: clamp(2.65rem, 7vw, 5.5rem); letter-spacing: -.045em; }
+  .lede { max-width: 58ch; margin: 1.15rem 0 0; color: var(--muted); font-size: clamp(1.06rem, 2vw, 1.24rem); }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.65rem; }
+  .button { padding: .7rem 1.1rem; border: 1px solid var(--accent); border-radius: .4rem; font-weight: 650; text-decoration: none; background: var(--panel); }
+  .button:hover { background: #e3f2ee; }
+  .launch { background: var(--accent); color: white; }
+  .launch:hover { background: #00534d; }
+
+  .download-form { display: flex; flex-wrap: wrap; align-items: end; gap: .8rem; }
+  .download-platform { display: grid; gap: .3rem; font-weight: 650; }
+  .download-form select, .download-form button { font: inherit; padding: .6rem .8rem; border-radius: .4rem; }
+  .download-form select { border: 1px solid var(--muted); color: var(--text); background: var(--panel); }
+  .download-form button { border: 1px solid var(--accent); cursor: pointer; }
+  .download-form :is(select, button):focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+
+  main section { margin-block: clamp(3rem, 7vw, 5rem); scroll-margin-top: 1.5rem; }
+  .section-title { margin: 0 0 .7rem; font-size: clamp(2rem, 4vw, 2.85rem); letter-spacing: -.025em; }
+  .section-intro { max-width: 74ch; margin: 0 0 1.5rem; color: var(--muted); }
+  .cases, .videos, .resources { display: grid; gap: 1rem; }
+  .cases, .videos { grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); }
+  .cases.single, .videos.solo { grid-template-columns: minmax(0, 1fr); max-width: 34rem; }
+  .case, .resource {
+    border: 1px solid var(--border);
+    border-radius: .65rem;
+    padding: 1.25rem;
+    background: var(--panel);
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color .15s, background .15s;
+  }
+  .case:hover, .resource:hover { border-color: var(--accent); background: #f4fbf8; }
+  .case { display: flex; flex-direction: column; align-items: flex-start; gap: .7rem; }
+  .case .num { color: var(--accent); font-size: .875rem; font-weight: 700; }
+  .case h3 { margin: 0; font-size: 1.17rem; line-height: 1.35; }
+  .case p { margin: 0 0 .35rem; color: var(--muted); }
+  .case .open { margin-top: auto; color: var(--accent); font-weight: 650; }
+  .case:hover .open, .resource:hover .label { text-decoration: underline; text-underline-offset: .2em; }
+
+  .video-cat { margin: 1.8rem 0 .75rem; font-size: 1.15rem; }
+  .video { margin: 0; padding: .55rem; background: var(--panel); border: 1px solid var(--border); border-radius: .65rem; }
+  .video figcaption { padding: .4rem .35rem .15rem; color: var(--muted); font-weight: 600; }
+  .video-frame { position: relative; display: block; aspect-ratio: 16 / 9; overflow: hidden; border-radius: .35rem; background: #e8f0f2; }
+  .video-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .video-frame .play { position: absolute; inset: 0; display: grid; place-items: center; background: rgb(0 0 0 / 12%); }
+  .video-frame:hover .play { background: rgb(0 0 0 / 24%); }
+  .play svg { width: 3.25rem; height: auto; filter: drop-shadow(0 2px 6px rgb(0 0 0 / 40%)); }
+
+  .resources { grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); }
+  .resource { display: grid; gap: .3rem; }
+  .resource .label { font-weight: 700; }
+  .resource .meta { color: var(--muted); font-size: .9rem; }
+  footer { border-top: 1px solid var(--border); background: var(--panel); }
+  .site-footer { padding-block: 1.5rem; color: var(--muted); font-size: .9rem; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .case, .resource { transition: none; }
+  }
+</style>
+</head>
+<body id="overview">
+<a class="skip-link" href="#main-content">Skip to content</a>
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="#overview">
+      <img src="assets/GIS-Coscientist_logo.png" alt="">
+      GIS Co-Scientist
+    </a>
+    <nav class="site-nav" aria-label="Main navigation">
+      <a href="#case-studies">Case studies</a>
+      <a href="#demos">Video demos</a>
+      <a href="#materials">Research materials</a>
+      <a href="https://doi.org/10.1080/10095020.2026.2764024" target="_blank" rel="noopener noreferrer">Paper</a>
+      <a href="https://autonomousgis-agsi.github.io/AGSI/user_manual" target="_blank" rel="noopener noreferrer">User Manual</a>
+      <a class="gibd-logo-link" href="https://giscience.psu.edu" target="_blank" rel="noopener noreferrer">
+        <img src="assets/gibd_logo.png" alt="GIBD at Penn State">
+      </a>
+    </nav>
+  </div>
+</header>
+<main id="main-content" tabindex="-1">
+  <div class="hero">
+    <div class="wrap">
+      <p class="eyebrow">Autonomous Geospatial Scientific Inquiry</p>
+      <h1>GIS Co-Scientist</h1>
+      <p class="lede">Explore how the GIS Co-Scientist retrieves data, performs spatial analysis, and carries out geospatial research. Browse case studies, watch workflow demonstrations, or open the live application.</p>
+      <div class="hero-actions">
+        <a class="button launch" href="https://www.gis-coscientist.online/" target="_blank" rel="noopener">Launch GIS Co-Scientist WebUI</a>
+        <a class="button" href="#desktop">Download desktop app</a>
+      </div>
+    </div>
+  </div>
+  <div class="wrap">
+
+
+  <section id="desktop">
+    <h2 class="section-title">Download GIS Co-Scientist Desktop</h2>
+    <p class="section-intro">Choose your operating system to open its installation guide and download the installer. On a Mac, check About This Mac to see whether you have an Apple chip or an Intel processor.</p>
+    <form class="download-form" id="desktop-download">
+      <label class="download-platform">
+        Operating system
+        <select name="installer" required>
+          <option value="">Select your operating system</option>
+          <option value="windows">Windows (.exe)</option>
+          <option value="mac-apple">macOS Apple Silicon (.dmg)</option>
+          <option value="mac-intel">macOS Intel (.dmg)</option>
+        </select>
+      </label>
+      <button class="button launch" type="submit">Download installer</button>
+    </form>
+    <noscript>
+      <p><a href="desktop-install.html">Open the desktop installation guide</a></p>
+    </noscript>
+  </section>
+
+  <section id="case-studies">
+    <h2 class="section-title">Research case studies</h2>
+    <p class="section-intro">Examine the research questions, conversation records, workflows, figures, and manuscripts from three full-pipeline runs.</p>
+    <div class="cases">
+      <a class="case" href="Case1/index.html">
+        <div class="num">Case 01</div>
+        <h3>Spatial Inequalities in Air Pollution Exposure and Income Inequality in California</h3>
+        <p>Research question: How do spatial inequalities in PM2.5 exposure across California counties vary with income inequality (Gini) in 2019, and does the spatial relationship vary by urban–rural classification?</p>
+        <span class="open">View case study</span>
+      </a>
+      <a class="case" href="Case2/index.html">
+        <div class="num">Case 02</div>
+        <h3>Mobility-Mediated Health</h3>
+        <p>Research question: How do spatial patterns of mobility (place visitation) mediate the relationship between neighborhood social economic status and depression prevalence across the counties of South Carolina?</p>
+        <span class="open">View case study</span>
+      </a>
+      <a class="case" href="Case3/index.html">
+        <div class="num">Case 03</div>
+        <h3>Proximity-Based Spatial Modeling of Hazardous Waste Exposure and Asthma Prevalence in North Carolina</h3>
+        <p>Research question: How does proximity to hazardous waste facilities influence spatial patterns of asthma prevalence across census tracts of North Carolina, and how do these relationships vary spatially by socioeconomic and demographic context?</p>
+        <span class="open">View case study</span>
+      </a>
+    </div>
+  </section>
+
+  <section id="partial-run">
+    <h2 class="section-title">Partially failed run</h2>
+    <div class="cases single">
+      <a class="case" href="Case4/index.html">
+        <div class="num">Case 04</div>
+        <h3>Hazardous Waste Proximity and Asthma, partially failed run</h3>
+        <p>An earlier run of the Case 3 research question that only partially completed.</p>
+        <span class="open">View partial run</span>
+      </a>
+    </div>
+  </section>
+
+  <section id="demos">
+    <h2 class="section-title">Video demonstrations</h2>
+    <!--
+      Each tile opens the video on YouTube in a new tab.
+      Thumbnail comes from img.youtube.com/vi/<ID>/hqdefault.jpg.
+    -->
+
+    <h3 class="video-cat">Introduction</h3>
+    <div class="videos solo">
+      <figure class="video">
+        <a class="video-frame" href="https://www.youtube.com/watch?v=oyf4I1VRlLU" target="_blank" rel="noopener" aria-label="Watch Introduction to GIS Co-Scientist on YouTube">
+          <img src="https://img.youtube.com/vi/oyf4I1VRlLU/hqdefault.jpg" alt="Introduction to GIS Co-Scientist thumbnail" loading="lazy">
+          <div class="play">
+            <svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55C3.97 2.33 2.27 4.81 1.48 7.74 0 13.05 0 24 0 24s0 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C68 34.95 68 24 68 24s0-10.95-1.48-16.26z" fill="#f00"/>
+              <path d="M45 24 27 14v20" fill="#fff"/>
+            </svg>
+          </div>
+        </a>
+        <figcaption>Introduction to GIS Co-Scientist</figcaption>
+      </figure>
+    </div>
+
+    <h3 class="video-cat">Data Retrieval Mode</h3>
+    <div class="videos">
+      <figure class="video">
+        <a class="video-frame" href="https://www.youtube.com/watch?v=TltGDALyw88" target="_blank" rel="noopener" aria-label="Watch Data Retrieval Mode, Example 1 on YouTube">
+          <img src="https://img.youtube.com/vi/TltGDALyw88/hqdefault.jpg" alt="Data Retrieval Mode, Example 1 thumbnail" loading="lazy">
+          <div class="play">
+            <svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55C3.97 2.33 2.27 4.81 1.48 7.74 0 13.05 0 24 0 24s0 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C68 34.95 68 24 68 24s0-10.95-1.48-16.26z" fill="#f00"/>
+              <path d="M45 24 27 14v20" fill="#fff"/>
+            </svg>
+          </div>
+        </a>
+        <figcaption>Example 1</figcaption>
+      </figure>
+      <figure class="video">
+        <a class="video-frame" href="https://www.youtube.com/watch?v=ASX5dAL9DXo" target="_blank" rel="noopener" aria-label="Watch Data Retrieval Mode, Example 2 on YouTube">
+          <img src="https://img.youtube.com/vi/ASX5dAL9DXo/hqdefault.jpg" alt="Data Retrieval Mode, Example 2 thumbnail" loading="lazy">
+          <div class="play">
+            <svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55C3.97 2.33 2.27 4.81 1.48 7.74 0 13.05 0 24 0 24s0 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C68 34.95 68 24 68 24s0-10.95-1.48-16.26z" fill="#f00"/>
+              <path d="M45 24 27 14v20" fill="#fff"/>
+            </svg>
+          </div>
+        </a>
+        <figcaption>Example 2</figcaption>
+      </figure>
+      <figure class="video">
+        <a class="video-frame" href="https://www.youtube.com/watch?v=hhOa5ffN2_k" target="_blank" rel="noopener" aria-label="Watch Data Retrieval Mode, Example 3 on YouTube">
+          <img src="https://img.youtube.com/vi/hhOa5ffN2_k/hqdefault.jpg" alt="Data Retrieval Mode, Example 3 thumbnail" loading="lazy">
+          <div class="play">
+            <svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55C3.97 2.33 2.27 4.81 1.48 7.74 0 13.05 0 24 0 24s0 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C68 34.95 68 24 68 24s0-10.95-1.48-16.26z" fill="#f00"/>
+              <path d="M45 24 27 14v20" fill="#fff"/>
+            </svg>
+          </div>
+        </a>
+        <figcaption>Example 3</figcaption>
+      </figure>
+    </div>
+
+    <h3 class="video-cat">Spatial Analysis Mode</h3>
+    <div class="videos">
+      <figure class="video">
+        <a class="video-frame" href="https://www.youtube.com/watch?v=Ue53TqW_Su0" target="_blank" rel="noopener" aria-label="Watch Spatial Analysis Mode, Example 1 on YouTube">
+          <img src="https://img.youtube.com/vi/Ue53TqW_Su0/hqdefault.jpg" alt="Spatial Analysis Mode, Example 1 thumbnail" loading="lazy">
+          <div class="play">
+            <svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55C3.97 2.33 2.27 4.81 1.48 7.74 0 13.05 0 24 0 24s0 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C68 34.95 68 24 68 24s0-10.95-1.48-16.26z" fill="#f00"/>
+              <path d="M45 24 27 14v20" fill="#fff"/>
+            </svg>
+          </div>
+        </a>
+        <figcaption>Example 1</figcaption>
+      </figure>
+      <figure class="video">
+        <a class="video-frame" href="https://www.youtube.com/watch?v=q5El_f-rJpY" target="_blank" rel="noopener" aria-label="Watch Spatial Analysis Mode, Example 2 on YouTube">
+          <img src="https://img.youtube.com/vi/q5El_f-rJpY/hqdefault.jpg" alt="Spatial Analysis Mode, Example 2 thumbnail" loading="lazy">
+          <div class="play">
+            <svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55C3.97 2.33 2.27 4.81 1.48 7.74 0 13.05 0 24 0 24s0 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C68 34.95 68 24 68 24s0-10.95-1.48-16.26z" fill="#f00"/>
+              <path d="M45 24 27 14v20" fill="#fff"/>
+            </svg>
+          </div>
+        </a>
+        <figcaption>Example 2</figcaption>
+      </figure>
+      <figure class="video">
+        <a class="video-frame" href="https://www.youtube.com/watch?v=-ppIPHSYqwk" target="_blank" rel="noopener" aria-label="Watch Spatial Analysis Mode, Example 3 on YouTube">
+          <img src="https://img.youtube.com/vi/-ppIPHSYqwk/hqdefault.jpg" alt="Spatial Analysis Mode, Example 3 thumbnail" loading="lazy">
+          <div class="play">
+            <svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55C3.97 2.33 2.27 4.81 1.48 7.74 0 13.05 0 24 0 24s0 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C68 34.95 68 24 68 24s0-10.95-1.48-16.26z" fill="#f00"/>
+              <path d="M45 24 27 14v20" fill="#fff"/>
+            </svg>
+          </div>
+        </a>
+        <figcaption>Example 3</figcaption>
+      </figure>
+    </div>
+
+    <h3 class="video-cat">Research Mode</h3>
+    <div class="videos">
+      <figure class="video">
+        <a class="video-frame" href="https://www.youtube.com/watch?v=Ib5p8sdtxGk" target="_blank" rel="noopener" aria-label="Watch Research Mode, Example 1 on YouTube">
+          <img src="https://img.youtube.com/vi/Ib5p8sdtxGk/hqdefault.jpg" alt="Research Mode, Example 1 thumbnail" loading="lazy">
+          <div class="play">
+            <svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55C3.97 2.33 2.27 4.81 1.48 7.74 0 13.05 0 24 0 24s0 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C68 34.95 68 24 68 24s0-10.95-1.48-16.26z" fill="#f00"/>
+              <path d="M45 24 27 14v20" fill="#fff"/>
+            </svg>
+          </div>
+        </a>
+        <figcaption>Example 1</figcaption>
+      </figure>
+      <figure class="video">
+        <a class="video-frame" href="https://www.youtube.com/watch?v=wOeYBPgxOj0" target="_blank" rel="noopener" aria-label="Watch Research Mode, Example 2 on YouTube">
+          <img src="https://img.youtube.com/vi/wOeYBPgxOj0/hqdefault.jpg" alt="Research Mode, Example 2 thumbnail" loading="lazy">
+          <div class="play">
+            <svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55C3.97 2.33 2.27 4.81 1.48 7.74 0 13.05 0 24 0 24s0 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C68 34.95 68 24 68 24s0-10.95-1.48-16.26z" fill="#f00"/>
+              <path d="M45 24 27 14v20" fill="#fff"/>
+            </svg>
+          </div>
+        </a>
+        <figcaption>Example 2</figcaption>
+      </figure>
+      <figure class="video">
+        <a class="video-frame" href="https://www.youtube.com/watch?v=z9f7fri45SM" target="_blank" rel="noopener" aria-label="Watch Research Mode, Example 3 on YouTube">
+          <img src="https://img.youtube.com/vi/z9f7fri45SM/hqdefault.jpg" alt="Research Mode, Example 3 thumbnail" loading="lazy">
+          <div class="play">
+            <svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55C3.97 2.33 2.27 4.81 1.48 7.74 0 13.05 0 24 0 24s0 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.64-3.26 5.42-6.19C68 34.95 68 24 68 24s0-10.95-1.48-16.26z" fill="#f00"/>
+              <path d="M45 24 27 14v20" fill="#fff"/>
+            </svg>
+          </div>
+        </a>
+        <figcaption>Example 3</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="materials">
+    <h2 class="section-title">Research materials</h2>
+    <div class="resources">
+      <a class="resource" href="Generated Manuscripts/index.html">
+        <span class="label">Generated Manuscripts</span>
+        <span class="meta">PDFs</span>
+      </a>
+      <a class="resource" href="Figures/index.html">
+        <span class="label">Figures</span>
+        <span class="meta">Gallery</span>
+      </a>
+      <a class="resource" href="Sessions/index.html">
+        <span class="label">Session bundles</span>
+        <span class="meta">Downloads</span>
+      </a>
+      <a class="resource" href="README.md">
+        <span class="label">README</span>
+        <span class="meta">Project notes</span>
+      </a>
+    </div>
+  </section>
+
+  </div></main>
+<footer><div class="wrap site-footer">
+    <span>GIS Co-Scientist &middot; Autonomous Geospatial Scientific Inquiry (AGSI)</span>
+    <span><a href="https://github.com/AutonomousGIS-AGSI/AGSI">View on GitHub</a></span>
+</div></footer>
+<script>
+  const desktopDownload = document.getElementById('desktop-download');
+  desktopDownload.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const installer = desktopDownload.elements.namedItem('installer').value;
+    window.location.assign("desktop-install.html#" + encodeURIComponent(installer));
+  });
+</script>
+</body>
+</html>

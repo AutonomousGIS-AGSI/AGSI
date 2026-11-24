@@ -1,0 +1,4 @@
+[JOIN AUDIT] County polygons joined with SES/Depression CSV
+  left rows (counties): 46
+  matched (non-null 'Depression_prev'): 46/46 (100.0%)
+  unmatched (null 'Depression_prev'): 0

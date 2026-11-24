@@ -1,0 +1,3 @@
+variable,morans_I,expected_I,z_sim,p_sim,n,weights
+pm25_mean,0.2373571567464405,-0.023255813953488372,2.3654178020179755,0.013,44,"Queen (fallback KNN k=5 if islands), row-standardized"
+ols_residuals,0.24296245945075876,-0.023255813953488372,2.4246673923260036,0.008,44,"Queen (fallback KNN k=5 if islands), row-standardized"

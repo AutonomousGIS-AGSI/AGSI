@@ -1,0 +1,180 @@
+[
+  {
+    "name": "NC_ACS_data.csv",
+    "path": "/bigdata/s0/tea5209/AGM/WebUI/uploads/c52bc37f-8e66-4df1-b20b-57c92bbd2311/NC_ACS_data.csv",
+    "ok": true,
+    "type": "table",
+    "ext": ".csv",
+    "n_rows": 2195,
+    "n_cols": 12,
+    "columns": [
+      "GEOID",
+      "ratio_white",
+      "ratio_black",
+      "ratio_asian",
+      "ratio_hispanic",
+      "ratio_other_race",
+      "ratio_male",
+      "ratio_female",
+      "ratio_poverty",
+      "ratio_unemployed",
+      "ratio_uninsured",
+      "med_income"
+    ],
+    "head": {
+      "GEOID": [
+        "1400000US37001020100",
+        "1400000US37001020200"
+      ],
+      "ratio_white": [
+        59.51207491375061,
+        36.08600048863914
+      ],
+      "ratio_black": [
+        28.04337111877772,
+        29.24505252870755
+      ],
+      "ratio_asian": [
+        1.7742730409068506,
+        4.446616173955534
+      ],
+      "ratio_hispanic": [
+        9.462789551503205,
+        28.389934033716106
+      ],
+      "ratio_other_race": [
+        1.0103499260719566,
+        1.832396774981676
+      ],
+      "ratio_male": [
+        46.6,
+        43.9
+      ],
+      "ratio_female": [
+        53.4,
+        56.1
+      ],
+      "ratio_poverty": [
+        20.8,
+        33.0
+      ],
+      "ratio_unemployed": [
+        5.6,
+        6.8
+      ],
+      "ratio_uninsured": [
+        11.3,
+        16.8
+      ],
+      "med_income": [
+        34205.0,
+        29797.0
+      ]
+    }
+  },
+  {
+    "name": "NC_HW_sites.gpkg",
+    "path": "/bigdata/s0/tea5209/AGM/WebUI/uploads/c52bc37f-8e66-4df1-b20b-57c92bbd2311/NC_HW_sites.gpkg",
+    "ok": true,
+    "type": "vector",
+    "ext": ".gpkg",
+    "n_rows": 2577,
+    "n_cols": 4,
+    "crs": "EPSG:4326",
+    "head": {
+      "SITE_NAME": [
+        "ALBERDINGK BOLEY INC",
+        "ALCATEL LUCENT USA, INC"
+      ],
+      "LAT": [
+        36.006601,
+        35.82177
+      ],
+      "LONG": [
+        -79.904711,
+        -78.62174
+      ]
+    },
+    "error": null,
+    "columns": [
+      "SITE_NAME",
+      "LAT",
+      "LONG",
+      "geometry"
+    ],
+    "geometry": {
+      "geom_col": "geometry",
+      "invalid": 0,
+      "empty": 0
+    }
+  },
+  {
+    "name": "NC_PLACES.csv",
+    "path": "/bigdata/s0/tea5209/AGM/WebUI/uploads/c52bc37f-8e66-4df1-b20b-57c92bbd2311/NC_PLACES.csv",
+    "ok": true,
+    "type": "table",
+    "ext": ".csv",
+    "n_rows": 2169,
+    "n_cols": 3,
+    "columns": [
+      "GEOID",
+      "Asthma_prev",
+      "geometry"
+    ],
+    "head": {
+      "GEOID": [
+        "1400000US37003040200",
+        "1400000US37007920100"
+      ],
+      "Asthma_prev": [
+        10.1,
+        11.1
+      ],
+      "geometry": [
+        "POINT (-81.24199315 35.97743191)",
+        "POINT (-79.94045847 34.98561551)"
+      ]
+    }
+  },
+  {
+    "name": "NC_tract.gpkg",
+    "path": "/bigdata/s0/tea5209/AGM/WebUI/uploads/c52bc37f-8e66-4df1-b20b-57c92bbd2311/NC_tract.gpkg",
+    "ok": true,
+    "type": "vector",
+    "ext": ".gpkg",
+    "n_rows": 2192,
+    "n_cols": 5,
+    "crs": "EPSG:4269",
+    "head": {
+      "GEOID": [
+        "1400000US37063001706",
+        "1400000US37183050300"
+      ],
+      "STATEFP": [
+        "37",
+        "37"
+      ],
+      "COUNTYFP": [
+        "063",
+        "183"
+      ],
+      "TRACTCE": [
+        "001706",
+        "050300"
+      ]
+    },
+    "error": null,
+    "columns": [
+      "GEOID",
+      "STATEFP",
+      "COUNTYFP",
+      "TRACTCE",
+      "geometry"
+    ],
+    "geometry": {
+      "geom_col": "geometry",
+      "invalid": 0,
+      "empty": 0
+    }
+  }
+]

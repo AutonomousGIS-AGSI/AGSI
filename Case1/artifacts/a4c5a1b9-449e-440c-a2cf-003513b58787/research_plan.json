@@ -1,0 +1,315 @@
+{
+  "research_question": "How do spatial inequalities in PM2.5 exposure across California counties vary with income inequality (Gini) in 2019, and does the spatial relationship vary by urban–rural classification?",
+  "research_intent": "To understand the relationship between spatial inequalities in PM2.5 exposure and income inequality across California counties and investigate how this relationship varies by urban-rural classification.",
+  "objectives": [
+    {
+      "number": 1,
+      "title": "Assess how PM2.5 exposure varies across California counties in 2019 and whether county-level PM2.5 is spatially clustered",
+      "hypothesis": "County-level annual PM2.5 exposure in 2019 is spatially clustered (positive global Moran’s I) rather than randomly distributed across California.",
+      "data_requirements": [
+        {
+          "source_id": "PM2.5_Annual_California_2019",
+          "description": "PM2.5 monitoring-site annual summaries to be aggregated to county-level PM2.5 exposure using `state_code`, `county_code`, `year`, and `arithmetic_mean` (filtered to PM2.5 annual standard records).",
+          "suitability_score": 7,
+          "scale_note": {
+            "data_scale": "monitoring site points; county identifiers present",
+            "question_scale": "county",
+            "mismatch": true,
+            "resolution": "aggregation"
+          },
+          "data_preprocessing": {
+            "required": true,
+            "rationale": "The PM2.5 data are at monitoring-site level (multiple records per county and multiple standards/metrics), but the research question requires county-level exposure for 2019; aggregating site `arithmetic_mean` to county-year produces a county exposure indicator suitable for county analysis.",
+            "sources": [
+              "PM2.5_Annual_California_2019"
+            ],
+            "what_each_contributes": null,
+            "method": "Filter to `year == 2019` and annual PM2.5 records, then compute county-level summary (e.g., mean of site `arithmetic_mean`) by county FIPS."
+          },
+          "data_gap": false
+        },
+        {
+          "source_id": "california_counties_2019",
+          "description": "County boundaries and identifiers (`GEOID`, `NAME`, `geometry`) to enable spatial weights and mapping of county-level PM2.5.",
+          "suitability_score": 10,
+          "scale_note": {
+            "data_scale": "county polygons (58 features)",
+            "question_scale": "county",
+            "mismatch": false,
+            "resolution": "none"
+          },
+          "data_preprocessing": {
+            "required": true,
+            "rationale": "County-level PM2.5 summaries must be attached to county geometries to compute contiguity-based spatial weights and spatial autocorrelation statistics.",
+            "sources": [
+              "PM2.5_Annual_California_2019",
+              "california_counties_2019"
+            ],
+            "what_each_contributes": {
+              "PM2.5_Annual_California_2019": "county-level PM2.5 exposure derived from `arithmetic_mean` after aggregation",
+              "california_counties_2019": "county polygon `geometry` and canonical county identifier `GEOID`"
+            },
+            "method": "Create a 5-digit county FIPS key (GEOID-style) from PM (`state_code`,`county_code`) and left-join to `california_counties_2019` on `GEOID`."
+          },
+          "data_gap": false
+        }
+      ],
+      "steps": [
+        {
+          "step_number": 1,
+          "operation_type": "data_wrangling",
+          "operation": "row_filter",
+          "input_nodes": [
+            "PM2.5_Annual_California_2019"
+          ],
+          "output_node": "pm25_2019_annual_records.csv",
+          "description": "Filter `PM2.5_Annual_California_2019` to `year == 2019` and `pollutant_standard == 'PM25 Annual 2006'`, keeping `state_code`, `county_code`, `site_number`, and `arithmetic_mean`.",
+          "expected_output": "A 2019-only PM2.5 annual-standard table at monitoring-site record level with the columns needed for county aggregation."
+        },
+        {
+          "step_number": 2,
+          "operation_type": "data_wrangling",
+          "operation": "derive_column",
+          "input_nodes": [
+            "pm25_2019_annual_records.csv"
+          ],
+          "output_node": "pm25_2019_with_geoid.csv",
+          "description": "Create a 5-digit county GEOID field `GEOID` by concatenating zero-padded `state_code` (2 digits) and zero-padded `county_code` (3 digits).",
+          "expected_output": null
+        },
+        {
+          "step_number": 3,
+          "operation_type": "aggregation",
+          "operation": "groupby_aggregate_mean",
+          "input_nodes": [
+            "pm25_2019_with_geoid.csv"
+          ],
+          "output_node": "pm25_county_2019.csv",
+          "description": "Aggregate to county level by grouping on `GEOID` and computing `pm25_mean_2019 = mean(arithmetic_mean)` across monitoring sites.",
+          "expected_output": "A county-level PM2.5 exposure table for 2019 with one row per county GEOID."
+        },
+        {
+          "step_number": 4,
+          "operation_type": "geoprocessing",
+          "operation": "attribute_join",
+          "input_nodes": [
+            "california_counties_2019",
+            "pm25_county_2019.csv"
+          ],
+          "output_node": "counties_pm25_2019.gpkg",
+          "description": "Left-join `pm25_county_2019.csv` to `california_counties_2019` on `GEOID` to attach `pm25_mean_2019` to county polygons.",
+          "expected_output": "A county polygon layer with 2019 county mean PM2.5 attached as `pm25_mean_2019`."
+        },
+        {
+          "step_number": 5,
+          "operation_type": "geoprocessing",
+          "operation": "spatial_weights_queen_contiguity",
+          "input_nodes": [
+            "counties_pm25_2019.gpkg"
+          ],
+          "output_node": "ca_county_queen_weights_2019.gpkg",
+          "description": "Construct a Queen contiguity spatial weights structure from county `geometry` and store neighbor links keyed by `GEOID`.",
+          "expected_output": null
+        },
+        {
+          "step_number": 6,
+          "operation_type": "statistical",
+          "operation": "global_morans_I",
+          "input_nodes": [
+            "counties_pm25_2019.gpkg",
+            "ca_county_queen_weights_2019.gpkg"
+          ],
+          "output_node": "pm25_global_moransI_2019.csv",
+          "description": "Compute global Moran’s I for `pm25_mean_2019` using the Queen contiguity weights.",
+          "expected_output": "A table reporting Moran’s I statistic, expected I, variance, z-score, and p-value for county PM2.5 clustering in 2019."
+        }
+      ]
+    },
+    {
+      "number": 2,
+      "title": "Determine whether county income inequality (Gini) is associated with county PM2.5 exposure in 2019 after accounting for spatial dependence",
+      "hypothesis": "Higher county income inequality (`B19083_001E:Gini Index`) is associated with higher county mean PM2.5 (`pm25_mean_2019`) in 2019, and the association remains after accounting for spatial dependence.",
+      "data_requirements": [
+        {
+          "source_id": "California_Counties_Gini_2019",
+          "description": "County-level income inequality for 2019 using `B19083_001E:Gini Index`, joined via a 5-digit county identifier derived from `state_fips` + `county_fips`.",
+          "suitability_score": 10,
+          "scale_note": {
+            "data_scale": "county (58 rows)",
+            "question_scale": "county",
+            "mismatch": false,
+            "resolution": "none"
+          },
+          "data_preprocessing": {
+            "required": true,
+            "rationale": "To estimate the PM2.5–Gini relationship at the county level, Gini must be merged into the county PM2.5 geodata created in Objective 1.",
+            "sources": [
+              "California_Counties_Gini_2019",
+              "counties_pm25_2019.gpkg"
+            ],
+            "what_each_contributes": {
+              "California_Counties_Gini_2019": "county Gini as `B19083_001E:Gini Index` plus FIPS components to form `GEOID`",
+              "counties_pm25_2019.gpkg": "county polygons and `pm25_mean_2019`"
+            },
+            "method": "Create `GEOID` from (`state_fips`,`county_fips`) and left-join to the county PM2.5 geodata on `GEOID`."
+          },
+          "data_gap": false
+        }
+      ],
+      "steps": [
+        {
+          "step_number": 1,
+          "operation_type": "data_wrangling",
+          "operation": "derive_column",
+          "input_nodes": [
+            "California_Counties_Gini_2019"
+          ],
+          "output_node": "gini_2019_with_geoid.csv",
+          "description": "Create a 5-digit county GEOID field `GEOID` by concatenating zero-padded `state_fips` (2 digits) and zero-padded `county_fips` (3 digits), and keep `GEOID`, `B19083_001E:Gini Index`, and `year`.",
+          "expected_output": null
+        },
+        {
+          "step_number": 2,
+          "operation_type": "geoprocessing",
+          "operation": "attribute_join",
+          "input_nodes": [
+            "counties_pm25_2019.gpkg",
+            "gini_2019_with_geoid.csv"
+          ],
+          "output_node": "counties_pm25_gini_2019.gpkg",
+          "description": "Left-join `gini_2019_with_geoid.csv` to `counties_pm25_2019.gpkg` on `GEOID` to attach `B19083_001E:Gini Index` to each county.",
+          "expected_output": "A county polygon layer containing both `pm25_mean_2019` and `B19083_001E:Gini Index` for 2019."
+        },
+        {
+          "step_number": 3,
+          "operation_type": "statistical",
+          "operation": "ordinary_least_squares",
+          "input_nodes": [
+            "counties_pm25_gini_2019.gpkg"
+          ],
+          "output_node": "ols_pm25_on_gini_2019.csv",
+          "description": "Fit an OLS model with `pm25_mean_2019` as the dependent variable and `B19083_001E:Gini Index` as the predictor, and output coefficients, standard errors, and model fit statistics.",
+          "expected_output": "A model-results table for OLS PM2.5 ~ Gini at the county level."
+        },
+        {
+          "step_number": 4,
+          "operation_type": "statistical",
+          "operation": "global_morans_I_on_residuals",
+          "input_nodes": [
+            "ols_pm25_on_gini_2019.csv",
+            "counties_pm25_gini_2019.gpkg",
+            "ca_county_queen_weights_2019.gpkg"
+          ],
+          "output_node": "ols_residuals_moransI_2019.csv",
+          "description": "Compute global Moran’s I for OLS residuals using Queen contiguity weights keyed by `GEOID`.",
+          "expected_output": "A table indicating whether spatial autocorrelation remains in OLS residuals (Moran’s I, z, p)."
+        },
+        {
+          "step_number": 5,
+          "operation_type": "statistical",
+          "operation": "spatial_lag_model_maximum_likelihood",
+          "input_nodes": [
+            "counties_pm25_gini_2019.gpkg",
+            "ca_county_queen_weights_2019.gpkg"
+          ],
+          "output_node": "spatial_lag_pm25_on_gini_2019.csv",
+          "description": "Fit a maximum-likelihood spatial lag model with `pm25_mean_2019` as the dependent variable and `B19083_001E:Gini Index` as the predictor using the Queen contiguity weights.",
+          "expected_output": "A model-results table for the spatial lag specification including coefficient estimates, spatial autoregressive parameter, and fit statistics."
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "title": "Determine whether the PM2.5–income inequality relationship differs between urban and rural counties in California in 2019",
+      "hypothesis": "The positive association between county Gini and county mean PM2.5 is stronger in metro counties (`Metro2013 == 1`) than in nonmetro counties (`Metro2013 == 0`).",
+      "data_requirements": [
+        {
+          "source_id": "California_UrbanRural_Classification_2019",
+          "description": "County urban–rural classification using `FIPSTXT` (county FIPS including state) and the metro indicator `Metro2013` (and/or `Nonmetro2013`) for stratification and interaction testing.",
+          "suitability_score": 8,
+          "scale_note": {
+            "data_scale": "county (58 rows), classification labeled as 2013-based codes",
+            "question_scale": "county, 2019",
+            "mismatch": true,
+            "resolution": "limitation"
+          },
+          "data_preprocessing": {
+            "required": true,
+            "rationale": "Urban–rural attributes must be merged into the county PM2.5+Gini geodata to test effect modification; however, the classification fields are explicitly 2013-based (e.g., `Metro2013`), so using them for 2019 is a temporal-label limitation that should be documented.",
+            "sources": [
+              "California_UrbanRural_Classification_2019",
+              "counties_pm25_gini_2019.gpkg"
+            ],
+            "what_each_contributes": {
+              "California_UrbanRural_Classification_2019": "county metro/nonmetro classification via `FIPSTXT` and `Metro2013`",
+              "counties_pm25_gini_2019.gpkg": "county geometry with `pm25_mean_2019` and `B19083_001E:Gini Index`"
+            },
+            "method": "Format `FIPSTXT` as 5-digit string `GEOID` and left-join to the county PM2.5+Gini layer on `GEOID`."
+          },
+          "data_gap": false
+        }
+      ],
+      "steps": [
+        {
+          "step_number": 1,
+          "operation_type": "data_wrangling",
+          "operation": "derive_column",
+          "input_nodes": [
+            "California_UrbanRural_Classification_2019"
+          ],
+          "output_node": "urban_rural_with_geoid.csv",
+          "description": "Create `GEOID` as a 5-character zero-padded string from `FIPSTXT` and keep `GEOID`, `Metro2013`, `Nonmetro2013`, and `RuralUrbanContinuumCode2013`.",
+          "expected_output": null
+        },
+        {
+          "step_number": 2,
+          "operation_type": "geoprocessing",
+          "operation": "attribute_join",
+          "input_nodes": [
+            "counties_pm25_gini_2019.gpkg",
+            "urban_rural_with_geoid.csv"
+          ],
+          "output_node": "counties_pm25_gini_urbanrural_2019.gpkg",
+          "description": "Left-join `urban_rural_with_geoid.csv` to `counties_pm25_gini_2019.gpkg` on `GEOID` to attach `Metro2013` (and related fields) to each county.",
+          "expected_output": "A county polygon layer with `pm25_mean_2019`, `B19083_001E:Gini Index`, and `Metro2013` available for interaction and stratified analyses."
+        },
+        {
+          "step_number": 3,
+          "operation_type": "data_wrangling",
+          "operation": "derive_interaction_term",
+          "input_nodes": [
+            "counties_pm25_gini_urbanrural_2019.gpkg"
+          ],
+          "output_node": "counties_pm25_gini_urbanrural_interaction_2019.gpkg",
+          "description": "Create an interaction term `gini_x_metro = (B19083_001E:Gini Index) * Metro2013`.",
+          "expected_output": null
+        },
+        {
+          "step_number": 4,
+          "operation_type": "statistical",
+          "operation": "ordinary_least_squares_with_interaction",
+          "input_nodes": [
+            "counties_pm25_gini_urbanrural_interaction_2019.gpkg"
+          ],
+          "output_node": "ols_pm25_gini_metro_interaction_2019.csv",
+          "description": "Fit an OLS model with `pm25_mean_2019` as the dependent variable and predictors `B19083_001E:Gini Index`, `Metro2013`, and `gini_x_metro`, and output coefficient estimates and p-values.",
+          "expected_output": "A model-results table testing whether the PM2.5–Gini slope differs by metro status (interaction term significance and direction)."
+        },
+        {
+          "step_number": 5,
+          "operation_type": "statistical",
+          "operation": "groupwise_pearson_correlation",
+          "input_nodes": [
+            "counties_pm25_gini_urbanrural_interaction_2019.gpkg"
+          ],
+          "output_node": "pm25_gini_correlations_by_metro_2019.csv",
+          "description": "Compute Pearson correlation between `pm25_mean_2019` and `B19083_001E:Gini Index` separately for counties where `Metro2013 == 1` and where `Metro2013 == 0`.",
+          "expected_output": "A two-row summary table of within-group correlations (metro vs nonmetro) with sample sizes."
+        }
+      ]
+    }
+  ],
+  "timestamp": "2026-04-21 21:13:43",
+  "time_taken_seconds": 67.74,
+  "time_taken_formatted": "1m 7s"
+}

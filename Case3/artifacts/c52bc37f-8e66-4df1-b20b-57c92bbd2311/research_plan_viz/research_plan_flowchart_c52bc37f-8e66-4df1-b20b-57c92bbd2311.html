@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Influence of Proximity to Hazardous Waste Facilities on Asthma Prevalence in North Carolina</title>
+<style>
+  body { margin: 0; font-family: 'Segoe UI', Arial, sans-serif; background: #f8f9fa; display: flex; flex-direction: column; height: 100vh; }
+  h1 { text-align: center; padding: 12px 0 4px 0; margin: 0; font-size: 18px; color: #2C3E50; }
+  .graph-panel { flex: 1; overflow: hidden; position: relative; cursor: grab; }
+  svg { display: block; width: 100%; height: 100%; }
+  .node-box { cursor: pointer; transition: filter 0.15s; }
+  .node-box:hover { filter: brightness(1.12); }
+  marker { overflow: visible; }
+
+  /* Zoom controls toolbar */
+  .zoom-toolbar {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    z-index: 50;
+    background: white;
+    border-radius: 8px;
+    padding: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    border: 1px solid #ddd;
+  }
+  .zoom-btn {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background: #fff;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #444;
+    transition: all 0.15s;
+    padding: 0;
+  }
+  .zoom-btn:hover { background: #e9ecef; color: #111; }
+  .zoom-btn:active { background: #dee2e6; }
+  .zoom-level {
+    font-size: 10px;
+    text-align: center;
+    color: #888;
+    padding: 2px 0;
+    user-select: none;
+  }
+  .zoom-divider {
+    height: 1px;
+    background: #e0e0e0;
+    margin: 2px 0;
+  }
+
+  /* Popup overlay */
+  .popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.35);
+    z-index: 100;
+    justify-content: center;
+    align-items: center;
+  }
+  .popup-overlay.visible { display: flex; }
+
+  /* Popup box */
+  .popup-box {
+    background: white;
+    border-radius: 10px;
+    padding: 24px 28px;
+    max-width: 580px;
+    width: 92%;
+    max-height: 75vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+    position: relative;
+    animation: popIn 0.18s ease-out;
+  }
+  @keyframes popIn {
+    from { transform: scale(0.92); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+  .popup-box h3 { margin-top: 0; color: #2C3E50; border-bottom: 2px solid #4C72B0; padding-bottom: 8px; }
+  .popup-box p { line-height: 1.6; color: #333; font-size: 13px; }
+  .popup-box ul { padding-left: 18px; }
+  .popup-box li { margin-bottom: 6px; font-size: 13px; }
+  .popup-box svg { max-width: 100%; height: auto; }
+  .popup-close {
+    position: absolute;
+    top: 10px; right: 14px;
+    background: none; border: none;
+    font-size: 20px; color: #999;
+    cursor: pointer; line-height: 1;
+    padding: 4px 8px; border-radius: 4px;
+  }
+  .popup-close:hover { background: #f0f0f0; color: #333; }
+</style>
+</head>
+<body>
+<h1>Influence of Proximity to Hazardous Waste Facilities on Asthma Prevalence in North Carolina</h1>
+<div class="graph-panel" id="graphPanel">
+<!-- Zoom controls -->
+<div class="zoom-toolbar">
+  <button class="zoom-btn" onclick="zoomIn()" title="Zoom in">+</button>
+  <button class="zoom-btn" onclick="zoomOut()" title="Zoom out">&minus;</button>
+  <div class="zoom-divider"></div>
+  <span class="zoom-level" id="zoomLevel">100%</span>
+  <div class="zoom-divider"></div>
+  <button class="zoom-btn" onclick="zoomReset()" title="Reset view">&#8634;</button>
+  <button class="zoom-btn" onclick="zoomFit()" title="Fit to view">&#11036;</button>
+</div>
+<svg id="flowchartSvg" width="1000" height="1290" viewBox="0 0 1000 1290">
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#666"/>
+    </marker>
+  </defs>
+  <g id="zoomGroup">
+    <line x1="500" y1="80" x2="360" y2="153" stroke="#555" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="360" y1="207" x2="360" y2="285" stroke="#4C72B0" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="360" y1="335" x2="360" y2="385" stroke="#4C72B0" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="360" y1="435" x2="360" y2="485" stroke="#4C72B0" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="360" y1="535" x2="360" y2="585" stroke="#4C72B0" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="360" y1="635" x2="360" y2="685" stroke="#4C72B0" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="360" y1="735" x2="360" y2="785" stroke="#4C72B0" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="360" y1="835" x2="360" y2="885" stroke="#4C72B0" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="360" y1="935" x2="360" y2="985" stroke="#4C72B0" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="360" y1="1035" x2="360" y2="1085" stroke="#4C72B0" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="500" y1="80" x2="640" y2="153" stroke="#555" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="640" y1="207" x2="640" y2="285" stroke="#DD8452" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="640" y1="335" x2="640" y2="385" stroke="#DD8452" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="640" y1="435" x2="640" y2="485" stroke="#DD8452" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="640" y1="535" x2="640" y2="585" stroke="#DD8452" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="640" y1="635" x2="640" y2="685" stroke="#DD8452" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="640" y1="735" x2="640" y2="785" stroke="#DD8452" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <line x1="640" y1="835" x2="640" y2="885" stroke="#DD8452" stroke-width="2" marker-end="url(#arrowhead)"/>
+    <g class="node-box" onclick="showPopup('RQ')">
+      <rect x="200" y="20" width="600" height="60" rx="10" ry="10" fill="#2C3E50" stroke="#333" stroke-width="1.5"/>
+      <text x="500" y="47.2" text-anchor="middle" fill="white" font-size="13" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">How does proximity to hazardous waste facilities influence spatial patterns of a</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj_1')">
+      <rect x="240" y="153" width="240" height="55" rx="10" ry="10" fill="#4C72B0" stroke="#333" stroke-width="1.5"/>
+      <text x="360" y="170.4" text-anchor="middle" fill="white" font-size="11" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">Obj 1: Assess whether asthma prevalence</text>
+      <text x="360" y="184.4" text-anchor="middle" fill="white" font-size="11" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">is sp</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj1_s1')">
+      <polygon points="265,285 470,285 455,335 250,335" fill="#a3b7d7" stroke="#333" stroke-width="1.5"/>
+      <text x="360" y="307.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S1.1: reproject_layer</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj1_s2')">
+      <polygon points="265,385 470,385 455,435 250,435" fill="#a3b7d7" stroke="#333" stroke-width="1.5"/>
+      <text x="360" y="407.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S1.2: reproject_layer</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj1_s3')">
+      <polygon points="265,485 470,485 455,535 250,535" fill="#a3b7d7" stroke="#333" stroke-width="1.5"/>
+      <text x="360" y="507.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S1.3: centroid</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj1_s4')">
+      <polygon points="265,585 470,585 455,635 250,635" fill="#a3b7d7" stroke="#333" stroke-width="1.5"/>
+      <text x="360" y="607.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S1.4: nearest_neighbor_distance_</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj1_s5')">
+      <polygon points="265,685 470,685 455,735 250,735" fill="#a3b7d7" stroke="#333" stroke-width="1.5"/>
+      <text x="360" y="707.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S1.5: left_join</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj1_s6')">
+      <polygon points="265,785 470,785 455,835 250,835" fill="#a3b7d7" stroke="#333" stroke-width="1.5"/>
+      <text x="360" y="807.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S1.6: attribute_join</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj1_s7')">
+      <polygon points="265,885 470,885 455,935 250,935" fill="#a3b7d7" stroke="#333" stroke-width="1.5"/>
+      <text x="360" y="907.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S1.7: global_morans_I</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj1_s8')">
+      <polygon points="265,985 470,985 455,1035 250,1035" fill="#a3b7d7" stroke="#333" stroke-width="1.5"/>
+      <text x="360" y="1007.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S1.8: getis_ord_gi_star</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj1_s9')">
+      <polygon points="265,1085 470,1085 455,1135 250,1135" fill="#a3b7d7" stroke="#333" stroke-width="1.5"/>
+      <text x="360" y="1107.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S1.9: mann_whitney_u_test</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj_2')">
+      <rect x="520" y="153" width="240" height="55" rx="10" ry="10" fill="#DD8452" stroke="#333" stroke-width="1.5"/>
+      <text x="640" y="170.4" text-anchor="middle" fill="white" font-size="11" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">Obj 2: Estimate how the hazardous-waste</text>
+      <text x="640" y="184.4" text-anchor="middle" fill="white" font-size="11" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">proxi</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj2_s1')">
+      <polygon points="545,285 750,285 735,335 530,335" fill="#f1cfbc" stroke="#333" stroke-width="1.5"/>
+      <text x="640" y="307.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S2.1: left_join</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj2_s2')">
+      <polygon points="545,385 750,385 735,435 530,435" fill="#f1cfbc" stroke="#333" stroke-width="1.5"/>
+      <text x="640" y="407.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S2.2: filter_rows_complete_cases</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj2_s3')">
+      <polygon points="545,485 750,485 735,535 530,535" fill="#f1cfbc" stroke="#333" stroke-width="1.5"/>
+      <text x="640" y="507.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S2.3: feature_engineering</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj2_s4')">
+      <polygon points="545,585 750,585 735,635 530,635" fill="#f1cfbc" stroke="#333" stroke-width="1.5"/>
+      <text x="640" y="607.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S2.4: ordinary_least_squares_wit</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj2_s5')">
+      <polygon points="545,685 750,685 735,735 530,735" fill="#f1cfbc" stroke="#333" stroke-width="1.5"/>
+      <text x="640" y="707.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S2.5: attach_coordinates</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj2_s6')">
+      <polygon points="545,785 750,785 735,835 530,835" fill="#f1cfbc" stroke="#333" stroke-width="1.5"/>
+      <text x="640" y="807.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S2.6: variance_inflation_factors</text>
+    </g>
+    <g class="node-box" onclick="showPopup('obj2_s7')">
+      <polygon points="545,885 750,885 735,935 530,935" fill="#f1cfbc" stroke="#333" stroke-width="1.5"/>
+      <text x="640" y="907.5" text-anchor="middle" fill="#222" font-size="10" font-weight="bold" font-family="Segoe UI, Arial, sans-serif">S2.7: geographically_weighted_re</text>
+    </g>
+  </g>
+</svg>
+</div>
+
+<!-- Popup overlay -->
+<div class="popup-overlay" id="popupOverlay" onclick="closePopup(event)">
+  <div class="popup-box" id="popupBox" onclick="event.stopPropagation()">
+    <button class="popup-close" onclick="closePopup()">&times;</button>
+    <div id="popupContent"></div>
+  </div>
+</div>
+
+<script>
+const details = {"RQ": "<h3>Research Question</h3><p>How does proximity to hazardous waste facilities influence spatial patterns of asthma prevalence across census tracts of North Carolina, and how do these relationships vary spatially by socioeconomic and demographic context?</p><p><b>Intent:</b> To investigate how proximity to hazardous waste facilities affects spatial patterns of asthma prevalence across census tracts in North Carolina, with a focus on variations influenced by socioeconomic and demographic contexts.</p>", "obj_1": "<h3>Objective 1</h3><p><b>Title:</b> Assess whether asthma prevalence is spatially clustered across North Carolina census tracts and whether hazardous-waste proximity aligns with high-asthma clusters</p><p><b>Hypothesis:</b> Census tracts with smaller nearest-site distance to hazardous waste facilities and/or larger hazardous-waste facility counts within 5000 meters have higher Asthma_prev and are overrepresented in statistically significant high-asthma clusters.</p><p><b>Data Requirements:</b></p><ul><li><b>NC_tract</b> (suitability: 10) \u2014 preprocessing: Reproject to a meter-based CRS; compute tract centroids; compute nearest distance and 5000 m counts to NC_HW_sites; join Asthma_prev by GEOID; attach metrics to tract polygons for spatial statistics.</li><li><b>NC_HW_sites</b> (suitability: 9)</li><li><b>NC_PLACES</b> (suitability: 9)</li></ul>", "obj1_s1": "<h3>Step 1.1</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"445\" height=\"50\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"80\" height=\"30\" rx=\"6\" fill=\"#c7d3e7\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"50.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">NC_tract</text>\n  <line x1=\"90\" y1=\"25.0\" x2=\"120\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"120\" y=\"10.0\" width=\"125\" height=\"30\" rx=\"6\" fill=\"#809bc8\" stroke=\"#4C72B0\" stroke-width=\"2\"/>\n  <text x=\"182.5\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">reproject_layer</text>\n  <line x1=\"245\" y1=\"25.0\" x2=\"275\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"275\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"355.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">nc_tract_projected.gpk</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> reproject_layer</p><p><b>Type:</b> geoprocessing</p><p><b>Input:</b> NC_tract</p><p><b>Output Node:</b> nc_tract_projected.gpkg</p><p><b>Description:</b> Reproject NC_tract to a common projected CRS in meters suitable for distance calculations while preserving GEOID.</p><p><b>Expected Output:</b> Projected tract polygons with GEOID in a meter-based CRS.</p>", "obj1_s2": "<h3>Step 1.2</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"462\" height=\"50\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"97\" height=\"30\" rx=\"6\" fill=\"#c7d3e7\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"58.5\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">NC_HW_sites</text>\n  <line x1=\"107\" y1=\"25.0\" x2=\"137\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"137\" y=\"10.0\" width=\"125\" height=\"30\" rx=\"6\" fill=\"#809bc8\" stroke=\"#4C72B0\" stroke-width=\"2\"/>\n  <text x=\"199.5\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">reproject_layer</text>\n  <line x1=\"262\" y1=\"25.0\" x2=\"292\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"292\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"372.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">nc_hw_sites_projected.</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> reproject_layer</p><p><b>Type:</b> geoprocessing</p><p><b>Input:</b> NC_HW_sites</p><p><b>Output Node:</b> nc_hw_sites_projected.gpkg</p><p><b>Description:</b> Reproject NC_HW_sites to the same projected CRS used for nc_tract_projected.gpkg while preserving SITE_NAME.</p><p><b>Expected Output:</b> Projected hazardous waste facility points in the same meter-based CRS as the tracts.</p>", "obj1_s3": "<h3>Step 1.3</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"500\" height=\"50\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#c7d3e7\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">nc_tract_projected.g</text>\n  <line x1=\"170\" y1=\"25.0\" x2=\"200\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"200\" y=\"10.0\" width=\"100\" height=\"30\" rx=\"6\" fill=\"#809bc8\" stroke=\"#4C72B0\" stroke-width=\"2\"/>\n  <text x=\"250.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">centroid</text>\n  <line x1=\"300\" y1=\"25.0\" x2=\"330\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"330\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"410.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">nc_tract_centroids.gpk</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> centroid</p><p><b>Type:</b> geoprocessing</p><p><b>Input:</b> nc_tract_projected.gpkg</p><p><b>Output Node:</b> nc_tract_centroids.gpkg</p><p><b>Description:</b> Compute tract centroids from nc_tract_projected.gpkg and retain GEOID for each centroid feature.</p><p><b>Expected Output:</b> Tract centroid point features keyed by GEOID.</p>", "obj1_s4": "<h3>Step 1.4</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"580\" height=\"88\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#c7d3e7\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">nc_tract_centroids.g</text>\n  <line x1=\"170\" y1=\"25.0\" x2=\"200\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"10\" y=\"48.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#c7d3e7\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"67.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">nc_hw_sites_projecte</text>\n  <line x1=\"170\" y1=\"63.0\" x2=\"200\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"200\" y=\"29.0\" width=\"180\" height=\"30\" rx=\"6\" fill=\"#809bc8\" stroke=\"#4C72B0\" stroke-width=\"2\"/>\n  <text x=\"290.0\" y=\"48.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">nearest_neighbor_distanc</text>\n  <line x1=\"380\" y1=\"44.0\" x2=\"410\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"410\" y=\"29.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"490.0\" y=\"48.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">tract_proximity_metric</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> nearest_neighbor_distance_and_buffer_count</p><p><b>Type:</b> geoprocessing</p><p><b>Input:</b> nc_tract_centroids.gpkg, nc_hw_sites_projected.gpkg</p><p><b>Output Node:</b> tract_proximity_metrics.csv</p><p><b>Description:</b> For each GEOID, compute nearest_hw_dist_m as the Euclidean distance in meters from the tract centroid to the nearest hazardous waste facility point and compute hw_count_5km as the count of hazardous waste facility points within 5000 meters of the centroid.</p><p><b>Expected Output:</b> A GEOID-keyed table with nearest_hw_dist_m and hw_count_5km.</p>", "obj1_s5": "<h3>Step 1.5</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"500\" height=\"88\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#c7d3e7\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">NC_PLACES</text>\n  <line x1=\"170\" y1=\"25.0\" x2=\"200\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"10\" y=\"48.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#c7d3e7\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"67.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">tract_proximity_metr</text>\n  <line x1=\"170\" y1=\"63.0\" x2=\"200\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"200\" y=\"29.0\" width=\"100\" height=\"30\" rx=\"6\" fill=\"#809bc8\" stroke=\"#4C72B0\" stroke-width=\"2\"/>\n  <text x=\"250.0\" y=\"48.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">left_join</text>\n  <line x1=\"300\" y1=\"44.0\" x2=\"330\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"330\" y=\"29.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"410.0\" y=\"48.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">asthma_proximity.csv</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> left_join</p><p><b>Type:</b> data_wrangling</p><p><b>Input:</b> NC_PLACES, tract_proximity_metrics.csv</p><p><b>Output Node:</b> asthma_proximity.csv</p><p><b>Description:</b> Left-join tract_proximity_metrics.csv to NC_PLACES on GEOID and retain GEOID, Asthma_prev, nearest_hw_dist_m, and hw_count_5km.</p><p><b>Expected Output:</b> A GEOID-keyed table containing Asthma_prev and hazardous-waste proximity metrics.</p>", "obj1_s6": "<h3>Step 1.6</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"518\" height=\"88\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#c7d3e7\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">nc_tract_projected.g</text>\n  <line x1=\"170\" y1=\"25.0\" x2=\"200\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"10\" y=\"48.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#c7d3e7\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"67.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">asthma_proximity.csv</text>\n  <line x1=\"170\" y1=\"63.0\" x2=\"200\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"200\" y=\"29.0\" width=\"118\" height=\"30\" rx=\"6\" fill=\"#809bc8\" stroke=\"#4C72B0\" stroke-width=\"2\"/>\n  <text x=\"259.0\" y=\"48.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">attribute_join</text>\n  <line x1=\"318\" y1=\"44.0\" x2=\"348\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"348\" y=\"29.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"428.0\" y=\"48.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">tract_asthma_proximity</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> attribute_join</p><p><b>Type:</b> geoprocessing</p><p><b>Input:</b> nc_tract_projected.gpkg, asthma_proximity.csv</p><p><b>Output Node:</b> tract_asthma_proximity.gpkg</p><p><b>Description:</b> Join asthma_proximity.csv to nc_tract_projected.gpkg by GEOID to create tract polygons with attributes Asthma_prev, nearest_hw_dist_m, and hw_count_5km.</p><p><b>Expected Output:</b> Tract polygons with Asthma_prev and proximity attributes suitable for spatial statistics.</p>", "obj1_s7": "<h3>Step 1.7</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"525\" height=\"50\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#c7d3e7\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">tract_asthma_proximi</text>\n  <line x1=\"170\" y1=\"25.0\" x2=\"200\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"200\" y=\"10.0\" width=\"125\" height=\"30\" rx=\"6\" fill=\"#809bc8\" stroke=\"#4C72B0\" stroke-width=\"2\"/>\n  <text x=\"262.5\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">global_morans_I</text>\n  <line x1=\"325\" y1=\"25.0\" x2=\"355\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"355\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"435.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">global_moransI_asthma.</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> global_morans_I</p><p><b>Type:</b> statistical</p><p><b>Input:</b> tract_asthma_proximity.gpkg</p><p><b>Output Node:</b> global_moransI_asthma.json</p><p><b>Description:</b> Compute Global Moran\u2019s I for Asthma_prev using queen contiguity weights defined on tract polygons and permutation-based p-values.</p><p><b>Expected Output:</b> Global Moran\u2019s I results for Asthma_prev including statistic, z-score, and permutation p-value.</p>", "obj1_s8": "<h3>Step 1.8</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"539\" height=\"50\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#c7d3e7\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">tract_asthma_proximi</text>\n  <line x1=\"170\" y1=\"25.0\" x2=\"200\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"200\" y=\"10.0\" width=\"139\" height=\"30\" rx=\"6\" fill=\"#809bc8\" stroke=\"#4C72B0\" stroke-width=\"2\"/>\n  <text x=\"269.5\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">getis_ord_gi_star</text>\n  <line x1=\"339\" y1=\"25.0\" x2=\"369\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"369\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"449.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">asthma_hotspots.gpkg</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> getis_ord_gi_star</p><p><b>Type:</b> statistical</p><p><b>Input:</b> tract_asthma_proximity.gpkg</p><p><b>Output Node:</b> asthma_hotspots.gpkg</p><p><b>Description:</b> Compute Getis-Ord Gi* for Asthma_prev using queen contiguity weights on tract polygons and write Gi* z-scores and p-value-based significance class per GEOID.</p><p><b>Expected Output:</b> Tract polygons with Gi* z-scores and hotspot/coldspot significance classification for Asthma_prev.</p>", "obj1_s9": "<h3>Step 1.9</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"553\" height=\"50\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#c7d3e7\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">asthma_hotspots.gpkg</text>\n  <line x1=\"170\" y1=\"25.0\" x2=\"200\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"200\" y=\"10.0\" width=\"153\" height=\"30\" rx=\"6\" fill=\"#809bc8\" stroke=\"#4C72B0\" stroke-width=\"2\"/>\n  <text x=\"276.5\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">mann_whitney_u_test</text>\n  <line x1=\"353\" y1=\"25.0\" x2=\"383\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"383\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"463.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">hotspot_proximity_comp</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> mann_whitney_u_test</p><p><b>Type:</b> statistical</p><p><b>Input:</b> asthma_hotspots.gpkg</p><p><b>Output Node:</b> hotspot_proximity_comparison.json</p><p><b>Description:</b> Using asthma_hotspots.gpkg, subset tracts to statistically significant hotspots for Asthma_prev (Gi* p < 0.05 and positive Gi* z-score) versus all other tracts, then compare nearest_hw_dist_m and hw_count_5km distributions between groups using Mann\u2013Whitney U tests.</p><p><b>Expected Output:</b> Group medians and Mann\u2013Whitney U test statistics and p-values for nearest_hw_dist_m and hw_count_5km comparing hotspots vs non-hotspots.</p>", "obj_2": "<h3>Objective 2</h3><p><b>Title:</b> Estimate how the hazardous-waste proximity\u2013asthma association varies by socioeconomic and demographic context and whether the association is spatially non-stationary</p><p><b>Hypothesis:</b> After adjustment for tract context, the association between hazardous waste proximity and Asthma_prev is stronger in tracts with higher ratio_poverty, higher ratio_uninsured, and higher ratio_black, and the proximity effect varies across space.</p><p><b>Data Requirements:</b></p><ul><li><b>NC_ACS_data</b> (suitability: 9) \u2014 preprocessing: Left-join ACS covariates to asthma_proximity.csv by GEOID; filter to complete cases; create transformed/standardized predictors and specified interactions; attach centroid x/y coordinates by GEOID; fit interaction OLS and geographically weighted regression.</li><li><b>asthma_proximity.csv</b> (suitability: 10)</li><li><b>nc_tract_centroids.gpkg</b> (suitability: 10)</li></ul>", "obj2_s1": "<h3>Step 2.1</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"500\" height=\"88\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#f8e6dc\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">asthma_proximity.csv</text>\n  <line x1=\"170\" y1=\"25.0\" x2=\"200\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"10\" y=\"48.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#f8e6dc\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"67.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">NC_ACS_data</text>\n  <line x1=\"170\" y1=\"63.0\" x2=\"200\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"200\" y=\"29.0\" width=\"100\" height=\"30\" rx=\"6\" fill=\"#e9b191\" stroke=\"#DD8452\" stroke-width=\"2\"/>\n  <text x=\"250.0\" y=\"48.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">left_join</text>\n  <line x1=\"300\" y1=\"44.0\" x2=\"330\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"330\" y=\"29.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"410.0\" y=\"48.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">tract_asthma_prox_acs.</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> left_join</p><p><b>Type:</b> data_wrangling</p><p><b>Input:</b> asthma_proximity.csv, NC_ACS_data</p><p><b>Output Node:</b> tract_asthma_prox_acs.csv</p><p><b>Description:</b> Left-join NC_ACS_data to asthma_proximity.csv on GEOID and retain GEOID, Asthma_prev, nearest_hw_dist_m, hw_count_5km, ratio_poverty, ratio_uninsured, med_income, ratio_black, and ratio_hispanic.</p><p><b>Expected Output:</b> A GEOID-keyed modeling table containing outcome, exposures, and covariates.</p>", "obj2_s2": "<h3>Step 2.2</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"580\" height=\"50\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#f8e6dc\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">tract_asthma_prox_ac</text>\n  <line x1=\"170\" y1=\"25.0\" x2=\"200\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"200\" y=\"10.0\" width=\"180\" height=\"30\" rx=\"6\" fill=\"#e9b191\" stroke=\"#DD8452\" stroke-width=\"2\"/>\n  <text x=\"290.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">filter_rows_complete_cas</text>\n  <line x1=\"380\" y1=\"25.0\" x2=\"410\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"410\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"490.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">tract_modeling_complet</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> filter_rows_complete_cases</p><p><b>Type:</b> data_wrangling</p><p><b>Input:</b> tract_asthma_prox_acs.csv</p><p><b>Output Node:</b> tract_modeling_completecases.csv</p><p><b>Description:</b> Filter tract_asthma_prox_acs.csv to rows with non-missing values for Asthma_prev, nearest_hw_dist_m, ratio_poverty, ratio_uninsured, med_income, ratio_black, and ratio_hispanic.</p>", "obj2_s3": "<h3>Step 2.3</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"553\" height=\"50\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#f8e6dc\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">tract_modeling_compl</text>\n  <line x1=\"170\" y1=\"25.0\" x2=\"200\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"200\" y=\"10.0\" width=\"153\" height=\"30\" rx=\"6\" fill=\"#e9b191\" stroke=\"#DD8452\" stroke-width=\"2\"/>\n  <text x=\"276.5\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">feature_engineering</text>\n  <line x1=\"353\" y1=\"25.0\" x2=\"383\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"383\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"463.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">tract_modeling_feature</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> feature_engineering</p><p><b>Type:</b> data_wrangling</p><p><b>Input:</b> tract_modeling_completecases.csv</p><p><b>Output Node:</b> tract_modeling_features.csv</p><p><b>Description:</b> Create ln_nearest_hw_dist_m = ln(nearest_hw_dist_m + 1), create z_ratio_poverty, z_ratio_uninsured, z_med_income, z_ratio_black, and z_ratio_hispanic as z-scores of ratio_poverty, ratio_uninsured, med_income, ratio_black, and ratio_hispanic, and create interaction terms ln_nearest_hw_dist_m_x_z_ratio_poverty = ln_nearest_hw_dist_m * z_ratio_poverty and ln_nearest_hw_dist_m_x_z_ratio_black = ln_nearest_hw_dist_m * z_ratio_black.</p><p><b>Expected Output:</b> A modeling-ready feature table including transformed exposure, standardized covariates, and specified interaction terms.</p>", "obj2_s4": "<h3>Step 2.4</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"580\" height=\"50\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#f8e6dc\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">tract_modeling_featu</text>\n  <line x1=\"170\" y1=\"25.0\" x2=\"200\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"200\" y=\"10.0\" width=\"180\" height=\"30\" rx=\"6\" fill=\"#e9b191\" stroke=\"#DD8452\" stroke-width=\"2\"/>\n  <text x=\"290.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">ordinary_least_squares_w</text>\n  <line x1=\"380\" y1=\"25.0\" x2=\"410\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"410\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"490.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">ols_interaction_result</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> ordinary_least_squares_with_interactions</p><p><b>Type:</b> statistical</p><p><b>Input:</b> tract_modeling_features.csv</p><p><b>Output Node:</b> ols_interaction_results.json</p><p><b>Description:</b> Fit an ordinary least squares model with dependent variable Asthma_prev and predictors ln_nearest_hw_dist_m, z_ratio_poverty, z_ratio_uninsured, z_med_income, z_ratio_black, z_ratio_hispanic, ln_nearest_hw_dist_m_x_z_ratio_poverty, and ln_nearest_hw_dist_m_x_z_ratio_black, and report heteroskedasticity-robust (HC) standard errors.</p><p><b>Expected Output:</b> OLS coefficient table and model diagnostics including robust standard errors and p-values.</p>", "obj2_s5": "<h3>Step 2.5</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"546\" height=\"88\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#f8e6dc\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">tract_modeling_featu</text>\n  <line x1=\"170\" y1=\"25.0\" x2=\"200\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"10\" y=\"48.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#f8e6dc\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"67.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">nc_tract_centroids.g</text>\n  <line x1=\"170\" y1=\"63.0\" x2=\"200\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"200\" y=\"29.0\" width=\"146\" height=\"30\" rx=\"6\" fill=\"#e9b191\" stroke=\"#DD8452\" stroke-width=\"2\"/>\n  <text x=\"273.0\" y=\"48.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">attach_coordinates</text>\n  <line x1=\"346\" y1=\"44.0\" x2=\"376\" y2=\"44.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"376\" y=\"29.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"456.0\" y=\"48.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">tract_modeling_with_xy</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> attach_coordinates</p><p><b>Type:</b> data_wrangling</p><p><b>Input:</b> tract_modeling_features.csv, nc_tract_centroids.gpkg</p><p><b>Output Node:</b> tract_modeling_with_xy.csv</p><p><b>Description:</b> Join centroid coordinates from nc_tract_centroids.gpkg to tract_modeling_features.csv by GEOID and write numeric x and y coordinate columns named x and y.</p>", "obj2_s6": "<h3>Step 2.6</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"552\" height=\"50\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#f8e6dc\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">tract_modeling_featu</text>\n  <line x1=\"170\" y1=\"25.0\" x2=\"200\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"200\" y=\"10.0\" width=\"180\" height=\"30\" rx=\"6\" fill=\"#e9b191\" stroke=\"#DD8452\" stroke-width=\"2\"/>\n  <text x=\"290.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">variance_inflation_facto</text>\n  <line x1=\"380\" y1=\"25.0\" x2=\"410\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"410\" y=\"10.0\" width=\"132\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"476.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">vif_results.json</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> variance_inflation_factors</p><p><b>Type:</b> statistical</p><p><b>Input:</b> tract_modeling_features.csv</p><p><b>Output Node:</b> vif_results.json</p><p><b>Description:</b> Compute variance inflation factors (VIF) for each predictor variable in the GWR predictor set (ln_nearest_hw_dist_m, z_ratio_poverty, z_ratio_uninsured, z_med_income, z_ratio_black, z_ratio_hispanic) prior to fitting the geographically weighted regression.</p><p><b>Expected Output:</b> A table of VIF values for each predictor variable to assess multicollinearity prior to GWR.</p>", "obj2_s7": "<h3>Step 2.7</h3><p style='color:#666;font-size:11px;margin-bottom:4px;'>Workflow</p><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"580\" height=\"50\" style=\"display:block;margin:10px auto;\">\n  <defs><marker id=\"wfah\" markerWidth=\"8\" markerHeight=\"6\" refX=\"8\" refY=\"3\" orient=\"auto\"><polygon points=\"0 0,8 3,0 6\" fill=\"#666\"/></marker></defs>\n  <rect x=\"10\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#f8e6dc\" stroke=\"#888\" stroke-width=\"1\"/>\n  <text x=\"90.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#333\">tract_modeling_with_</text>\n  <line x1=\"170\" y1=\"25.0\" x2=\"200\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"200\" y=\"10.0\" width=\"180\" height=\"30\" rx=\"6\" fill=\"#e9b191\" stroke=\"#DD8452\" stroke-width=\"2\"/>\n  <text x=\"290.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-weight=\"bold\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#222\">geographically_weighted_</text>\n  <line x1=\"380\" y1=\"25.0\" x2=\"410\" y2=\"25.0\" stroke=\"#666\" stroke-width=\"1.5\" marker-end=\"url(#wfah)\"/>\n  <rect x=\"410\" y=\"10.0\" width=\"160\" height=\"30\" rx=\"6\" fill=\"#d4edda\" stroke=\"#28a745\" stroke-width=\"1.5\"/>\n  <text x=\"490.0\" y=\"29.0\" text-anchor=\"middle\" font-size=\"10\" font-family=\"Segoe UI,Arial,sans-serif\" fill=\"#155724\">gwr_local_coefficients</text>\n</svg><hr style='border:none;border-top:1px solid #e9ecef;margin:12px 0;'><p><b>Operation:</b> geographically_weighted_regression</p><p><b>Type:</b> statistical</p><p><b>Input:</b> tract_modeling_with_xy.csv</p><p><b>Output Node:</b> gwr_local_coefficients.gpkg</p><p><b>Description:</b> Fit a geographically weighted regression using an adaptive bandwidth selected by minimizing AICc and a bisquare kernel with dependent variable Asthma_prev and predictors ln_nearest_hw_dist_m, z_ratio_poverty, z_ratio_uninsured, z_med_income, z_ratio_black, and z_ratio_hispanic, and output per-GEOID local coefficients and local R2.</p><p><b>Expected Output:</b> Per-tract local coefficient estimates (including the ln_nearest_hw_dist_m coefficient) and local R2 for assessing spatial non-stationarity.</p>"};
+
+// ─── Zoom & Pan state ───
+let scale = 1;
+let panX = 0, panY = 0;
+let isPanning = false;
+let _wasDragged = false;
+let panStartX = 0, panStartY = 0;
+let _mdX = 0, _mdY = 0;
+const PAN_THRESHOLD = 4;
+const MIN_SCALE = 0.2;
+const MAX_SCALE = 5;
+const ZOOM_STEP = 0.15;
+const svg = document.getElementById('flowchartSvg');
+const zoomGroup = document.getElementById('zoomGroup');
+const graphPanel = document.getElementById('graphPanel');
+
+function applyTransform() {
+  zoomGroup.setAttribute('transform', `translate(${panX}, ${panY}) scale(${scale})`);
+  document.getElementById('zoomLevel').textContent = Math.round(scale * 100) + '%';
+}
+
+function zoomIn() {
+  scale = Math.min(MAX_SCALE, scale + ZOOM_STEP);
+  applyTransform();
+}
+
+function zoomOut() {
+  scale = Math.max(MIN_SCALE, scale - ZOOM_STEP);
+  applyTransform();
+}
+
+function zoomReset() {
+  scale = 1;
+  panX = 0;
+  panY = 0;
+  applyTransform();
+}
+
+function zoomFit() {
+  const bbox = zoomGroup.getBBox();
+  const vb = svg.viewBox.baseVal;
+  const pad = 30;
+  const scaleX = (vb.width - pad * 2) / bbox.width;
+  const scaleY = (vb.height - pad * 2) / bbox.height;
+  scale = Math.min(scaleX, scaleY, MAX_SCALE);
+  panX = (vb.width / scale - bbox.width) / 2 - bbox.x + pad / scale;
+  panY = (vb.height / scale - bbox.height) / 2 - bbox.y + pad / scale;
+  applyTransform();
+}
+
+// Mouse wheel zoom (centered on cursor)
+graphPanel.addEventListener('wheel', function(e) {
+  e.preventDefault();
+  const rect = svg.getBoundingClientRect();
+  const mouseX = e.clientX - rect.left;
+  const mouseY = e.clientY - rect.top;
+
+  const vb = svg.viewBox.baseVal;
+  const svgX = (mouseX / rect.width) * vb.width;
+  const svgY = (mouseY / rect.height) * vb.height;
+
+  const oldScale = scale;
+  if (e.deltaY < 0) {
+    scale = Math.min(MAX_SCALE, scale + ZOOM_STEP);
+  } else {
+    scale = Math.max(MIN_SCALE, scale - ZOOM_STEP);
+  }
+
+  // Adjust pan so zoom centers on cursor
+  panX = svgX / scale - svgX / oldScale + panX;
+  panY = svgY / scale - svgY / oldScale + panY;
+  applyTransform();
+}, { passive: false });
+
+// Pan with left-click drag (or middle mouse)
+graphPanel.addEventListener('mousedown', function(e) {
+  if (e.button === 0 || e.button === 1) {
+    e.preventDefault();
+    isPanning = true;
+    _wasDragged = false;
+    panStartX = e.clientX;
+    panStartY = e.clientY;
+    _mdX = e.clientX;
+    _mdY = e.clientY;
+    graphPanel.style.cursor = 'grabbing';
+  }
+});
+
+window.addEventListener('mousemove', function(e) {
+  if (!isPanning) return;
+  const dist = Math.abs(e.clientX - _mdX) + Math.abs(e.clientY - _mdY);
+  if (dist > PAN_THRESHOLD) _wasDragged = true;
+  const vb = svg.viewBox.baseVal;
+  const rect = svg.getBoundingClientRect();
+  const dx = (e.clientX - panStartX) * (vb.width / rect.width) / scale;
+  const dy = (e.clientY - panStartY) * (vb.height / rect.height) / scale;
+  panX += dx;
+  panY += dy;
+  panStartX = e.clientX;
+  panStartY = e.clientY;
+  applyTransform();
+});
+
+window.addEventListener('mouseup', function() {
+  if (isPanning) {
+    isPanning = false;
+    graphPanel.style.cursor = '';
+  }
+});
+
+// Suppress node clicks after a drag
+graphPanel.addEventListener('click', function(e) {
+  if (_wasDragged) {
+    e.stopPropagation();
+    _wasDragged = false;
+  }
+}, true);
+
+// ─── Node popup ───
+function showPopup(nodeId) {
+  const content = document.getElementById('popupContent');
+  const overlay = document.getElementById('popupOverlay');
+  if (details[nodeId]) {
+    content.innerHTML = details[nodeId];
+  } else {
+    content.innerHTML = '<p style="color:#999; font-style:italic;">No details available.</p>';
+  }
+  overlay.classList.add('visible');
+
+  // Highlight selected node
+  document.querySelectorAll('.node-box rect, .node-box polygon').forEach(el => {
+    el.setAttribute('stroke-width', '1.5');
+    el.setAttribute('stroke', '#333');
+  });
+  const clicked = event.currentTarget.querySelector('rect, polygon');
+  if (clicked) {
+    clicked.setAttribute('stroke-width', '3.5');
+    clicked.setAttribute('stroke', '#FFD700');
+  }
+}
+
+function closePopup(e) {
+  // If called from overlay click, only close if clicking the overlay itself
+  if (e && e.target !== document.getElementById('popupOverlay')) return;
+  document.getElementById('popupOverlay').classList.remove('visible');
+  // Reset highlights
+  document.querySelectorAll('.node-box rect, .node-box polygon').forEach(el => {
+    el.setAttribute('stroke-width', '1.5');
+    el.setAttribute('stroke', '#333');
+  });
+}
+
+// Close on Escape key
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closePopup();
+});
+
+// Fit to view on initial load
+window.addEventListener('DOMContentLoaded', function() {
+  setTimeout(zoomFit, 100);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,629 @@
+{
+  "steps": [
+    {
+      "objective_key": "objective_1",
+      "objective_title": "Assess whether asthma prevalence is spatially clustered across North Carolina census tracts and whether hazardous-waste proximity aligns with high-asthma clusters",
+      "objective_number": 1,
+      "step_index": 1,
+      "step_description": "Reproject NC_tract to a common projected CRS in meters suitable for distance calculations while preserving GEOID.",
+      "status": "completed",
+      "agent_name": "DataAgent",
+      "task_complexity": "simple",
+      "code": "import os\nimport geopandas as gpd\n\n# Paths\nINPUT_PATH = \"/bigdata/s0/tea5209/AGM/WebUI/uploads/c52bc37f-8e66-4df1-b20b-57c92bbd2311/NC_tract.gpkg\"\nOUTPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/nc_tract_projected.gpkg\"\nOUTPUT_DIR = os.path.dirname(OUTPUT_PATH)\nos.makedirs(OUTPUT_DIR, exist_ok=True)\n\n# Read\ngdf = gpd.read_file(INPUT_PATH)\n\n# Validate required columns exist (per inspection)\nrequired_cols = [\"GEOID\", \"STATEFP\", \"COUNTYFP\", \"TRACTCE\", \"geometry\"]\nmissing = [c for c in required_cols if c not in gdf.columns]\nif missing:\n    raise KeyError(f\"Missing required columns: {missing}. Available: {list(gdf.columns)}\")\n\n# Ensure GEOID preserved as string\ngdf[\"GEOID\"] = gdf[\"GEOID\"].astype(str)\n\n# Basic geometry validity filtering (required before spatial ops)\ngdf = gdf[gdf.geometry.notnull()]\ngdf = gdf[gdf.geometry.is_valid & ~gdf.geometry.is_empty].copy()\n\n# Choose a meter-based projected CRS suitable for North Carolina distance calculations:\n# EPSG:32119 = NAD83 / North Carolina (meters)\nTARGET_CRS = \"EPSG:32119\"\n\n# If source CRS is missing, stop (cannot reliably reproject)\nif gdf.crs is None:\n    raise ValueError(\"Input layer has no CRS defined; cannot reproject safely.\")\n\n# Reproject\ngdf_proj = gdf.to_crs(TARGET_CRS)\n\n# Write to GeoPackage\nlayer_name = \"nc_tract_projected\"\nif os.path.exists(OUTPUT_PATH):\n    os.remove(OUTPUT_PATH)\ngdf_proj.to_file(OUTPUT_PATH, layer=layer_name, driver=\"GPKG\")\n\n# Record dataset for deferred visualization (optional)\nrecord_data_to_viz(\n    output_dir=OUTPUT_DIR,\n    file_path=OUTPUT_PATH,\n    caption=\"North Carolina census tract polygons reprojected to a meter-based CRS (EPSG:32119) for distance calculations, preserving GEOID.\",\n    viz_hint={\"type\": \"boundary\"},\n    role=\"intermediate\",\n)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/generated_code/op_reproject_layer_76feeb46.py",
+      "output": "",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/manifest.json",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/manifest.json",
+          "filename": "manifest.json",
+          "size": 3902,
+          "type": "json",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/nc_tract_projected.gpkg",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/nc_tract_projected.gpkg",
+          "filename": "nc_tract_projected.gpkg",
+          "size": 4112384,
+          "type": "gpkg",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_1",
+      "objective_title": "Assess whether asthma prevalence is spatially clustered across North Carolina census tracts and whether hazardous-waste proximity aligns with high-asthma clusters",
+      "objective_number": 1,
+      "step_index": 2,
+      "step_description": "Reproject NC_HW_sites to the same projected CRS used for nc_tract_projected.gpkg while preserving SITE_NAME.",
+      "status": "completed",
+      "agent_name": "DataAgent",
+      "task_complexity": "simple",
+      "code": "import os\nimport geopandas as gpd\n\n# Paths\nINPUT_HW = \"/bigdata/s0/tea5209/AGM/WebUI/uploads/c52bc37f-8e66-4df1-b20b-57c92bbd2311/NC_HW_sites.gpkg\"\nINPUT_TRACTS_PROJ = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/nc_tract_projected.gpkg\"\nOUTPUT_GPKG = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/nc_hw_sites_projected.gpkg\"\nOUTPUT_DIR = os.path.dirname(OUTPUT_GPKG)\n\nos.makedirs(OUTPUT_DIR, exist_ok=True)\n\n# Load inputs\nhw = gpd.read_file(INPUT_HW)\ntracts_proj = gpd.read_file(INPUT_TRACTS_PROJ)\n\n# Ensure required column exists\nrequired_cols = {\"SITE_NAME\", \"geometry\"}\nmissing = required_cols - set(hw.columns)\nif missing:\n    raise KeyError(f\"Missing required columns in NC_HW_sites: {sorted(missing)}. Available: {list(hw.columns)}\")\n\n# Validate geometries\nhw = hw[hw.geometry.notna()]\nhw = hw[hw.geometry.is_valid & ~hw.geometry.is_empty].copy()\n\n# Target CRS from projected tracts\ntarget_crs = tracts_proj.crs\nif target_crs is None:\n    raise ValueError(\"nc_tract_projected.gpkg has no CRS; cannot reproject NC_HW_sites to match.\")\n\n# Reproject\nhw_proj = hw.to_crs(target_crs)\n\n# Preserve SITE_NAME (and keep geometry); drop other columns to be explicit\nhw_proj = hw_proj[[\"SITE_NAME\", \"geometry\"]].copy()\n\n# Save\nhw_proj.to_file(OUTPUT_GPKG, driver=\"GPKG\")\n\n# Record as data-to-viz (defer rendering)\nrecord_data_to_viz(\n    output_dir=OUTPUT_DIR,\n    file_path=OUTPUT_GPKG,\n    caption=\"Hazardous waste facility point locations reprojected to the same projected (meter-based) CRS as the tract layer.\",\n    viz_hint={\"type\": \"point_map\"},\n    role=\"intermediate\",\n)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/generated_code/op_reproject_layer_dbaddbaf.py",
+      "output": "",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/manifest.json",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/manifest.json",
+          "filename": "manifest.json",
+          "size": 3902,
+          "type": "json",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/nc_hw_sites_projected.gpkg",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/nc_hw_sites_projected.gpkg",
+          "filename": "nc_hw_sites_projected.gpkg",
+          "size": 401408,
+          "type": "gpkg",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_1",
+      "objective_title": "Assess whether asthma prevalence is spatially clustered across North Carolina census tracts and whether hazardous-waste proximity aligns with high-asthma clusters",
+      "objective_number": 1,
+      "step_index": 3,
+      "step_description": "Compute tract centroids from nc_tract_projected.gpkg and retain GEOID for each centroid feature.",
+      "status": "completed",
+      "agent_name": "DataAgent",
+      "task_complexity": "simple",
+      "code": "import os\nimport geopandas as gpd\n\nINPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/nc_tract_projected.gpkg\"\nOUTPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/nc_tract_centroids.gpkg\"\nOUTPUT_DIR = os.path.dirname(OUTPUT_PATH)\n\nos.makedirs(OUTPUT_DIR, exist_ok=True)\n\n# Read projected tract polygons\ntracts = gpd.read_file(INPUT_PATH)\n\n# Validate geometry before spatial operations\ntracts = tracts[tracts.geometry.is_valid & ~tracts.geometry.is_empty].copy()\n\n# Ensure GEOID is present and non-null\ntracts = tracts.dropna(subset=[\"GEOID\"]).copy()\ntracts[\"GEOID\"] = tracts[\"GEOID\"].astype(str)\n\n# Compute centroids (input is projected, so planar centroids are appropriate)\ncentroids = tracts[[\"GEOID\", \"geometry\"]].copy()\ncentroids[\"geometry\"] = centroids.geometry.centroid\ncentroids = gpd.GeoDataFrame(centroids, geometry=\"geometry\", crs=tracts.crs)\n\n# Save centroid points to GeoPackage\ncentroids.to_file(OUTPUT_PATH, driver=\"GPKG\", layer=\"nc_tract_centroids\")\n\n# Optional: register as data-to-viz for downstream auto-rendering\nrecord_data_to_viz(\n    output_dir=OUTPUT_DIR,\n    file_path=OUTPUT_PATH,\n    caption=\"Centroid point locations for North Carolina Census tracts keyed by GEOID.\",\n    viz_hint={\"type\": \"point\"},\n    role=\"intermediate\",\n)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/generated_code/op_centroid_e6941b6c.py",
+      "output": "",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/manifest.json",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/manifest.json",
+          "filename": "manifest.json",
+          "size": 3902,
+          "type": "json",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/nc_tract_centroids.gpkg",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/nc_tract_centroids.gpkg",
+          "filename": "nc_tract_centroids.gpkg",
+          "size": 348160,
+          "type": "gpkg",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_1",
+      "objective_title": "Assess whether asthma prevalence is spatially clustered across North Carolina census tracts and whether hazardous-waste proximity aligns with high-asthma clusters",
+      "objective_number": 1,
+      "step_index": 4,
+      "step_description": "For each GEOID, compute nearest_hw_dist_m as the Euclidean distance in meters from the tract centroid to the nearest hazardous waste facility point and compute hw_count_5km as the count of hazardous waste facility points within 5000 meters of the centroid.",
+      "status": "completed",
+      "agent_name": "DataAgent",
+      "task_complexity": "simple",
+      "code": "import os\nimport numpy as np\nimport pandas as pd\nimport geopandas as gpd\n\nOUTPUT_DIR = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311\"\nTRACT_CENTROIDS_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/nc_tract_centroids.gpkg\"\nHW_SITES_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/nc_hw_sites_projected.gpkg\"\nOUTPUT_CSV_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/tract_proximity_metrics.csv\"\n\nos.makedirs(os.path.dirname(OUTPUT_CSV_PATH), exist_ok=True)\nos.makedirs(OUTPUT_DIR, exist_ok=True)\n\n# -------------------------\n# Load\n# -------------------------\ntract = gpd.read_file(TRACT_CENTROIDS_PATH)\nhw = gpd.read_file(HW_SITES_PATH)\n\n# -------------------------\n# Validate required columns (per inspected schemas)\n# -------------------------\nrequired_tract_cols = {\"GEOID\", \"geometry\"}\nrequired_hw_cols = {\"SITE_NAME\", \"geometry\"}\n\nmissing_tract = required_tract_cols - set(tract.columns)\nmissing_hw = required_hw_cols - set(hw.columns)\n\nif missing_tract:\n    raise KeyError(f\"Missing columns in tract centroids: {sorted(missing_tract)}; available={list(tract.columns)}\")\nif missing_hw:\n    raise KeyError(f\"Missing columns in HW sites: {sorted(missing_hw)}; available={list(hw.columns)}\")\n\n# -------------------------\n# Clean / validate geometry\n# -------------------------\ntract = tract[tract.geometry.notna()]\nhw = hw[hw.geometry.notna()]\n\ntract = tract[tract.geometry.is_valid & ~tract.geometry.is_empty].copy()\nhw = hw[hw.geometry.is_valid & ~hw.geometry.is_empty].copy()\n\ntract[\"GEOID\"] = tract[\"GEOID\"].astype(str).str.strip()\n\n# -------------------------\n# CRS harmonization: ensure projected CRS with meter units\n# -------------------------\ntarget_crs = tract.crs\nif target_crs is None or (hasattr(target_crs, \"is_geographic\") and target_crs.is_geographic):\n    target_crs = \"EPSG:3857\"  # meter-based fallback if input is geographic/undefined\n\ntract = tract.to_crs(target_crs)\nhw = hw.to_crs(target_crs)\n\n# -------------------------\n# Metrics\n#   - nearest_hw_dist_m: nearest Euclidean distance from centroid to nearest HW point\n#   - hw_count_5km: count of HW points within 5000 m\n# -------------------------\n# Nearest distance\nif len(hw) == 0 or len(tract) == 0:\n    out = pd.DataFrame(\n        {\n            \"GEOID\": tract[\"GEOID\"].values if len(tract) else [],\n            \"nearest_hw_dist_m\": np.nan,\n            \"hw_count_5km\": 0,\n        }\n    )\nelse:\n    nearest = gpd.sjoin_nearest(\n        tract[[\"GEOID\", \"geometry\"]],\n        hw[[\"SITE_NAME\", \"geometry\"]],\n        how=\"left\",\n        distance_col=\"nearest_hw_dist_m\",\n    )\n\n    dist_df = nearest[[\"GEOID\", \"nearest_hw_dist_m\"]].copy()\n\n    # Count within 5km\n    tract_buf = tract[[\"GEOID\", \"geometry\"]].copy()\n    tract_buf[\"geometry\"] = tract_buf.geometry.buffer(5000)\n\n    within = gpd.sjoin(\n        tract_buf,\n        hw[[\"SITE_NAME\", \"geometry\"]],\n        how=\"left\",\n        predicate=\"intersects\",\n    )\n\n    count_df = (\n        within.groupby(\"GEOID\", dropna=False)\n        .size()\n        .rename(\"hw_count_5km\")\n        .reset_index()\n    )\n\n    # If a tract had no matches in left join, size() returns 1 (the left row) with NaNs on right.\n    # Correct by counting only non-null right-side matches.\n    # (In geopandas sjoin, right columns appear; we have SITE_NAME from right.)\n    count_df = (\n        within.assign(_has_match=within[\"SITE_NAME\"].notna().astype(int))\n        .groupby(\"GEOID\", dropna=False)[\"_has_match\"]\n        .sum()\n        .rename(\"hw_count_5km\")\n        .reset_index()\n    )\n\n    out = dist_df.merge(count_df, on=\"GEOID\", how=\"left\")\n    out[\"hw_count_5km\"] = out[\"hw_count_5km\"].fillna(0).astype(int)\n\n# -------------------------\n# Save\n# -------------------------\nout.to_csv(OUTPUT_CSV_PATH, index=False)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/generated_code/op_nearest_neighbor_distance_and__5ce3e24a.py",
+      "output": "",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/tract_proximity_metrics.csv",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/tract_proximity_metrics.csv",
+          "filename": "tract_proximity_metrics.csv",
+          "size": 92781,
+          "type": "csv",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_1",
+      "objective_title": "Assess whether asthma prevalence is spatially clustered across North Carolina census tracts and whether hazardous-waste proximity aligns with high-asthma clusters",
+      "objective_number": 1,
+      "step_index": 5,
+      "step_description": "Left-join tract_proximity_metrics.csv to NC_PLACES on GEOID and retain GEOID, Asthma_prev, nearest_hw_dist_m, and hw_count_5km.",
+      "status": "completed",
+      "agent_name": "DataAgent",
+      "task_complexity": "simple",
+      "code": "import os\nimport numpy as np\nimport pandas as pd\n\n# Pre-imported helpers assumed available in this environment:\n# record_table, record_figure, record_data_to_viz\n\nNC_PLACES_PATH = \"/bigdata/s0/tea5209/AGM/WebUI/uploads/c52bc37f-8e66-4df1-b20b-57c92bbd2311/NC_PLACES.csv\"\nTRACT_METRICS_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/tract_proximity_metrics.csv\"\n\nOUTPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/asthma_proximity.csv\"\nOUTPUT_DIR = os.path.dirname(OUTPUT_PATH)\n\nos.makedirs(OUTPUT_DIR, exist_ok=True)\n\n# -----------------------\n# Load inputs\n# -----------------------\nplaces = pd.read_csv(NC_PLACES_PATH, dtype={\"GEOID\": \"string\"})\nmetrics = pd.read_csv(TRACT_METRICS_PATH, dtype={\"GEOID\": \"string\"})\n\n# -----------------------\n# Normalize join keys\n# -----------------------\nplaces[\"GEOID\"] = places[\"GEOID\"].astype(\"string\").str.strip()\nmetrics[\"GEOID\"] = metrics[\"GEOID\"].astype(\"string\").str.strip()\n\n# Ensure metrics has unique GEOID to prevent row multiplication in left join\nmetrics = metrics.drop_duplicates(subset=[\"GEOID\"]).copy()\n\n# -----------------------\n# Keep only needed columns\n# -----------------------\nplaces_keep = places[[\"GEOID\", \"Asthma_prev\"]].copy()\nmetrics_keep = metrics[[\"GEOID\", \"nearest_hw_dist_m\", \"hw_count_5km\"]].copy()\n\n# Coerce expected numeric fields when possible (they are currently object dtype)\nfor col in [\"Asthma_prev\"]:\n    places_keep[col] = pd.to_numeric(places_keep[col], errors=\"coerce\")\n\nfor col in [\"nearest_hw_dist_m\", \"hw_count_5km\"]:\n    metrics_keep[col] = pd.to_numeric(metrics_keep[col], errors=\"coerce\")\n\n# Replace common Census/ETL sentinel missing values if present\nsentinels = [-666666666, -888888888, -999999999]\nplaces_keep = places_keep.replace(sentinels, np.nan)\nmetrics_keep = metrics_keep.replace(sentinels, np.nan)\n\n# -----------------------\n# Left join on GEOID\n# -----------------------\nout = places_keep.merge(metrics_keep, on=\"GEOID\", how=\"left\")\n\n# -----------------------\n# Simple join audit (text file)\n# -----------------------\naudit_col = \"nearest_hw_dist_m\"\nmatched = int(out[audit_col].notna().sum())\ntotal = len(out)\nmatch_rate = (matched / total) if total else 0.0\nunmatched = total - matched\n\naudit_lines = [\n    \"[JOIN AUDIT] Left-join tract_proximity_metrics to NC_PLACES on GEOID\",\n    f\"  output rows: {total}\",\n    f\"  matched (non-null '{audit_col}'): {matched}/{total} ({match_rate:.1%})\",\n    f\"  unmatched: {unmatched}\",\n]\naudit_txt = \"\\n\".join(audit_lines) + \"\\n\"\n\naudit_path = os.path.join(OUTPUT_DIR, \"join_audit_asthma_proximity.txt\")\nwith open(audit_path, \"w\") as f:\n    f.write(audit_txt)\n\n# -----------------------\n# Save output\n# -----------------------\nout = out[[\"GEOID\", \"Asthma_prev\", \"nearest_hw_dist_m\", \"hw_count_5km\"]].copy()\nout.to_csv(OUTPUT_PATH, index=False)\n\n# Record as data-to-viz (intermediate merged table for downstream use)\nrecord_data_to_viz(\n    output_dir=OUTPUT_DIR,\n    file_path=OUTPUT_PATH,\n    caption=\"GEOID-keyed table of asthma prevalence joined with hazardous-waste proximity metrics.\",\n    viz_hint={\"type\": \"table\"},\n    role=\"intermediate\",\n)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/generated_code/op_left_join_daea970b.py",
+      "output": "",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/asthma_proximity.csv",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/asthma_proximity.csv",
+          "filename": "asthma_proximity.csv",
+          "size": 99893,
+          "type": "csv",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/join_audit_asthma_proximity.txt",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/join_audit_asthma_proximity.txt",
+          "filename": "join_audit_asthma_proximity.txt",
+          "size": 165,
+          "type": "txt",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/manifest.json",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/manifest.json",
+          "filename": "manifest.json",
+          "size": 3902,
+          "type": "json",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_1",
+      "objective_title": "Assess whether asthma prevalence is spatially clustered across North Carolina census tracts and whether hazardous-waste proximity aligns with high-asthma clusters",
+      "objective_number": 1,
+      "step_index": 6,
+      "step_description": "Join asthma_proximity.csv to nc_tract_projected.gpkg by GEOID to create tract polygons with attributes Asthma_prev, nearest_hw_dist_m, and hw_count_5km.",
+      "status": "completed",
+      "agent_name": "DataAgent",
+      "task_complexity": "simple",
+      "code": "import os\nimport numpy as np\nimport pandas as pd\nimport geopandas as gpd\n\n# Pre-imported helpers (available in the environment)\n# record_figure, record_table, record_data_to_viz\n\nINPUT_GPKG = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/nc_tract_projected.gpkg\"\nINPUT_CSV = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/asthma_proximity.csv\"\nOUTPUT_GPKG = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/tract_asthma_proximity.gpkg\"\nOUTPUT_DIR = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311\"\n\n# -------------------------\n# STEP 1: INSPECT INPUTS\n# (Performed via get_columns in the orchestrator before code generation)\n# Confirmed columns:\n#   nc_tract_projected.gpkg: GEOID, STATEFP, COUNTYFP, TRACTCE, geometry\n#   asthma_proximity.csv: GEOID, Asthma_prev, nearest_hw_dist_m, hw_count_5km\n# -------------------------\n\n# -------------------------\n# STEP 2: LOOKUP SKILL DOC\n# (Performed via lookup_skill_doc in the orchestrator before code generation)\n# Key guidance applied: cast join keys to str, strip, zfill(11), audit match rate,\n# handle duplicated keys, convert numeric columns.\n# -------------------------\n\n# -------------------------\n# STEP 3: GENERATE SCRIPT\n# -------------------------\n\n# Validate input existence\nfor p in [INPUT_GPKG, INPUT_CSV]:\n    if not os.path.exists(p):\n        raise FileNotFoundError(f\"Missing required input: {p}\")\n\n# Load data\ntracts = gpd.read_file(INPUT_GPKG)\nprox = pd.read_csv(INPUT_CSV)\n\n# Validate / clean geometry before any spatial operations (even though we do attribute join)\ntracts = tracts[tracts.geometry.notna()]\ntracts = tracts[tracts.geometry.is_valid & ~tracts.geometry.is_empty].copy()\n\n# Normalize join keys (tract GEOID width = 11)\nKEY = \"GEOID\"\nKEY_WIDTH = 11\n\ntracts[KEY] = tracts[KEY].astype(str).str.strip().str.zfill(KEY_WIDTH)\nprox[KEY] = prox[KEY].astype(str).str.strip().str.zfill(KEY_WIDTH)\n\n# Keep only needed columns from CSV (avoid accidental column collisions)\nneeded_cols = [KEY, \"Asthma_prev\", \"nearest_hw_dist_m\", \"hw_count_5km\"]\nmissing = [c for c in needed_cols if c not in prox.columns]\nif missing:\n    raise KeyError(f\"Missing required columns in asthma_proximity.csv: {missing}. Available: {list(prox.columns)}\")\nprox = prox[needed_cols].copy()\n\n# Coerce numeric fields (CSV columns came in as object)\nfor c in [\"Asthma_prev\", \"nearest_hw_dist_m\", \"hw_count_5km\"]:\n    prox[c] = pd.to_numeric(prox[c], errors=\"coerce\")\n\n# Replace common sentinel missing codes (defensive)\nprox = prox.replace([-666666666, -888888888, -999999999], np.nan)\n\n# Ensure right-side GEOID is unique (avoid exploding row counts)\ndup_mask = prox[KEY].duplicated(keep=False)\nif dup_mask.any():\n    # Keep the first occurrence; could also aggregate, but operation requests a direct join.\n    prox = prox.drop_duplicates(subset=[KEY], keep=\"first\").copy()\n\n# Left join: keep all tract polygons\nmerged = tracts.merge(prox, on=KEY, how=\"left\")\n\n# Join audit\naudit_col = \"Asthma_prev\"\nmatched = int(merged[audit_col].notna().sum())\ntotal = len(merged)\nmatch_rate = matched / total if total else 0.0\nunmatched = total - matched\n\naudit_lines = [\n    \"[JOIN AUDIT] Tract polygons enriched with asthma/proximity attributes\",\n    f\"  left rows (tracts): {total}\",\n    f\"  matched rows (non-null {audit_col}): {matched}/{total} ({match_rate:.1%})\",\n    f\"  unmatched rows: {unmatched}\",\n]\nif total and match_rate < 0.9:\n    audit_lines.append(\"  WARNING: match rate below 90% — inspect GEOID formatting/coverage.\")\n    audit_lines.append(f\"    left GEOID sample: {tracts[KEY].head(5).tolist()}\")\n    audit_lines.append(f\"    right GEOID sample: {prox[KEY].head(5).tolist()}\")\n    audit_lines.append(\n        f\"    example unmatched left GEOIDs: {merged.loc[merged[audit_col].isna(), KEY].head(10).tolist()}\"\n    )\n\naudit_text = \"\\n\".join(audit_lines)\nprint(audit_text)\nos.makedirs(OUTPUT_DIR, exist_ok=True)\nwith open(os.path.join(OUTPUT_DIR, \"join_audit_tract_asthma_proximity.txt\"), \"w\") as f:\n    f.write(audit_text + \"\\n\")\n\n# Save output GeoPackage\nos.makedirs(os.path.dirname(OUTPUT_GPKG), exist_ok=True)\nmerged.to_file(OUTPUT_GPKG, driver=\"GPKG\")\n\n# Record as data-to-viz artifact for downstream map rendering (choropleth-ready)\nrecord_data_to_viz(\n    output_dir=OUTPUT_DIR,\n    file_path=OUTPUT_GPKG,\n    caption=\"North Carolina tract polygons joined with asthma prevalence and highway proximity attributes.\",\n    viz_hint={\"type\": \"choropleth\", \"column\": \"Asthma_prev\"},\n    role=\"intermediate\",\n)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/generated_code/op_attribute_join_ec2e72d9.py",
+      "output": "[JOIN AUDIT] Tract polygons enriched with asthma/proximity attributes\n  left rows (tracts): 2192\n  matched rows (non-null Asthma_prev): 2169/2192 (99.0%)\n  unmatched rows: 23\n",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/join_audit_tract_asthma_proximity.txt",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/join_audit_tract_asthma_proximity.txt",
+          "filename": "join_audit_tract_asthma_proximity.txt",
+          "size": 175,
+          "type": "txt",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/manifest.json",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/manifest.json",
+          "filename": "manifest.json",
+          "size": 3902,
+          "type": "json",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/tract_asthma_proximity.gpkg",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/tract_asthma_proximity.gpkg",
+          "filename": "tract_asthma_proximity.gpkg",
+          "size": 4198400,
+          "type": "gpkg",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_1",
+      "objective_title": "Assess whether asthma prevalence is spatially clustered across North Carolina census tracts and whether hazardous-waste proximity aligns with high-asthma clusters",
+      "objective_number": 1,
+      "step_index": 7,
+      "step_description": "Compute Global Moran’s I for Asthma_prev using queen contiguity weights defined on tract polygons and permutation-based p-values.",
+      "status": "completed",
+      "agent_name": "ModelingAgent",
+      "task_complexity": "complex",
+      "code": "import os\nimport json\nimport numpy as np\nimport geopandas as gpd\nfrom libpysal.weights import Queen\nfrom esda.moran import Moran\n\nINPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/tract_asthma_proximity.gpkg\"\nOUTPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/global_moransI_asthma.json\"\nOUTPUT_DIR = os.path.dirname(OUTPUT_PATH)\n\n# ----------------------------\n# Load + basic validation\n# ----------------------------\ngdf = gpd.read_file(INPUT_PATH)\n\n# Validate geometry before spatial operations\ngdf = gdf[gdf.geometry.notna()]\ngdf = gdf[gdf.geometry.is_valid & ~gdf.geometry.is_empty].copy()\n\ntarget_col = \"Asthma_prev\"\ngdf = gdf.dropna(subset=[target_col]).reset_index(drop=True)\n\nif len(gdf) == 0:\n    raise ValueError(f\"No rows available after dropping NA in '{target_col}' and invalid/empty geometries.\")\nif len(gdf) < 3:\n    raise ValueError(f\"Need at least 3 polygons to compute Moran's I; got n={len(gdf)}.\")\n\n# ----------------------------\n# Queen contiguity weights\n# ----------------------------\nw = Queen.from_dataframe(gdf, use_index=False)\nw.transform = \"r\"  # row-standardize\n\n# ----------------------------\n# Global Moran's I (permutation inference)\n# ----------------------------\npermutations = 999\ny = gdf[target_col].to_numpy(dtype=float)\n\nmi = Moran(y, w, permutations=permutations)\n\n# Prepare results\nresults = {\n    \"variable\": target_col,\n    \"n\": int(len(gdf)),\n    \"weights\": {\n        \"type\": \"queen_contiguity\",\n        \"transform\": \"row_standardized\",\n        \"n_islands\": int(len(w.islands)) if hasattr(w, \"islands\") and w.islands is not None else 0,\n        \"islands\": list(map(int, w.islands)) if hasattr(w, \"islands\") and w.islands else [],\n        \"permutations\": int(permutations),\n    },\n    \"global_morans_I\": {\n        \"I\": float(mi.I),\n        \"expected_I\": float(mi.EI),\n        \"z_score_permutation\": float(mi.z_sim),\n        \"p_value_permutation\": float(mi.p_sim),\n        \"z_score_normal\": float(mi.z_norm),\n        \"p_value_normal\": float(mi.p_norm),\n        \"variance_sim\": float(mi.VI_sim),\n        \"variance_norm\": float(mi.VI_norm),\n    },\n}\n\n# ----------------------------\n# Save output JSON\n# ----------------------------\nos.makedirs(OUTPUT_DIR, exist_ok=True)\nwith open(OUTPUT_PATH, \"w\", encoding=\"utf-8\") as f:\n    json.dump(results, f, indent=2)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/generated_code/op_global_morans_I_84608c70.py",
+      "output": "('WARNING: ', 827, ' is an island (no neighbors)')\n",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/global_moransI_asthma.json",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/global_moransI_asthma.json",
+          "filename": "global_moransI_asthma.json",
+          "size": 547,
+          "type": "json",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_1",
+      "objective_title": "Assess whether asthma prevalence is spatially clustered across North Carolina census tracts and whether hazardous-waste proximity aligns with high-asthma clusters",
+      "objective_number": 1,
+      "step_index": 8,
+      "step_description": "Compute Getis-Ord Gi* for Asthma_prev using queen contiguity weights on tract polygons and write Gi* z-scores and p-value-based significance class per GEOID.",
+      "status": "completed",
+      "agent_name": "ModelingAgent",
+      "task_complexity": "complex",
+      "code": "import os\nimport numpy as np\nimport geopandas as gpd\n\nfrom libpysal.weights import Queen\nfrom esda.getisord import G_Local\n\n# ---------------------------------------------------------------------\n# Paths\n# ---------------------------------------------------------------------\nINPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/tract_asthma_proximity.gpkg\"\nOUTPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/asthma_hotspots.gpkg\"\nOUTPUT_DIR = os.path.dirname(OUTPUT_PATH)\nos.makedirs(OUTPUT_DIR, exist_ok=True)\n\n# ---------------------------------------------------------------------\n# Load + validate\n# ---------------------------------------------------------------------\ngdf = gpd.read_file(INPUT_PATH)\n\nrequired_cols = [\"GEOID\", \"Asthma_prev\", \"geometry\"]\nmissing = [c for c in required_cols if c not in gdf.columns]\nif missing:\n    raise KeyError(f\"Missing required columns: {missing}. Available columns: {list(gdf.columns)}\")\n\n# Keep valid geometries only\ngdf = gdf[gdf.geometry.notnull()]\ngdf = gdf[gdf.geometry.is_valid & ~gdf.geometry.is_empty].copy()\n\n# Drop null analysis values\ngdf = gdf.dropna(subset=[\"Asthma_prev\"]).copy()\n\n# Reset index so weights align 0..n-1\ngdf = gdf.reset_index(drop=True)\n\n# Ensure GEOID is string\ngdf[\"GEOID\"] = gdf[\"GEOID\"].astype(str)\n\n# ---------------------------------------------------------------------\n# Queen contiguity weights (with island handling)\n# ---------------------------------------------------------------------\nw = Queen.from_dataframe(gdf)\n\n# Handle islands while preserving Queen as the base scheme:\n# give each island a self-neighbor so Gi* is defined.\nif getattr(w, \"islands\", None):\n    for i in w.islands:\n        w.neighbors[i] = [i]\n        w.weights[i] = [1.0]\n\n# Row-standardize\nw.transform = \"r\"\n\n# ---------------------------------------------------------------------\n# Getis-Ord Gi* (local G*): z-scores + permutation p-values\n# ---------------------------------------------------------------------\ny = gdf[\"Asthma_prev\"].to_numpy(dtype=float)\ngi = G_Local(y, w, star=True, permutations=999)\n\n# Attach results\ngdf[\"GiZ\"] = np.asarray(gi.Zs, dtype=float)\ngdf[\"GiP\"] = np.asarray(gi.p_sim, dtype=float)\n\n# ---------------------------------------------------------------------\n# Significance classification (hotspot/coldspot) based on p-value + sign(z)\n# ---------------------------------------------------------------------\ndef classify_gistar(z, p):\n    if not np.isfinite(z) or not np.isfinite(p):\n        return \"NoData\"\n    # Hotspots (positive z)\n    if z > 0:\n        if p <= 0.01:\n            return \"Hotspot_99\"\n        if p <= 0.05:\n            return \"Hotspot_95\"\n        if p <= 0.10:\n            return \"Hotspot_90\"\n        return \"NotSig\"\n    # Coldspots (negative z)\n    if z < 0:\n        if p <= 0.01:\n            return \"Coldspot_99\"\n        if p <= 0.05:\n            return \"Coldspot_95\"\n        if p <= 0.10:\n            return \"Coldspot_90\"\n        return \"NotSig\"\n    return \"NotSig\"\n\ngdf[\"GiClass\"] = [classify_gistar(z, p) for z, p in zip(gdf[\"GiZ\"], gdf[\"GiP\"])]\n\n# ---------------------------------------------------------------------\n# Save output\n# ---------------------------------------------------------------------\n# Keep all original attributes + Gi* outputs; ensure a stable schema\nout_gdf = gdf.copy()\n\n# GeoPackage write\nout_gdf.to_file(OUTPUT_PATH, driver=\"GPKG\")\n\n# Manuscript artifact (auto-render choropleth later)\nrecord_data_to_viz(\n    output_dir=OUTPUT_DIR,\n    file_path=OUTPUT_PATH,\n    caption=\"Census tract Getis-Ord Gi* hotspot/coldspot classification for asthma prevalence (Queen contiguity).\",\n    viz_hint={\"type\": \"choropleth\", \"column\": \"GiZ\", \"cmap\": \"RdBu_r\"},\n    role=\"final\",\n)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/generated_code/op_getis_ord_gi_star_a0702311.py",
+      "output": "",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/asthma_hotspots.gpkg",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/asthma_hotspots.gpkg",
+          "filename": "asthma_hotspots.gpkg",
+          "size": 4235264,
+          "type": "gpkg",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/manifest.json",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/manifest.json",
+          "filename": "manifest.json",
+          "size": 3902,
+          "type": "json",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_1",
+      "objective_title": "Assess whether asthma prevalence is spatially clustered across North Carolina census tracts and whether hazardous-waste proximity aligns with high-asthma clusters",
+      "objective_number": 1,
+      "step_index": 9,
+      "step_description": "Using asthma_hotspots.gpkg, subset tracts to statistically significant hotspots for Asthma_prev (Gi* p < 0.05 and positive Gi* z-score) versus all other tracts, then compare nearest_hw_dist_m and hw_count_5km distributions between groups using Mann–Whitney U tests.",
+      "status": "completed",
+      "agent_name": "ModelingAgent",
+      "task_complexity": "medium",
+      "code": "import os\nimport json\nimport warnings\n\nimport numpy as np\nimport pandas as pd\nimport geopandas as gpd\n\nfrom scipy.stats import mannwhitneyu\nimport matplotlib.pyplot as plt\n\n# Pre-imported in the environment per instructions:\n# record_figure, record_table, record_data_to_viz\n\nINPUT_GPKG = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/asthma_hotspots.gpkg\"\nOUTPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/hotspot_proximity_comparison.json\"\nOUTPUT_DIR = os.path.dirname(OUTPUT_PATH)\nos.makedirs(OUTPUT_DIR, exist_ok=True)\n\nwarnings.filterwarnings(\"ignore\", category=UserWarning)\n\n# ----------------------------\n# Load data (handle multi-layer geopackage)\n# ----------------------------\nlayer_to_read = None\ntry:\n    import fiona\n    layers = fiona.listlayers(INPUT_GPKG)\n    if len(layers) == 0:\n        raise ValueError(\"No layers found in the GeoPackage.\")\n    layer_to_read = layers[0]\nexcept Exception:\n    layer_to_read = None  # geopandas will try default\n\ngdf = gpd.read_file(INPUT_GPKG, layer=layer_to_read) if layer_to_read else gpd.read_file(INPUT_GPKG)\n\n# Validate geometry as required (even though not used for tests)\ngdf = gdf[gdf.geometry.notna()]\ngdf = gdf[gdf.geometry.is_valid & ~gdf.geometry.is_empty].copy()\n\n# ----------------------------\n# Subset to hotspots vs non-hotspots\n# Hotspot definition: GiP < 0.05 AND GiZ > 0\n# ----------------------------\nrequired_cols = [\"GiP\", \"GiZ\", \"nearest_hw_dist_m\", \"hw_count_5km\"]\nmissing = [c for c in required_cols if c not in gdf.columns]\nif missing:\n    raise KeyError(f\"Missing required columns: {missing}. Available columns: {list(gdf.columns)}\")\n\ndf = gdf[required_cols].copy()\n\n# Ensure numeric and handle nulls\nfor c in required_cols:\n    df[c] = pd.to_numeric(df[c], errors=\"coerce\")\n\ndf = df.dropna(subset=[\"GiP\", \"GiZ\"]).copy()\ndf[\"is_hotspot\"] = (df[\"GiP\"] < 0.05) & (df[\"GiZ\"] > 0)\n\n# Prepare analysis subsets for each variable (drop nulls per variable)\ndef mannwhitney_summary(data: pd.DataFrame, value_col: str, group_col: str = \"is_hotspot\"):\n    sub = data[[value_col, group_col]].dropna().copy()\n    hotspot_vals = sub.loc[sub[group_col] == True, value_col].to_numpy()\n    nonhot_vals = sub.loc[sub[group_col] == False, value_col].to_numpy()\n\n    result = {\n        \"n_hotspot\": int(hotspot_vals.size),\n        \"n_nonhotspot\": int(nonhot_vals.size),\n        \"median_hotspot\": float(np.nanmedian(hotspot_vals)) if hotspot_vals.size else None,\n        \"median_nonhotspot\": float(np.nanmedian(nonhot_vals)) if nonhot_vals.size else None,\n        \"u_statistic\": None,\n        \"p_value\": None,\n        \"alternative\": \"two-sided\",\n    }\n\n    if hotspot_vals.size == 0 or nonhot_vals.size == 0:\n        return result\n\n    # Mann–Whitney U test (two-sided)\n    u = mannwhitneyu(hotspot_vals, nonhot_vals, alternative=\"two-sided\", method=\"auto\")\n    result[\"u_statistic\"] = float(u.statistic)\n    result[\"p_value\"] = float(u.pvalue)\n    return result\n\n\nresults = {\n    \"hotspot_definition\": {\"GiP\": \"< 0.05\", \"GiZ\": \"> 0\"},\n    \"overall_counts\": {\n        \"n_total_valid_geom\": int(len(gdf)),\n        \"n_total_with_GiP_GiZ\": int(len(df)),\n        \"n_hotspot\": int(df[\"is_hotspot\"].sum()),\n        \"n_nonhotspot\": int((~df[\"is_hotspot\"]).sum()),\n    },\n    \"tests\": {\n        \"nearest_hw_dist_m\": mannwhitney_summary(df, \"nearest_hw_dist_m\"),\n        \"hw_count_5km\": mannwhitney_summary(df, \"hw_count_5km\"),\n    },\n}\n\n# ----------------------------\n# Save primary output JSON\n# ----------------------------\nwith open(OUTPUT_PATH, \"w\", encoding=\"utf-8\") as f:\n    json.dump(results, f, indent=2)\n\n# ----------------------------\n# Secondary output: comparative boxplots (optional manuscript artifact)\n# ----------------------------\nplot_df = df[[\"is_hotspot\", \"nearest_hw_dist_m\", \"hw_count_5km\"]].copy()\nplot_df[\"Group\"] = np.where(plot_df[\"is_hotspot\"], \"Hotspot (GiP<0.05, GiZ>0)\", \"Other tracts\")\n\nfig, axes = plt.subplots(1, 2, figsize=(12, 5))\n\n# nearest_hw_dist_m\ntmp = plot_df[[\"Group\", \"nearest_hw_dist_m\"]].dropna()\naxes[0].boxplot(\n    [tmp.loc[tmp[\"Group\"].str.startswith(\"Hotspot\"), \"nearest_hw_dist_m\"].to_numpy(),\n     tmp.loc[~tmp[\"Group\"].str.startswith(\"Hotspot\"), \"nearest_hw_dist_m\"].to_numpy()],\n    tick_labels=[\"Hotspot\", \"Other\"],\n    showfliers=False,\n)\naxes[0].set_title(\"Nearest HW distance (m)\")\naxes[0].set_ylabel(\"nearest_hw_dist_m\")\n\n# hw_count_5km\ntmp = plot_df[[\"Group\", \"hw_count_5km\"]].dropna()\naxes[1].boxplot(\n    [tmp.loc[tmp[\"Group\"].str.startswith(\"Hotspot\"), \"hw_count_5km\"].to_numpy(),\n     tmp.loc[~tmp[\"Group\"].str.startswith(\"Hotspot\"), \"hw_count_5km\"].to_numpy()],\n    tick_labels=[\"Hotspot\", \"Other\"],\n    showfliers=False,\n)\naxes[1].set_title(\"HW count within 5 km\")\naxes[1].set_ylabel(\"hw_count_5km\")\n\nplt.tight_layout()\nfig_path = os.path.join(OUTPUT_DIR, \"hotspot_vs_nonhotspot_proximity_boxplots.png\")\nplt.savefig(fig_path, dpi=200, bbox_inches=\"tight\")\nplt.close()\n\nrecord_figure(\n    output_dir=OUTPUT_DIR,\n    file_path=fig_path,\n    caption=\"Boxplots comparing nearest hardware distance and hardware counts within 5 km between significant asthma hotspots (Gi* p<0.05, z>0) and all other tracts.\",\n    role=\"promoted\",\n    objective_key=\"objective_1\",\n    step_index=1,\n)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/generated_code/op_mann_whitney_u_test_15bbf83e.py",
+      "output": "",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/hotspot_proximity_comparison.json",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/hotspot_proximity_comparison.json",
+          "filename": "hotspot_proximity_comparison.json",
+          "size": 755,
+          "type": "json",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/hotspot_vs_nonhotspot_proximity_boxplots.png",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/hotspot_vs_nonhotspot_proximity_boxplots.png",
+          "filename": "hotspot_vs_nonhotspot_proximity_boxplots.png",
+          "size": 65456,
+          "type": "png",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/manifest.json",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/manifest.json",
+          "filename": "manifest.json",
+          "size": 3902,
+          "type": "json",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_2",
+      "objective_title": "Estimate how the hazardous-waste proximity–asthma association varies by socioeconomic and demographic context and whether the association is spatially non-stationary",
+      "objective_number": 2,
+      "step_index": 1,
+      "step_description": "Left-join NC_ACS_data to asthma_proximity.csv on GEOID and retain GEOID, Asthma_prev, nearest_hw_dist_m, hw_count_5km, ratio_poverty, ratio_uninsured, med_income, ratio_black, and ratio_hispanic.",
+      "status": "completed",
+      "agent_name": "DataAgent",
+      "task_complexity": "simple",
+      "code": "import os\nimport numpy as np\nimport pandas as pd\n\n# Paths\nAS_PROX_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/asthma_proximity.csv\"\nACS_PATH = \"/bigdata/s0/tea5209/AGM/WebUI/uploads/c52bc37f-8e66-4df1-b20b-57c92bbd2311/NC_ACS_data.csv\"\n\nOUTPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/tract_asthma_prox_acs.csv\"\nOUTPUT_DIR = os.path.dirname(OUTPUT_PATH)\nos.makedirs(OUTPUT_DIR, exist_ok=True)\n\n# ----------------------------\n# Load\n# ----------------------------\nasthma_prox = pd.read_csv(AS_PROX_PATH, dtype={\"GEOID\": \"string\"})\nacs = pd.read_csv(ACS_PATH, dtype={\"GEOID\": \"string\"})\n\n# ----------------------------\n# Normalize join keys\n# ----------------------------\nKEY_WIDTH = 11  # tract GEOID width\nasthma_prox[\"GEOID\"] = asthma_prox[\"GEOID\"].astype(\"string\").str.strip().str.zfill(KEY_WIDTH)\nacs[\"GEOID\"] = acs[\"GEOID\"].astype(\"string\").str.strip().str.zfill(KEY_WIDTH)\n\n# ----------------------------\n# Clean numeric columns (objects -> numeric where applicable)\n# ----------------------------\nnum_cols_asthma = [\"Asthma_prev\", \"nearest_hw_dist_m\", \"hw_count_5km\"]\nnum_cols_acs = [\n    \"ratio_poverty\",\n    \"ratio_uninsured\",\n    \"med_income\",\n    \"ratio_black\",\n    \"ratio_hispanic\",\n]\n\nfor c in num_cols_asthma:\n    asthma_prox[c] = pd.to_numeric(asthma_prox[c], errors=\"coerce\")\n\nfor c in num_cols_acs:\n    acs[c] = pd.to_numeric(acs[c], errors=\"coerce\")\n\n# Replace common Census sentinels with NaN (if present after numeric coercion)\nacs = acs.replace([-666666666, -888888888, -999999999], np.nan)\n\n# Ensure right-side key uniqueness to avoid row explosion\nacs = acs.drop_duplicates(subset=[\"GEOID\"]).copy()\n\n# ----------------------------\n# Left join (asthma_proximity left, ACS right)\n# ----------------------------\nmerged = asthma_prox.merge(acs, on=\"GEOID\", how=\"left\", validate=\"m:1\")\n\n# ----------------------------\n# Retain requested columns only\n# ----------------------------\nkeep_cols = [\n    \"GEOID\",\n    \"Asthma_prev\",\n    \"nearest_hw_dist_m\",\n    \"hw_count_5km\",\n    \"ratio_poverty\",\n    \"ratio_uninsured\",\n    \"med_income\",\n    \"ratio_black\",\n    \"ratio_hispanic\",\n]\nmerged = merged.loc[:, keep_cols].copy()\n\n# ----------------------------\n# Join audit\n# ----------------------------\naudit_col = \"ratio_poverty\"\nmatched = int(merged[audit_col].notna().sum())\ntotal = int(len(merged))\nmatch_rate = matched / total if total else 0.0\nunmatched_n = total - matched\n\naudit_lines = [\n    \"[JOIN AUDIT] asthma_proximity (left) + NC_ACS_data (right) on GEOID\",\n    f\"  left rows: {total}\",\n    f\"  matched rows (non-null '{audit_col}' after join): {matched}/{total} ({match_rate:.1%})\",\n    f\"  unmatched left rows (null '{audit_col}'): {unmatched_n}\",\n]\n\nif match_rate < 0.9:\n    audit_lines.append(\"  WARNING: match rate below 90% — inspect GEOID formatting/coverage.\")\n    audit_lines.append(f\"    left GEOID sample: {asthma_prox['GEOID'].head(5).tolist()}\")\n    audit_lines.append(f\"    right GEOID sample: {acs['GEOID'].head(5).tolist()}\")\n    audit_lines.append(\n        f\"    example unmatched left GEOIDs: {merged.loc[merged[audit_col].isna(), 'GEOID'].head(10).tolist()}\"\n    )\n\naudit_text = \"\\n\".join(audit_lines)\nwith open(os.path.join(OUTPUT_DIR, \"join_audit_asthma_proximity_acs.txt\"), \"w\") as f:\n    f.write(audit_text + \"\\n\")\n\n# ----------------------------\n# Save output\n# ----------------------------\nmerged.to_csv(OUTPUT_PATH, index=False)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/generated_code/op_left_join_ef00dd93.py",
+      "output": "",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/join_audit_asthma_proximity_acs.txt",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/join_audit_asthma_proximity_acs.txt",
+          "filename": "join_audit_asthma_proximity_acs.txt",
+          "size": 207,
+          "type": "txt",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/tract_asthma_prox_acs.csv",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/tract_asthma_prox_acs.csv",
+          "filename": "tract_asthma_prox_acs.csv",
+          "size": 214774,
+          "type": "csv",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_2",
+      "objective_title": "Estimate how the hazardous-waste proximity–asthma association varies by socioeconomic and demographic context and whether the association is spatially non-stationary",
+      "objective_number": 2,
+      "step_index": 2,
+      "step_description": "Filter tract_asthma_prox_acs.csv to rows with non-missing values for Asthma_prev, nearest_hw_dist_m, ratio_poverty, ratio_uninsured, med_income, ratio_black, and ratio_hispanic.",
+      "status": "completed",
+      "agent_name": "DataAgent",
+      "task_complexity": "simple",
+      "code": "import os\nimport numpy as np\nimport pandas as pd\n\nINPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/tract_asthma_prox_acs.csv\"\nOUTPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/tract_modeling_completecases.csv\"\nOUTPUT_DIR = os.path.dirname(OUTPUT_PATH)\n\n# ---- Step 3: Load --------------------------------------------------------\ndf = pd.read_csv(INPUT_PATH, dtype={\"GEOID\": \"string\"})\n\nrequired_cols = [\n    \"Asthma_prev\",\n    \"nearest_hw_dist_m\",\n    \"ratio_poverty\",\n    \"ratio_uninsured\",\n    \"med_income\",\n    \"ratio_black\",\n    \"ratio_hispanic\",\n]\n\n# Coerce required fields to numeric so blanks/non-numeric become NaN\nfor c in required_cols:\n    df[c] = pd.to_numeric(df[c], errors=\"coerce\")\n\n# Treat common Census sentinels as missing (in case present)\ndf = df.replace([-666666666, -888888888, -999999999], np.nan)\n\n# Keep complete cases for required modeling fields\ndf_cc = df.dropna(subset=required_cols).copy()\n\n# ---- Save ----------------------------------------------------------------\nos.makedirs(OUTPUT_DIR, exist_ok=True)\ndf_cc.to_csv(OUTPUT_PATH, index=False)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/generated_code/op_filter_rows_complete_cases_4c943f3c.py",
+      "output": "",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/tract_modeling_completecases.csv",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/tract_modeling_completecases.csv",
+          "filename": "tract_modeling_completecases.csv",
+          "size": 214774,
+          "type": "csv",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_2",
+      "objective_title": "Estimate how the hazardous-waste proximity–asthma association varies by socioeconomic and demographic context and whether the association is spatially non-stationary",
+      "objective_number": 2,
+      "step_index": 3,
+      "step_description": "Create ln_nearest_hw_dist_m = ln(nearest_hw_dist_m + 1), create z_ratio_poverty, z_ratio_uninsured, z_med_income, z_ratio_black, and z_ratio_hispanic as z-scores of ratio_poverty, ratio_uninsured, med_income, ratio_black, and ratio_hispanic, and create interaction terms ln_nearest_hw_dist_m_x_z_ratio_poverty = ln_nearest_hw_dist_m * z_ratio_poverty and ln_nearest_hw_dist_m_x_z_ratio_black = ln_nearest_hw_dist_m * z_ratio_black.",
+      "status": "completed",
+      "agent_name": "DataAgent",
+      "task_complexity": "simple",
+      "code": "import os\nimport numpy as np\nimport pandas as pd\n\nINPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/tract_modeling_completecases.csv\"\nOUTPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/tract_modeling_features.csv\"\nOUTPUT_DIR = os.path.dirname(OUTPUT_PATH)\n\n# ----------------------------\n# Load\n# ----------------------------\ndf = pd.read_csv(INPUT_PATH, dtype={\"GEOID\": \"string\"})\n\n# Enforce expected columns (from get_columns)\nrequired_cols = [\n    \"GEOID\",\n    \"Asthma_prev\",\n    \"nearest_hw_dist_m\",\n    \"hw_count_5km\",\n    \"ratio_poverty\",\n    \"ratio_uninsured\",\n    \"med_income\",\n    \"ratio_black\",\n    \"ratio_hispanic\",\n]\nmissing = [c for c in required_cols if c not in df.columns]\nif missing:\n    raise KeyError(f\"Missing required columns: {missing}. Available columns: {df.columns.tolist()}\")\n\n# Normalize GEOID\ndf[\"GEOID\"] = df[\"GEOID\"].astype(\"string\").str.strip()\n\n# ----------------------------\n# Numeric coercion\n# (get_columns shows these are object; coerce to numeric)\n# ----------------------------\nnum_cols = [\n    \"Asthma_prev\",\n    \"nearest_hw_dist_m\",\n    \"hw_count_5km\",\n    \"ratio_poverty\",\n    \"ratio_uninsured\",\n    \"med_income\",\n    \"ratio_black\",\n    \"ratio_hispanic\",\n]\nfor c in num_cols:\n    df[c] = pd.to_numeric(df[c], errors=\"coerce\")\n\n# Replace common Census sentinels if present\ndf = df.replace([-666666666, -888888888, -999999999], np.nan)\n\n# ----------------------------\n# Feature engineering\n# ----------------------------\n# ln_nearest_hw_dist_m = ln(nearest_hw_dist_m + 1)\n# Guard against negative distances (invalid); set to NaN so log isn't defined\ndf.loc[df[\"nearest_hw_dist_m\"] < 0, \"nearest_hw_dist_m\"] = np.nan\ndf[\"ln_nearest_hw_dist_m\"] = np.log(df[\"nearest_hw_dist_m\"] + 1.0)\n\n# Z-scores (population std, ddof=0); if std==0 or NaN, return NaN\ndef zscore(s: pd.Series) -> pd.Series:\n    mu = s.mean(skipna=True)\n    sigma = s.std(skipna=True, ddof=0)\n    if pd.isna(sigma) or sigma == 0:\n        return pd.Series(np.nan, index=s.index)\n    return (s - mu) / sigma\n\ndf[\"z_ratio_poverty\"] = zscore(df[\"ratio_poverty\"])\ndf[\"z_ratio_uninsured\"] = zscore(df[\"ratio_uninsured\"])\ndf[\"z_med_income\"] = zscore(df[\"med_income\"])\ndf[\"z_ratio_black\"] = zscore(df[\"ratio_black\"])\ndf[\"z_ratio_hispanic\"] = zscore(df[\"ratio_hispanic\"])\n\n# Interaction terms\ndf[\"ln_nearest_hw_dist_m_x_z_ratio_poverty\"] = df[\"ln_nearest_hw_dist_m\"] * df[\"z_ratio_poverty\"]\ndf[\"ln_nearest_hw_dist_m_x_z_ratio_black\"] = df[\"ln_nearest_hw_dist_m\"] * df[\"z_ratio_black\"]\n\n# ----------------------------\n# Save\n# ----------------------------\nos.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)\ndf.to_csv(OUTPUT_PATH, index=False)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/generated_code/op_feature_engineering_842818ed.py",
+      "output": "",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/tract_modeling_features.csv",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/tract_modeling_features.csv",
+          "filename": "tract_modeling_features.csv",
+          "size": 549862,
+          "type": "csv",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_2",
+      "objective_title": "Estimate how the hazardous-waste proximity–asthma association varies by socioeconomic and demographic context and whether the association is spatially non-stationary",
+      "objective_number": 2,
+      "step_index": 4,
+      "step_description": "Fit an ordinary least squares model with dependent variable Asthma_prev and predictors ln_nearest_hw_dist_m, z_ratio_poverty, z_ratio_uninsured, z_med_income, z_ratio_black, z_ratio_hispanic, ln_nearest_hw_dist_m_x_z_ratio_poverty, and ln_nearest_hw_dist_m_x_z_ratio_black, and report heteroskedasticity-robust (HC) standard errors.",
+      "status": "completed",
+      "agent_name": "ModelingAgent",
+      "task_complexity": "complex",
+      "code": "import os\nimport json\nimport numpy as np\nimport pandas as pd\nimport statsmodels.api as sm\nfrom statsmodels.stats.outliers_influence import variance_inflation_factor\n\nINPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/tract_modeling_features.csv\"\nOUTPUT_NODE_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/ols_interaction_results.json\"\nOUTPUT_DIR = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311\"\n\n# ----------------------------\n# 1) Load + clean\n# ----------------------------\ndf = pd.read_csv(INPUT_PATH)\n\ny_col = \"Asthma_prev\"\nx_cols = [\n    \"ln_nearest_hw_dist_m\",\n    \"z_ratio_poverty\",\n    \"z_ratio_uninsured\",\n    \"z_med_income\",\n    \"z_ratio_black\",\n    \"z_ratio_hispanic\",\n    \"ln_nearest_hw_dist_m_x_z_ratio_poverty\",\n    \"ln_nearest_hw_dist_m_x_z_ratio_black\",\n]\n\nrequired_cols = [y_col] + x_cols\nmissing = [c for c in required_cols if c not in df.columns]\nif missing:\n    raise KeyError(\n        f\"Missing required columns: {missing}. Available columns: {list(df.columns)}\"\n    )\n\n# All are typed as object in schema; coerce to numeric\nfor c in required_cols:\n    df[c] = pd.to_numeric(df[c], errors=\"coerce\")\n\ndf_clean = df.dropna(subset=required_cols).copy()\ndf_clean = df_clean.reset_index(drop=True)\n\ny = df_clean[y_col].astype(float).values\nX = df_clean[x_cols].astype(float)\nX_const = sm.add_constant(X, has_constant=\"add\")\n\n# ----------------------------\n# 2) Fit OLS + robust (HC) SEs\n# ----------------------------\nols = sm.OLS(y, X_const).fit()\n# Use heteroskedasticity-robust covariance (HC1 is common default)\nols_hc = ols.get_robustcov_results(cov_type=\"HC1\")\n\nparam_names = [\"const\"] + x_cols\n\ncoef_df = pd.DataFrame(\n    {\n        \"variable\": param_names,\n        \"coef\": ols_hc.params,\n        \"std_err_hc1\": ols_hc.bse,\n        \"t_hc1\": ols_hc.tvalues,\n        \"p_value_hc1\": ols_hc.pvalues,\n        \"ci95_low_hc1\": ols_hc.conf_int()[:, 0],\n        \"ci95_high_hc1\": ols_hc.conf_int()[:, 1],\n    }\n)\n\n# Model diagnostics (some computed on original OLS; robust affects inference, not fitted values)\nresid = ols.resid\nrmse = float(np.sqrt(np.mean(resid**2)))\n\ndiagnostics = {\n    \"n_obs\": int(ols.nobs),\n    \"n_params\": int(len(param_names)),\n    \"r2\": float(ols.rsquared),\n    \"adj_r2\": float(ols.rsquared_adj),\n    \"aic\": float(ols.aic),\n    \"bic\": float(ols.bic),\n    \"f_statistic\": None if ols.fvalue is None else float(ols.fvalue),\n    \"f_pvalue\": None if ols.f_pvalue is None else float(ols.f_pvalue),\n    \"rmse\": rmse,\n    \"robust_cov_type\": \"HC1\",\n}\n\n# ----------------------------\n# 3) Optional: VIF (on non-constant predictors)\n# ----------------------------\nvif_df = pd.DataFrame(\n    {\n        \"variable\": x_cols,\n        \"vif\": [float(variance_inflation_factor(X_const.values, i + 1)) for i in range(len(x_cols))],\n    }\n)\n\n# ----------------------------\n# 4) Save promoted tables\n# ----------------------------\nos.makedirs(OUTPUT_DIR, exist_ok=True)\ntables_dir = os.path.join(OUTPUT_DIR, \"tables\")\nos.makedirs(tables_dir, exist_ok=True)\n\ncoef_table_path = os.path.join(tables_dir, \"ols_interaction_coefficients_hc1.csv\")\ncoef_df.to_csv(coef_table_path, index=False)\nrecord_table(\n    output_dir=OUTPUT_DIR,\n    file_path=coef_table_path,\n    caption=\"OLS coefficients for asthma prevalence with interaction terms; inference uses heteroskedasticity-robust (HC1) standard errors.\",\n    role=\"promoted\",\n    columns=[\"variable\", \"coef\", \"std_err_hc1\", \"t_hc1\", \"p_value_hc1\", \"ci95_low_hc1\", \"ci95_high_hc1\"],\n)\n\ndiag_table_path = os.path.join(tables_dir, \"ols_interaction_model_diagnostics.csv\")\npd.DataFrame([diagnostics]).to_csv(diag_table_path, index=False)\nrecord_table(\n    output_dir=OUTPUT_DIR,\n    file_path=diag_table_path,\n    caption=\"OLS model diagnostics for asthma prevalence interaction model (R², adjusted R², AIC/BIC, RMSE, and sample size).\",\n    role=\"promoted\",\n)\n\nvif_table_path = os.path.join(tables_dir, \"ols_interaction_vif.csv\")\nvif_df.to_csv(vif_table_path, index=False)\nrecord_table(\n    output_dir=OUTPUT_DIR,\n    file_path=vif_table_path,\n    caption=\"Variance inflation factors (VIF) for predictors in the asthma prevalence interaction model.\",\n    role=\"intermediate\",\n    columns=[\"variable\", \"vif\"],\n)\n\n# ----------------------------\n# 5) Primary output JSON\n# ----------------------------\nresult = {\n    \"model\": \"OLS\",\n    \"dependent_variable\": y_col,\n    \"predictors\": x_cols,\n    \"robust_standard_errors\": {\"type\": \"HC1\"},\n    \"diagnostics\": diagnostics,\n    \"coefficients\": coef_df.to_dict(orient=\"records\"),\n    \"vif\": vif_df.to_dict(orient=\"records\"),\n}\n\nos.makedirs(os.path.dirname(OUTPUT_NODE_PATH), exist_ok=True)\nwith open(OUTPUT_NODE_PATH, \"w\", encoding=\"utf-8\") as f:\n    json.dump(result, f, indent=2)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/generated_code/op_ordinary_least_squares_with_in_e05a3cb6.py",
+      "output": "",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/manifest.json",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/manifest.json",
+          "filename": "manifest.json",
+          "size": 3902,
+          "type": "json",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/ols_interaction_results.json",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/ols_interaction_results.json",
+          "filename": "ols_interaction_results.json",
+          "size": 4047,
+          "type": "json",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/tables/ols_interaction_coefficients_hc1.csv",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/tables/ols_interaction_coefficients_hc1.csv",
+          "filename": "ols_interaction_coefficients_hc1.csv",
+          "size": 1312,
+          "type": "csv",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/tables/ols_interaction_model_diagnostics.csv",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/tables/ols_interaction_model_diagnostics.csv",
+          "filename": "ols_interaction_model_diagnostics.csv",
+          "size": 202,
+          "type": "csv",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/tables/ols_interaction_vif.csv",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/tables/ols_interaction_vif.csv",
+          "filename": "ols_interaction_vif.csv",
+          "size": 337,
+          "type": "csv",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_2",
+      "objective_title": "Estimate how the hazardous-waste proximity–asthma association varies by socioeconomic and demographic context and whether the association is spatially non-stationary",
+      "objective_number": 2,
+      "step_index": 5,
+      "step_description": "Join centroid coordinates from nc_tract_centroids.gpkg to tract_modeling_features.csv by GEOID and write numeric x and y coordinate columns named x and y.",
+      "status": "completed",
+      "agent_name": "DataAgent",
+      "task_complexity": "simple",
+      "code": "import os\nimport pandas as pd\nimport geopandas as gpd\n\n# Paths\nINPUT_CSV = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/tract_modeling_features.csv\"\nINPUT_GPKG = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/nc_tract_centroids.gpkg\"\nOUTPUT_CSV = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/tract_modeling_with_xy.csv\"\nOUTPUT_DIR = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311\"\n\nJOIN_KEY = \"GEOID\"\nTRACT_GEOID_WIDTH = 11  # Census tract GEOID width\n\n# ---- Load inputs ----\ndf = pd.read_csv(INPUT_CSV, dtype={JOIN_KEY: \"string\"})\ncentroids = gpd.read_file(INPUT_GPKG)\n\n# ---- Validate / clean geometry ----\ncentroids = centroids[centroids.geometry.is_valid & ~centroids.geometry.is_empty].copy()\n\n# ---- Normalize join keys (cast to str, strip, zfill) ----\ndf[JOIN_KEY] = df[JOIN_KEY].astype(\"string\").str.strip().str.zfill(TRACT_GEOID_WIDTH)\n\ncentroids[JOIN_KEY] = (\n    centroids[JOIN_KEY].astype(\"string\").str.strip().str.zfill(TRACT_GEOID_WIDTH)\n)\n\n# ---- Extract coordinates ----\ncentroids[\"x\"] = pd.to_numeric(centroids.geometry.x, errors=\"coerce\")\ncentroids[\"y\"] = pd.to_numeric(centroids.geometry.y, errors=\"coerce\")\n\n# Keep only required join fields and deduplicate right side\ncentroids_xy = centroids[[JOIN_KEY, \"x\", \"y\"]].drop_duplicates(subset=[JOIN_KEY]).copy()\n\n# ---- Join (left join: keep all modeling rows) ----\nout = df.merge(centroids_xy, on=JOIN_KEY, how=\"left\")\n\n# Ensure numeric output columns\nout[\"x\"] = pd.to_numeric(out[\"x\"], errors=\"coerce\")\nout[\"y\"] = pd.to_numeric(out[\"y\"], errors=\"coerce\")\n\n# ---- Save ----\nos.makedirs(os.path.dirname(OUTPUT_CSV), exist_ok=True)\nout.to_csv(OUTPUT_CSV, index=False)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/generated_code/op_attach_coordinates_35cde900.py",
+      "output": "",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/tract_modeling_with_xy.csv",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/tract_modeling_with_xy.csv",
+          "filename": "tract_modeling_with_xy.csv",
+          "size": 625539,
+          "type": "csv",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_2",
+      "objective_title": "Estimate how the hazardous-waste proximity–asthma association varies by socioeconomic and demographic context and whether the association is spatially non-stationary",
+      "objective_number": 2,
+      "step_index": 6,
+      "step_description": "Compute variance inflation factors (VIF) for each predictor variable in the GWR predictor set (ln_nearest_hw_dist_m, z_ratio_poverty, z_ratio_uninsured, z_med_income, z_ratio_black, z_ratio_hispanic) prior to fitting the geographically weighted regression.",
+      "status": "completed",
+      "agent_name": "ModelingAgent",
+      "task_complexity": "medium",
+      "code": "import os\nimport json\nimport warnings\n\nimport numpy as np\nimport pandas as pd\nimport statsmodels.api as sm\nfrom statsmodels.stats.outliers_influence import variance_inflation_factor\n\n# -----------------------------\n# Paths\n# -----------------------------\nINPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/tract_modeling_features.csv\"\nOUTPUT_NODE_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/vif_results.json\"\nOUTPUT_DIR = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311\"\n\nos.makedirs(os.path.dirname(OUTPUT_NODE_PATH), exist_ok=True)\nos.makedirs(OUTPUT_DIR, exist_ok=True)\n\n# -----------------------------\n# Load data\n# -----------------------------\ndf = pd.read_csv(INPUT_PATH)\n\npredictor_cols = [\n    \"ln_nearest_hw_dist_m\",\n    \"z_ratio_poverty\",\n    \"z_ratio_uninsured\",\n    \"z_med_income\",\n    \"z_ratio_black\",\n    \"z_ratio_hispanic\",\n]\n\n# Validate required columns exist\nmissing = [c for c in predictor_cols if c not in df.columns]\nif missing:\n    raise KeyError(\n        f\"Missing required predictor columns: {missing}. \"\n        f\"Available columns: {list(df.columns)}\"\n    )\n\n# -----------------------------\n# Prepare X: numeric + complete cases\n# -----------------------------\nX_df = df[predictor_cols].copy()\nfor c in predictor_cols:\n    X_df[c] = pd.to_numeric(X_df[c], errors=\"coerce\")\n\nn_before = int(len(X_df))\nX_df = X_df.dropna(axis=0, how=\"any\").reset_index(drop=True)\nn_after = int(len(X_df))\nn_dropped = n_before - n_after\n\nif n_after < 3:\n    raise ValueError(\n        f\"Not enough complete cases after dropna for VIF. \"\n        f\"n_before={n_before}, n_after={n_after}.\"\n    )\n\n# Add intercept (const) but exclude it from VIF reporting\nX_const = sm.add_constant(X_df, has_constant=\"add\")\n\n# -----------------------------\n# Compute VIF\n# -----------------------------\nvif_rows = []\nwith warnings.catch_warnings():\n    warnings.simplefilter(\"ignore\")  # silence runtime warnings from near-singular fits\n    for i, col in enumerate(X_df.columns, start=1):  # start=1 skips const at index 0\n        try:\n            vif_val = float(variance_inflation_factor(X_const.values, i))\n        except Exception:\n            vif_val = float(\"nan\")\n        vif_rows.append({\"variable\": col, \"vif\": vif_val})\n\nvif_df = pd.DataFrame(vif_rows).sort_values(\"vif\", ascending=False).reset_index(drop=True)\n\n# -----------------------------\n# Save promoted table (CSV) + primary JSON output\n# -----------------------------\ntables_dir = os.path.join(OUTPUT_DIR, \"tables\")\nos.makedirs(tables_dir, exist_ok=True)\nvif_table_path = os.path.join(tables_dir, \"vif_table.csv\")\nvif_df.to_csv(vif_table_path, index=False)\n\nrecord_table(\n    output_dir=OUTPUT_DIR,\n    file_path=vif_table_path,\n    caption=\"Variance inflation factors (VIF) for GWR predictor variables to assess multicollinearity.\",\n    role=\"promoted\",\n    columns=[\"variable\", \"vif\"],\n)\n\nresult = {\n    \"predictors\": predictor_cols,\n    \"n_rows_input\": n_before,\n    \"n_rows_used_complete_cases\": n_after,\n    \"n_rows_dropped_due_to_na_or_non_numeric\": n_dropped,\n    \"vif_table\": vif_df.to_dict(orient=\"records\"),\n    \"notes\": {\n        \"interpretation_rule_of_thumb\": \"VIF > 10 indicates problematic multicollinearity (often also flagged at > 5).\",\n        \"computation\": \"VIF computed from X with an intercept; reported VIF excludes the intercept.\",\n    },\n}\n\nwith open(OUTPUT_NODE_PATH, \"w\", encoding=\"utf-8\") as f:\n    json.dump(result, f, indent=2, allow_nan=True)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/generated_code/op_variance_inflation_factors_1f970cc2.py",
+      "output": "",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/manifest.json",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/manifest.json",
+          "filename": "manifest.json",
+          "size": 3902,
+          "type": "json",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/tables/vif_table.csv",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/tables/vif_table.csv",
+          "filename": "vif_table.csv",
+          "size": 224,
+          "type": "csv",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/vif_results.json",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/vif_results.json",
+          "filename": "vif_results.json",
+          "size": 1021,
+          "type": "json",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    },
+    {
+      "objective_key": "objective_2",
+      "objective_title": "Estimate how the hazardous-waste proximity–asthma association varies by socioeconomic and demographic context and whether the association is spatially non-stationary",
+      "objective_number": 2,
+      "step_index": 7,
+      "step_description": "Fit a geographically weighted regression using an adaptive bandwidth selected by minimizing AICc and a bisquare kernel with dependent variable Asthma_prev and predictors ln_nearest_hw_dist_m, z_ratio_poverty, z_ratio_uninsured, z_med_income, z_ratio_black, and z_ratio_hispanic, and output per-GEOID local coefficients and local R2.",
+      "status": "completed",
+      "agent_name": "ModelingAgent",
+      "task_complexity": "complex",
+      "code": "import os\nimport numpy as np\nimport pandas as pd\nimport geopandas as gpd\nimport matplotlib.pyplot as plt\n\nimport matplotlib\nmatplotlib.use(\"Agg\")\nfrom mgwr.gwr import GWR\nfrom mgwr.sel_bw import Sel_BW\nfrom sklearn.preprocessing import StandardScaler\n\n# ---- Paths -----------------------------------------------------------------\nINPUT_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/tract_modeling_with_xy.csv\"\nOUTPUT_NODE_PATH = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/gwr_local_coefficients.gpkg\"\nOUTPUT_MAP_PATH_TEMPLATE = \"/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/gwr_thematic_map_{}.png\"\nOUTPUT_DIR = os.path.dirname(OUTPUT_NODE_PATH)\nos.makedirs(OUTPUT_DIR, exist_ok=True)\n\n# ---- Load ------------------------------------------------------------------\ndf = pd.read_csv(INPUT_PATH, dtype={\"GEOID\": \"string\"})\n\ny_col = \"Asthma_prev\"\nx_cols = [\n    \"ln_nearest_hw_dist_m\",\n    \"z_ratio_poverty\",\n    \"z_ratio_uninsured\",\n    \"z_med_income\",\n    \"z_ratio_black\",\n    \"z_ratio_hispanic\",\n]\ncoord_cols = [\"x\", \"y\"]\n\nneeded = [\"GEOID\", y_col] + x_cols + coord_cols\nmissing = [c for c in needed if c not in df.columns]\nif missing:\n    raise KeyError(f\"Missing required columns: {missing}. Available columns: {list(df.columns)}\")\n\n# Coerce numeric columns (they are object-typed in input)\nfor c in [y_col] + x_cols + coord_cols:\n    df[c] = pd.to_numeric(df[c], errors=\"coerce\")\n\n# ---- Build aligned arrays & drop bad rows ----------------------------------\nY = df[[y_col]].to_numpy(dtype=float)           # (n, 1)\nX_raw = df[x_cols].to_numpy(dtype=float)        # (n, k)\ncoords = df[coord_cols].to_numpy(dtype=float)   # (n, 2)\n\nmask = np.isfinite(np.hstack([Y, X_raw, coords])).all(axis=1)\ndf_m = df.loc[mask].copy()\nY = Y[mask]\nX_raw = X_raw[mask]\ncoords = coords[mask]\n\nif df_m.shape[0] == 0:\n    raise ValueError(\"No rows remain after dropping NA/inf in y, X, and coords.\")\nif df_m.shape[0] <= (len(x_cols) + 2):\n    raise ValueError(\n        f\"Too few observations for GWR (n={df_m.shape[0]}) relative to predictors (k={len(x_cols)}).\"\n    )\n\n# ---- Create geometry (point features from x/y) ------------------------------\nxv = coords[:, 0]\nyv = coords[:, 1]\nlooks_lonlat = (np.nanmax(np.abs(xv)) <= 180.0) and (np.nanmax(np.abs(yv)) <= 90.0)\ncrs = \"EPSG:4326\" if looks_lonlat else \"EPSG:3857\"\n\ngdf = gpd.GeoDataFrame(\n    df_m,\n    geometry=gpd.points_from_xy(df_m[\"x\"], df_m[\"y\"]),\n    crs=crs,\n).copy()\ngdf = gdf[gdf.geometry.notnull() & ~gdf.geometry.is_empty & gdf.geometry.is_valid].copy()\n\nif gdf.shape[0] != df_m.shape[0]:\n    keep_idx = gdf.index.to_numpy()\n    df_m2 = df_m.loc[keep_idx].copy()\n    Y = df_m2[[y_col]].to_numpy(dtype=float)\n    X_raw = df_m2[x_cols].to_numpy(dtype=float)\n    coords = df_m2[coord_cols].to_numpy(dtype=float)\n    df_m = df_m2\n\n# ---- Standardize for stable bandwidth search/fit ----------------------------\nx_scaler = StandardScaler()\ny_scaler = StandardScaler()\nX_s = x_scaler.fit_transform(X_raw)\nY_s = y_scaler.fit_transform(Y)\n\n# ---- Bandwidth selection: adaptive, minimize AICc, bisquare kernel ----------\nselector = Sel_BW(coords, Y_s, X_s, fixed=False, kernel=\"bisquare\", spherical=False)\nbw = selector.search(criterion=\"AICc\")\n\n# ---- Fit GWR ---------------------------------------------------------------\nmodel = GWR(coords, Y_s, X_s, bw=bw, fixed=False, kernel=\"bisquare\", spherical=False)\nresults = model.fit()\n\n# ---- Back-transform coefficients to original units --------------------------\nparam_names = [\"Intercept\"] + x_cols\na = np.asarray(results.params)  # (n, k+1)\n\ny_mean = float(y_scaler.mean_[0])\ny_std = float(np.sqrt(y_scaler.var_[0]))\nx_means = x_scaler.mean_\nx_stds = np.sqrt(x_scaler.var_)\n\nbetas = np.zeros_like(a, dtype=float)\nfor j in range(1, len(param_names)):\n    betas[:, j] = (y_std / x_stds[j - 1]) * a[:, j]\nbetas[:, 0] = y_mean + y_std * a[:, 0] - (betas[:, 1:] * x_means.reshape(1, -1)).sum(axis=1)\n\n# ---- Assemble output GeoDataFrame ------------------------------------------\nout = gdf.copy()\nfor j, name in enumerate(param_names):\n    out[f\"b_{name}\"] = betas[:, j]\n\nout[\"gwr_localR2\"] = np.asarray(results.localR2).reshape(-1)\nout[\"gwr_bw\"] = int(bw)\n\nkeep_cols = [\"GEOID\"] + [f\"b_{n}\" for n in param_names] + [\"gwr_localR2\", \"gwr_bw\", \"geometry\"]\nout = out[keep_cols].copy()\n\n# ---- Save GPKG ------------------------------------------------------------\nos.makedirs(os.path.dirname(OUTPUT_NODE_PATH), exist_ok=True)\nif os.path.exists(OUTPUT_NODE_PATH):\n    os.remove(OUTPUT_NODE_PATH)\nout.to_file(OUTPUT_NODE_PATH, driver=\"GPKG\")\n\n# ---- Create thematic maps for each coefficient ----------------------------\nfor j, name in enumerate(param_names):\n    fig, ax = plt.subplots(1, 1, figsize=(10, 8))\n    out.plot(\n        column=f\"b_{name}\",\n        cmap=\"viridis\",\n        scheme=\"Quantiles\",\n        legend=True,\n        ax=ax\n    )\n    ax.set_title(f\"GWR Local Coefficient for {name}\")\n    plt.savefig(OUTPUT_MAP_PATH_TEMPLATE.format(name), dpi=300)",
+      "code_file": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/generated_code/op_geographically_weighted_regres_c23ac133.py",
+      "output": "",
+      "artifacts": [
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/gwr_local_coefficients.gpkg",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/gwr_local_coefficients.gpkg",
+          "filename": "gwr_local_coefficients.gpkg",
+          "size": 512000,
+          "type": "gpkg",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/gwr_thematic_map_Intercept.png",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/gwr_thematic_map_Intercept.png",
+          "filename": "gwr_thematic_map_Intercept.png",
+          "size": 486716,
+          "type": "png",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/gwr_thematic_map_ln_nearest_hw_dist_m.png",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/gwr_thematic_map_ln_nearest_hw_dist_m.png",
+          "filename": "gwr_thematic_map_ln_nearest_hw_dist_m.png",
+          "size": 499442,
+          "type": "png",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/gwr_thematic_map_z_med_income.png",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/gwr_thematic_map_z_med_income.png",
+          "filename": "gwr_thematic_map_z_med_income.png",
+          "size": 490151,
+          "type": "png",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/gwr_thematic_map_z_ratio_black.png",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/gwr_thematic_map_z_ratio_black.png",
+          "filename": "gwr_thematic_map_z_ratio_black.png",
+          "size": 493552,
+          "type": "png",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/gwr_thematic_map_z_ratio_hispanic.png",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/gwr_thematic_map_z_ratio_hispanic.png",
+          "filename": "gwr_thematic_map_z_ratio_hispanic.png",
+          "size": 496291,
+          "type": "png",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/gwr_thematic_map_z_ratio_poverty.png",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/gwr_thematic_map_z_ratio_poverty.png",
+          "filename": "gwr_thematic_map_z_ratio_poverty.png",
+          "size": 500821,
+          "type": "png",
+          "is_shapefile_component": false
+        },
+        {
+          "path": "/bigdata/s0/tea5209/AGM/Outputs/c52bc37f-8e66-4df1-b20b-57c92bbd2311/gwr_thematic_map_z_ratio_uninsured.png",
+          "relative_path": "c52bc37f-8e66-4df1-b20b-57c92bbd2311/gwr_thematic_map_z_ratio_uninsured.png",
+          "filename": "gwr_thematic_map_z_ratio_uninsured.png",
+          "size": 482935,
+          "type": "png",
+          "is_shapefile_component": false
+        }
+      ],
+      "error": null,
+      "error_traceback": "",
+      "depends_on": [],
+      "dependents": []
+    }
+  ],
+  "task_id": "c52bc37f-8e66-4df1-b20b-57c92bbd2311"
+}

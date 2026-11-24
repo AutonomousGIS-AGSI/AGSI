@@ -1,0 +1,4 @@
+[JOIN AUDIT] counties_pm25_2019_qc.gpkg (left) + gini_2019_with_geoid.csv (right)
+  left rows: 58
+  matched 'B19083_001E:Gini Index': 58/58 (100.0%)
+  unmatched (NaN in right): 0

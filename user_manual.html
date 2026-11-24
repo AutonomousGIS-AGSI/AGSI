@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GIS Co-Scientist User Manual</title>
+<link rel="stylesheet" href="user_manual.css">
+</head>
+<body>
+
+<header class="hero">
+    <div class="hero-inner">
+        <img src="doc/GIS-Coscientist_logo.png" alt="GIS Co-Scientist logo" onerror="this.style.display='none'">
+        <div>
+            <h1>GIS Co-Scientist</h1>
+
+        </div>
+        <div class="hero-search">
+            <input id="docSearch" type="search" placeholder="Search "
+                   autocomplete="off" aria-label="Search the manual">
+            <div id="searchResults" class="search-results" hidden></div>
+        </div>
+        <a class="hero-gibd" href="https://giscience.psu.edu/" target="_blank" rel="noopener"
+           title="Penn State GIScience">
+            <img src="doc/gibd_logo.png" alt="Penn State GIScience (GIBD)" onerror="this.style.display='none'">
+        </a>
+    </div>
+</header>
+
+<div class="layout">
+    <!-- ── Left rail: page groups (built/active-managed by JS) ───────── -->
+    <!-- Pages + their children are built by JS from the PAGES config below. -->
+    <nav class="toc" id="toc" aria-label="Sections">
+        <h2>Pages</h2>
+    </nav>
+
+    <main>
+
+    <!-- ═══════════════════ 1. INTRO ═══════════════════ -->
+    <section id="intro">
+        <h2>What is GIS Co-Scientist?</h2>
+        <p><strong>GIS Co-Scientist</strong> is a multi-agent framework for autonomous geospatial scientific inquiry,
+            retrieving geospatial data, running spatial analyses, and producing full research manuscripts through
+            a single conversational interface.</p>
+
+        
+
+
+        <p>GIS Co-Scientist has four <strong>working modes</strong> that you switch between depending on the type of task you want the system to run:</p>
+
+        <div class="mode-grid">
+            <div class="card"><h4><span class="pill data">Data Retriever</span></h4>
+                <p>Find and download geospatial datasets from built-in public sources.</p></div>
+            <div class="card"><h4><span class="pill spatial">Spatial Analysis</span></h4>
+                <p>Run a specific spatial analysis on your data.</p></div>
+            <div class="card"><h4><span class="pill research">Research</span></h4>
+                <p>The full pipeline: research plan generation, spatial modeling, interpretation, and manuscript writing.</p></div>
+            <div class="card"><h4><span class="pill chat">Chat</span></h4>
+                <p>Conversational Q&ampA</p></div>
+        </div>
+
+        <!-- <div class="note"><strong>Who is this for?</strong>&nbsp; Researchers, students, and analysts who want to do spatial
+        analysis without writing all the code themselves. No programming is required, though every piece of generated code is shown
+        to you and can be reviewed, edited, and re-run.</div> -->
+
+        <!-- <p>Behind the interface is a <strong>specialized multi-agent system</strong> with a
+        <strong>human-in-the-loop</strong> at its center: dedicated agents understand the question, retrieve geospatial data,
+        plan a workflow, write and run code, interpret results, and draft the report - while you stay in control, reviewing and
+        approving (or revising) at each major checkpoint. A reproducibility layer logs every workflow, dataset, and line of
+        executable code so any result can be traced and reproduced.</p>
+
+        <figure>
+            <img src="doc/architecture.jpg" alt="GIS Co-Scientist multi-agent architecture with a human-in-the-loop and a reproducibility layer" />
+            <figcaption>System architecture - a human-in-the-loop guides a layer of specialized agents, backed by a
+                reproducibility layer (workflow logging, data lineage, executable code, execution tracking, and saved artifacts).</figcaption>
+        </figure> -->
+
+        <!-- <div class="feature">
+            <span class="tag">What makes it geospatial</span>
+            <h4>The geoprocessing workflow</h4>
+            <p>Unlike general-purpose AI assistants, GIS Co-Scientist plans an explicit <strong>geoprocessing workflow</strong> -
+            a directed graph of spatial input data, geoprocessing operations/tools, and output data - before any code is written.
+            This workflow is the geospatial backbone shared across the three working modes (Data Retriever, Spatial Analysis, and
+            Research), and it is shown to you for review. See <a href="#modes-models">Section 8</a>.</p>
+        </div> -->
+    </section>
+
+    <!-- ═══════════════════ INSTALLING THE DESKTOP APP ═══════════════════ -->
+    <section id="install">
+        <h2>Installing the Desktop App</h2>
+        <p>GIS Co-Scientist is also available as a desktop app for Windows and macOS. It runs the same interface in its
+        own window, and your conversations, uploads and outputs stay on your computer.</p>
+
+        <h3 id="install-windows">Windows</h3>
+        <p>Requires 64-bit Windows 10 or 11 and about 900 MB of free disk space. No administrator rights are needed.</p>
+        <div class="step"><div class="num">1</div><div class="body">Download <code>GIS-CoScientist-Setup-&lt;version&gt;.exe</code>
+            from the <a href="https://github.com/Teakinboyewa/GIS-co-scientist-desktop/releases" target="_blank" rel="noopener">releases page</a>.</div></div>
+        <div class="step"><div class="num">2</div><div class="body">Double-click the file. If Windows shows <em>"Windows protected your PC"</em>,
+            click <span class="ui">More info</span>, then <span class="ui">Run anyway</span>.</div></div>
+        <div class="step"><div class="num">3</div><div class="body">Follow the installer. Tick <em>Create a desktop shortcut</em> if you want one.
+            The app installs to <code>%LOCALAPPDATA%\Programs\GIS Co-Scientist</code> and is added to the Start menu.
+            The installer also checks for the Microsoft Edge WebView2 runtime, which the app needs (it is already part of most Windows 10 and 11 computers).</div></div>
+        <div class="step"><div class="num">4</div><div class="body">Open <strong>GIS Co-Scientist</strong> from the Start menu or the desktop
+            shortcut, then add your API key in <span class="ui">Settings</span> (see <a href="#apikey">API Key</a>).</div></div>
+
+        <h3 id="install-mac">macOS</h3>
+        <p>There are two builds: <code>arm64</code> for Apple Silicon (M1 and later) and <code>x86_64</code> for Intel Macs.
+        To check which Mac you have, open the Apple menu &rarr; <em>About This Mac</em>.</p>
+        <div class="step"><div class="num">1</div><div class="body">Download <code>GIS-CoScientist-&lt;version&gt;-&lt;arch&gt;.dmg</code> for your Mac
+            from the <a href="https://github.com/Teakinboyewa/GIS-co-scientist-desktop/releases" target="_blank" rel="noopener">releases page</a>.</div></div>
+        <div class="step"><div class="num">2</div><div class="body">Open the <code>.dmg</code> and drag <strong>GIS Co-Scientist</strong> into
+            <strong>Applications</strong>.</div></div>
+        <div class="step"><div class="num">3</div><div class="body">The first time you open it, macOS may say <em>"GIS Co-Scientist" Not Opened</em>
+            because Apple could not verify it. To allow it (you only need to do this once):
+            <ul>
+                <li><strong>macOS 15 Sequoia and later:</strong> click <span class="ui">Done</span> on the message, open
+                    <em>System Settings &rarr; Privacy &amp; Security</em>, scroll down to <em>Security</em>, and click
+                    <span class="ui">Open Anyway</span> next to GIS Co-Scientist. Enter your password, then click
+                    <span class="ui">Open Anyway</span> again.</li>
+                <li><strong>macOS 14 Sonoma and earlier:</strong> right-click (or Control-click) the app in Applications, choose
+                    <span class="ui">Open</span>, then click <span class="ui">Open</span> again.</li>
+            </ul>
+            After that it opens normally.</div></div>
+        <div class="step"><div class="num">4</div><div class="body">Add your API key in <span class="ui">Settings</span>
+            (see <a href="#apikey">API Key</a>).</div></div>
+
+        <h3 id="install-update">Updating and uninstalling</h3>
+        <ul>
+            <li><strong>Update:</strong> install the newer version over the old one (on macOS, replace the app in Applications).
+                Your conversations, uploads and outputs are kept.</li>
+            <li><strong>Uninstall (Windows):</strong> <em>Settings &rarr; Apps &rarr; Installed apps</em> &rarr; GIS Co-Scientist &rarr;
+                <span class="ui">Uninstall</span>. Your conversations, uploads and outputs are left in the install folder;
+                delete <code>%LOCALAPPDATA%\Programs\GIS Co-Scientist</code> to remove them too.</li>
+            <li><strong>Uninstall (macOS):</strong> drag the app from Applications to the Trash. Your data is in
+                <code>~/Library/Application Support/GIS Co-Scientist</code>; delete that folder to remove it too.</li>
+        </ul>
+    </section>
+
+    <!-- ═══════════════════ 2. QUICK START ═══════════════════ -->
+    <section id="quickstart">
+        <h2>Quick Start</h2>
+        
+
+        <div class="step"><div class="num">1</div><div class="body">
+            <strong>Add your API key:</strong> Click <span class="ui">Settings</span> (top-right), paste your
+            <strong>GIBD</strong> key (<code>gibd-</code>) or <strong>OpenAI</strong> key (<code>sk-</code>) into the
+            <em>API Key</em> field, and click <span class="ui">Save Key</span>.
+            See <a href="#apikey">Section 3</a> for how to get one.</div></div>
+
+        <div class="step"><div class="num">2</div><div class="body">
+            <strong>Pick a mode:</strong> In the chat input toolbar, open the mode dropdown (bottom-right of the input box) and
+            choose <em style="color: black;">Data Retrieval</em>, <em style="color: black;">Spatial Analysis</em>, <em style="color: black;">Research</em>, or <em style="color: black;">Chat</em>.</div></div>
+
+        <div class="step"><div class="num">3</div><div class="body">
+            <strong>Upload data (Optional):</strong> Click the <span class="ui">＋</span> button (or the <img src="doc/folder-plus.svg" alt="folder plus" class="ui-icon" /> button in <em>Data Layers</em>, top of the right panel)
+            to load your own shapefile, GeoPackage, GeoJSON, CSV, or raster. If you don't have data, the Data Retriever can fetch it.</div></div>
+
+        <div class="step"><div class="num">4</div><div class="body">
+            <strong>Set Auto Data (Optional):</strong> Use the <span class="ui">Auto Data</span> switch in the mode dropdown (on by default) to control how
+            datasets are fetched. When <em>on</em>, the system automatically downloads any data your request needs; when <em>off</em>, it
+            works with the data already uploaded instead of fetching new datasets. (In <em>Data Retrieval</em> mode, data is always fetched.)
+            See <a href="#data-mode">Section 9</a> for details.</div></div>
+
+        <div class="step"><div class="num">5</div><div class="body">
+            <strong>Type your request</strong> in the input box and press <span class="kbd">Enter</span> (use
+            <span class="kbd">Shift</span>+<span class="kbd">Enter</span> for a new line).</div></div>
+
+        <div class="step"><div class="num">6</div><div class="body">
+            <strong>Review and approve.</strong> The system streams its plan, asks for your approval at key checkpoints, then runs.
+            Outputs appear in the <em>Map Viewer</em> and <em>Results and Artifacts</em> panels on the right.</div></div>
+
+        <div class="tip"><strong>NOTE:</strong>&nbsp; Turn on <em><strong>Autonomous</strong></em> mode (in the mode dropdown) if you want the
+        system to auto-approve its own plans and run end-to-end with minimal interruption (see <a href="#modes-models">Section 8</a>).</div>
+    </section>
+
+    <!-- ═══════════════════ 3. API KEY ═══════════════════ -->
+    <section id="apikey">
+        <h2>3. API Key</h2>
+
+        <p>GIS Co-Scientist needs an API key to run its language-model calls. You can use <strong>either</strong> a
+        <strong>GIBD key</strong> or an <strong>OpenAI API key</strong> - there is a single <em>API Key</em> field in Settings,
+        and the app automatically detects which type you entered.</p>
+
+        <h3>Getting a key</h3>
+        <table>
+            <tr><th>Key type</th><th>Where to get it</th></tr>
+            <tr><td><strong>GIBD key</strong></td>
+                <td>At <a href="https://www.gibd.online" target="_blank" rel="noopener">gibd.online</a> - create an account or sign in, then request a key.</td></tr>
+            <tr><td><strong>OpenAI key</strong></td>
+                <td>At <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">platform.openai.com/api-keys</a> - sign in, then create a secret key.</td></tr>
+        </table>
+
+        <h3>Entering your key</h3>
+        <div class="step"><div class="num">1</div><div class="body">Click <span class="ui">Settings</span> in the top-right header.</div></div>
+        <div class="step"><div class="num">2</div><div class="body">Paste your GIBD or OpenAI key into the <strong>API Key</strong> field.</div></div>
+        <div class="step"><div class="num">3</div><div class="body">Click <span class="ui">Save Key</span>. A status message confirms it was stored.
+            Use <span class="ui">Clear Key</span> to remove it.</div></div>
+
+        <div class="note">API key is <strong>stored locally on your browser</strong> and is never stored on our server. Keep it private, and use
+        <span class="ui">Clear Key</span> to remove it whenever you like.</div>
+
+    </section>
+
+    <!-- ═══════════════════ 4. LAYOUT ═══════════════════ -->
+    <section id="layout">
+        <h2>UI Layout Overview</h2>
+        <figure>
+            <img src="doc/User Interface.png" alt="User Interface" />
+            <figcaption>GIS Co-Scientist user interface overview.</figcaption>
+        </figure>
+      
+
+        <h3>Left sidebar</h3>
+
+        <ul>
+            <li><strong>Top row:</strong> <span class="ui">New chat</span> starts a fresh conversation (see
+                <a href="#conversations">Section 7</a>), and the <span class="kbd">◧</span> button collapses the sidebar.</li>
+            <li><strong>Conversations:</strong> your saved conversations under <em>Recent</em>, with filter and sort controls.</li>
+            <li><strong>Data Sources:</strong> a second tab listing the data sources the assistant can retrieve from (see
+                <a href="#data-sources-manual">Adding a New Data Source</a>).</li>
+        </ul>
+
+        <h3>Center (Chat area)</h3>
+        <p>The middle panel is the conversation itself: the assistant's messages and a multi-line <strong>input box</strong> at the
+        bottom. Below the input box is a <strong>toolbar</strong>:</p>
+        <ul>
+            <li><span class="ui">＋ Add data</span> - upload a dataset (same as the <img src="doc/folder-plus.svg" alt="folder plus" class="ui-icon" /> button in Data Layers).</li>
+            <li><span class="ui">Mode selector</span> - choose the working mode, and switch <strong>Autonomous</strong> and
+                <strong>Auto Data</strong> on or off (see <a href="#modes-models">Section 8</a>).</li>
+            <li><span class="ui">Model selector</span> - see the note under <a href="#modes-models">Models used</a>.</li>
+            <li><span class="ui">Send</span> - submit your request (also doubles as a Stop button while running).</li>
+        </ul>
+        <p>Each stage of a run appears in the chat as a card. Its <span class="ui">Tokens</span> chip shows how many tokens the
+        stage's language-model calls have used so far, and it keeps counting through re-runs, revisions, result analysis and
+        manuscript drafting. Click the chip to see the stage's input, output and total tokens, the number of calls, and a
+        per-call table naming the model used. The totals are saved with the conversation.</p>
+
+        <h3>Right (layers, map and results)</h3>
+        <p>The right region is stacked top to bottom. The <span class="kbd">◨</span> button in the Data Layers header collapses
+        the whole right panel.</p>
+        <ul>
+            <li><span class="ui">Data Layers</span> (top) - every dataset uploaded, downloaded, or produced in this conversation.
+                The <img src="doc/folder-plus.svg" alt="folder plus" class="ui-icon" /> button adds a layer, and clicking the
+                <em>Data Layers</em> title collapses or expands the list (see <a href="#datalayers">Section 6</a>).</li>
+            <li><span class="ui">Map Viewer</span> (middle) - an interactive map that renders data layers.</li>
+            <li><span class="ui">Results and Artifacts</span> (bottom) - analysis outputs, tables, figures, statistics, and report
+                downloads. Clear it with the <span class="ui">×</span> button. Drag the divider between the map and this panel
+                to resize them.</li>
+        </ul>
+    </section>
+
+    <!-- ═══════════════════ 5. SETTINGS ═══════════════════ -->
+    <section id="settings">
+        <h2>Settings</h2>
+        <p class="lead">Opened from the <span class="ui">Settings</span> button.</p>
+
+        <h3>API Key</h3>
+        <p>Enter, show/hide, save, or clear your API key (a GIBD or OpenAI key) - covered in <a href="#apikey">Section 3</a>.</p>
+
+        <h3>Data Source Keys</h3>
+        <p>Some data sources (e.g. the U.S. Census, EPA AQS) require their own API keys. This section lets you store those keys
+        once so you're not asked again:</p>
+        <ul>
+            <li>When a download needs a key you don't have, the system <strong>prompts you inline</strong> in the chat. Whatever you
+                enter is saved here automatically.</li>
+            <li>You can also add keys ahead of time: type the <strong>key name</strong> (e.g.
+                <code>US_Census_demography_key</code>) and its <strong>value</strong>, then click <span class="ui">Add</span>.</li>
+            <li>Saved keys are listed and can be removed individually.</li>
+        </ul>
+        <p>See <a href="#data-mode">Section 9</a> for exactly which sources need a key and where to get one.</p>
+    </section>
+
+    <!-- ═══════════════════ 6. DATA LAYERS ═══════════════════ -->
+    <section id="datalayers">
+        <h2>Data Layers</h2>
+
+        <h3>Adding a data layer</h3>
+        <p>Click the 
+            <img src="doc/folder-plus.svg" alt="folder plus" class="ui-icon" /> button (Data Layers header, top of the right panel) or the <span class="ui">＋</span> in the chat toolbar to open the
+        <em>Add Data Layer</em> dialog. Browse for the file(s), and click <span class="ui">Add Layer</span>.</p>
+
+        <h4>Supported formats</h4>
+        <table>
+            <tr><th>Type</th><th>Extensions</th><th>Notes</th></tr>
+            <tr><td>GeoJSON</td><td><code>.geojson</code> </td><td>Vector features.</td></tr>
+            <tr><td>GeoPackage</td><td><code>.gpkg</code></td><td>Single-file vector store.</td></tr>
+            <tr><td>Shapefile</td><td><code>.shp .shx .dbf .prj</code></td><td>Select <em>all</em> components at once, or zip them.</td></tr>
+            <tr><td>Zipped shapefile</td><td><code>.zip</code></td><td>A ZIP containing the shapefile parts.</td></tr>
+            <tr><td>Tabular</td><td><code>.csv</code> <code>.xlsx</code> <code>.parquet</code></td><td>Joined to geometry during analysis.</td></tr>
+            <tr><td>Raster</td><td><code>.tif</code> <code>.tiff</code></td><td>Imagery / elevation grids.</td></tr>
+        </table>
+        <div class="tip"><strong>Tip:</strong>&nbsp; A shapefile is several files. ZIP all parts together, or select
+        <code>.shp</code>, <code>.shx</code>, <code>.dbf</code> and <code>.prj</code> together in the file picker.</div>
+
+        <h3>The layer drop-down menu</h3>
+        <p>Each layer in the Data Layers list has a context menu (click the layer / its menu control) with these actions:</p>
+        <div class="menu-demo">
+            <div>ℹ&nbsp;&nbsp;Details</div>
+            <div>☰&nbsp;&nbsp;Show Attribute Table</div>
+            <div>🗺&nbsp;&nbsp;Load on Map Viewer</div>
+            <div>👁&nbsp;&nbsp;Preview in Results Panel</div>
+            <div>⤓&nbsp;&nbsp;Download</div>
+            <div class="sep"></div>
+            <div class="danger">🗑&nbsp;&nbsp;Remove Layer</div>
+        </div>
+        <ul>
+            <li><span class="ui">Details</span> - name, file, size, type, and when it was added.</li>
+            <li><span class="ui">Show Attribute Table</span> - browse the layer's records and columns. The attribute table is being displayed in the <em>Results & Artifacts</em> panel.</li>
+            <li><span class="ui">Load on Map Viewer</span> - render the layer on the interactive map.</li>
+            <li><span class="ui">Preview in Results Panel</span> - a quick look in the <em>Results & Artifacts</em> panel.</li>
+            <li><span class="ui">Download</span> - save the layer to your computer.</li>
+            <li><span class="ui">Remove Layer</span> - delete it from this conversation.</li>
+        </ul>
+        <p>A visibility checkbox on each layer toggles whether it's drawn on the map.</p>
+
+        <h3 id="dl-results">Result layers and reloads</h3>
+        <ul>
+            <li><strong>Results go to the map.</strong> When a Spatial Analysis run finishes, its vector outputs are added to Data
+                Layers and drawn on the Map Viewer, and the run's main output opens in <em>Results and Artifacts</em>.</li>
+            <li><strong>Layers survive a reload.</strong> A layer you add from your computer is saved to the conversation right away,
+                and a Spatial Analysis run's map outputs are saved as conversation files. Reloading the page or reopening the
+                conversation brings them back. A layer you remove stays removed, until you add it again, for example by clicking
+                its download tile or using <span class="ui">Add to Map</span> on a result.</li>
+            <li><strong>Follow-up requests can use result layers.</strong> Layers in the list, including results added with
+                <span class="ui">Add to Map</span>, are sent with your next message. For example, after a run that creates county
+                centroids you can ask for "100 m buffers around the centroids" and the system reuses that layer instead of
+                computing it again.</li>
+        </ul>
+    </section>
+
+    <!-- ═══════════════════ 7. CONVERSATIONS ═══════════════════ -->
+    <section id="conversations">
+        <h2>Conversation History and Sharing</h2>
+        <p class="lead">Each conversation is saved automatically and scoped to your API key.</p>
+
+        <h3>History</h3>
+        <ul>
+            <li><span class="ui">New chat</span> starts a fresh conversation with its own data layers and workspace.</li>
+            <li>Conversations are listed in the left sidebar and saved against your API key - sign in with the same key on any
+                machine to get them back.</li>
+            <li>Uploaded files and generated artifacts are stored with the conversation, so reopening it restores its state.</li>
+        </ul>
+
+        <h3>Sharing a conversation</h3>
+        <p>Every conversation has a shareable URL - the browser address updates to include
+        <code>?conversation=&lt;id&gt;</code> as soon as the chat is created. To share, simply copy that link and send it.</p>
+
+        <h4>What happens when someone opens your link</h4>
+        <table>
+            <tr><th>Situation</th><th>Behavior</th></tr>
+            <tr><td>You (the owner) open it</td><td>Full edit access, as normal.</td></tr>
+            <tr><td>Another user opens it (with their own key)</td>
+                <td>They join as a <strong>collaborator</strong>. A banner notes it's a shared conversation; both of you see updates
+                    in the same workspace and artifacts.</td></tr>
+            <tr><td>A collaborator wants a private copy</td>
+                <td><strong>Fork-on-write:</strong> their first change can create an independent copy they own, leaving your original
+                    untouched. (Forking is blocked while a run is still in progress.)</td></tr>
+        </table>
+        
+    </section>
+
+    <!-- ═══════════════════ 8. MODES / MODELS ═══════════════════ -->
+    <section id="modes-models">
+        <h2>Models</h2>
+
+        <h3>Choosing a mode</h3>
+        <p>Open the <em><strong>mode dropdown</strong></em> (bottom-right of the input box, labeled with the current mode) and select one:</p>
+        <table>
+            <tr><th>Mode</th><th>Usage</th><th>Section</th></tr>
+            <tr><td><strong>Data Retrieval</strong></td><td>Download data only - no analysis.</td><td><a href="#data-mode">§9</a></td></tr>
+            <tr><td><strong>Spatial Analysis</strong></td><td>Run a direct spatial analysis on your data.</td><td><a href="#spatial-mode">§10</a></td></tr>
+            <tr><td><strong>Research</strong></td><td>Run the full workflow and draft a manuscript.</td><td><a href="#research-mode">§11</a></td></tr>
+            <tr><td><strong>Chat</strong></td><td>Ask conversational questions, no workflow.</td><td><a href="#chat-mode">§12</a></td></tr>
+        </table>
+
+        <h3>Autonomous mode</h3>
+        <p>Inside the mode dropdown is an <strong>Autonomous</strong> toggle. When on, the system <strong>auto-approves its own
+        plans</strong> and proceeds through checkpoints without pausing for human confirmation - useful for hands-off, end-to-end
+        runs. When off (the default), it stops at each major checkpoint so human can review, revise, or approve.</p>
+        <div class="tip"><strong>When to use it:</strong>&nbsp; Turn Autonomous on once you trust the request and want a complete
+        result in one go; keep it off when you want to steer the analysis step by step.</div>
+
+        <h3>Models used</h3>
+        <p>GIS Co-Scientist is a multi-agent system, so a single run is handled by more than one language model -
+        each step makes its own model call. In the current release every one of those calls uses <strong>GPT-6 Luna</strong>.
+        Each call's model and reasoning effort are set individually in the application's configuration, so
+        a single step can be moved to a different model without affecting the rest.</p>
+        <table>
+            <tr><th>Mode</th><th>Operations / Stages</th><th>Model</th></tr>
+            <tr>
+                <td><strong>Data Retriever</strong></td>
+                <td>
+                    <ul class="cell-list">
+                        <li>User request interpretation</li>
+                        <li>Data source identification</li>
+                        <li>Data download / query code generation</li>
+                    </ul>
+                </td>
+                <td><strong>GPT-6 Luna</strong></td>
+            </tr>
+            <tr>
+                <td><strong>Spatial Analysis</strong></td>
+                <td>
+                    <ul class="cell-list">
+                        <li>User request interpretation</li>
+                        <li>Geoprocessing workflow construction</li>
+                        <li>Operation and analysis code generation, debugging</li>
+                    </ul>
+                </td>
+                <td><strong>GPT-6 Luna</strong></td>
+            </tr>
+            <tr>
+                <td><strong>Research</strong></td>
+                <td>
+                    <ul class="cell-list">
+                        <li>Question understanding</li>
+                        <li>Data retrieval</li>
+                        <li>Research plan generation and review</li>
+                        <li>Code generation and debugging</li>
+                        <li>Result analysis and interpretation</li>
+                        <li>Manuscript drafting</li>
+                    </ul>
+                </td>
+                <td><strong>GPT-6 Luna</strong></td>
+            </tr>
+            <tr>
+                <td><strong>Chat</strong></td>
+                <td><ul class="cell-list"><li>Conversational response generation</li></ul></td>
+                <td><strong>GPT-6 Luna</strong></td>
+            </tr>
+        </table>
+        <p>Most calls run at <em>low</em> reasoning effort; the rest use the model's default. Calls that use tools are sent
+        with reasoning turned off, because GPT-6 Luna does not accept tools and reasoning together. Click a stage card's
+        <span class="ui">Tokens</span> chip to see which model each of its calls used.</p>
+
+        <div class="note"><strong>NOTE:</strong>&nbsp; The <span class="ui">Model</span> and <span class="ui">Reasoning Effort</span>
+        selectors in the input toolbar are reserved for a future update. For now the models are fixed in the
+        application, so changing those selectors does not change the model that runs. <span class="ui">Handbook Studio</span>
+        is the exception: it has its own model picker (see <a href="#dsm-studio">Handbook Studio</a>).</div>
+    </section>
+
+    
+
+    <!-- ═══════════════════ GEOPROCESSING WORKFLOW ═══════════════════ -->
+    <section id="geoprocessing">
+        <h2>Geoprocessing Workflow</h2>
+        
+        
+        <p>Before writing any code, GIS Co-Scientist constructs an explicit <strong>geoprocessing workflow</strong>. The geoprocessing workflow is represented as a directed 
+        graph where <strong>spatial input data</strong> &rarr; <strong>geoprocessing operations / tools</strong> &rarr;
+        <strong> and output data</strong> are connected. Each analytical objective is decomposed into a sequence of spatial operations and the output of one step becomes
+        the input for the next step. This geoprocessing workflow serves as an executable blueprint for any geospatial task.</p>
+
+
+        <figure>
+            <img src="doc/Example_GeoprocessingWorkflow_SpatialAnalysis.jpg" alt="The components of a geoprocessing workflow: input data, operations/tools, and output data" />
+            <figcaption>An example of geoprocessing workflow generated during spatial analysis. <strong>Blue nodes</strong> are <strong>input data</strong>, 
+                <strong>yellow nodes</strong> are <strong>geoprocessing operations/tools</strong>, and <strong>green nodes</strong> are <strong>intermediate outputs</strong>, and <strong>purple nodes</strong> are <strong>final outputs</strong>.</figcaption>
+        </figure>
+
+        <figure>
+            <img src="doc/geoprocessing-workflow.jpg" alt="A geoprocessing workflow graph linking input datasets, geoprocessing operations, and output data across three research objectives" />
+            <figcaption>An example of geoprocessing workflow generated during research mode. <strong>Blue nodes</strong> are <strong>input data</strong>, 
+                <strong>yellow nodes</strong> are <strong>geoprocessing operations/tools</strong>, and <strong>green nodes</strong> are <strong>intermediate outputs</strong>; rows group the workflow by objective, and dashed links show data
+                operations/tools, and green nodes are outputs; rows group the workflow by objective, and dashed links show data
+                reused within and across objectives.</figcaption>
+        </figure>
+
+        
+    </section>
+
+
+    <!-- ═══════════════════ dding a New Data Source ═══════════════════ -->
+    <section id="data-sources-manual">
+        <h2>Adding a New Data Source</h2>
+        <p class="lead">Users are allowed to <strong>register your own data sources</strong> so the
+        assistant can retrieve from them. As a way of allowing contributions, the data sources added by user can be added to the shared data sources which every user has access to.</p>
+
+        
+
+        <h3 id="dsm-open">Opening the Data Sources panel</h3>
+        <p>Click the <span class="ui"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/></svg> Data Sources</span> button (bottom-right of the screen by default). It opens a
+        full-panel view on the right. </p>
+        <p>The launcher can be dragged up the right edge to dock it as a vertical tab. </p>
+        
+
+        <h3 id="dsm-tabs">The two tabs</h3>
+        <table>
+            <tr><th>Tab</th><th>What it shows</th></tr>
+            <tr><td><strong>My Sources</strong></td><td>The sources you've added, plus the option to add a new one.</td></tr>
+            <tr><td><strong>Shared Sources</strong></td><td>Read-only list of shared sources available to every user.</td></tr>
+            <!-- <tr><td><strong>Review queue</strong></td><td>Admins only - submissions awaiting approval (see <a href="#dsm-review">below</a>).</td></tr> -->
+        </table>
+        
+        <div class="tip"><strong>Tip:</strong>&nbsp; Click a card to open a <strong>detail popup</strong> 
+            (a movable, resizable window) showing
+        its description, website link, required credentials, handbook, and code example. Each card also has an always-visible
+        <span class="ui">⤓ download</span> icon that saves the source as a <code>.toml</code>
+            </div>
+
+        
+
+        <h3 id="dsm-add">Adding a data source</h3>
+       
+        <p>On <strong>My Sources</strong>, click <span class="ui">＋ Add data source</span> and fill in the form:</p>
+        <table>
+            <tr><th>Field</th><th>Purpose</th></tr>
+            <tr><td><strong>Source Name</strong> (required)</td><td>A clear, human-readable name (e.g. <em>NOAA Tides</em>).</td></tr>
+            <tr><td><strong>Brief Description</strong></td><td>One or two sentences - the assistant uses this to decide when to pick the source.</td></tr>
+            <tr><td><strong>Website</strong></td><td>The data source's official site (shown as a link in the detail popup).</td></tr>
+            <tr><td><strong>Handbook / Instructions</strong></td><td>Technical notes: base URL, endpoints, auth, parameters, gotchas - one
+                per line. Use <code>{YOUR_KEY_NAME}</code> where an API key is needed.</td></tr>
+            <tr><td><strong>Code Example</strong></td><td>A working Python snippet that downloads from the source and saves a file.</td></tr>
+        </table>
+        <p>Instead of typing, you can click <span class="ui">Import from file…</span> to load a <code>.toml</code>
+        handbook which fills every field - see <a href="#dsm-handbook">Creating a data source handbook</a> below for how to write one.</p>
+        <!-- <div class="tip"><strong>Tip:</strong>&nbsp; You can customize the downloaded <code>.toml</code> before re-importing it, which makes it easy to copy, back up, or tweak a source without rebuilding it from scratch.</div> -->
+
+
+        <h3 id="dsm-handbook">Creating a data source handbook</h3>
+        <p>A <strong>handbook</strong> is a complete data source definition which provides the technical information that GIS Co-Scientist needs to retrieve data from one specific source.</p>
+        <p>A handbook serves a single data source and is maintained on its own, so adding, updating, or removing a source is plug-and-play. It is normally saved in a structured file format (<code>.toml</code>).</p>
+        <!-- <p> All the fields contained in a handbook are described in the table under
+        <a href="#dsm-add">Adding a data source</a></p> -->
+        
+        
+
+        <h4>Writing a good handbook</h4>
+        <p>A handbook consists of three required parts: data_source_name, brief_description, and handbook.</p>
+        <table>
+            <tr><th>Field</th><th>Description</th></tr>
+            <tr><td><strong><code>data_source_name</code></strong></td><td>A short, meaningful, human-readable name - for example
+                <code>OpenStreetMap</code>, <code>US_Census_demography</code>, <code>US_Census_boundary</code>,
+                <code>OpenTopography</code>, <code>OpenWeather</code>, <code>COVID_NYT</code>, or
+                <code>ESRI_world_imagery</code>.</td></tr>
+            <tr><td><strong><code>brief_description</code></strong></td><td>One line describing the source so the assistant knows when to use
+                it. Include the critical scope - geographic <em>extent</em> and time <em>period</em>. E.g. for
+                <code>COVID_NYT</code>: <em>"US COVID-19 data by the New York Times. Cumulative counts of COVID-19 cases and deaths
+                in the United States, at the state and county level, from 2020-01-21 to 2023-03-23."</em></td></tr>
+            <tr><td><strong><code>handbook</code></strong></td><td>This is the most critical section of the handbook. This includes the technical requirements for downloading from the data source -
+                one requirement per line. Cover the access URL and endpoints, the parameters and their allowed values,
+                the column/attribute names.</td></tr>
+        </table>
+
+
+        <p>Other fields of the handbook include: Code example, website</p> 
+        <table>
+            <tr><th>Optional field</th><th>Description</th></tr>
+            <tr><td><code>code_example</code></td><td>  A short, working Python snippet that downloads data from this source and saves it to a file. The assistant uses it as
+                a verified template, so keep it self-contained: put the logic in a <code>download_data()</code> function with a final line that calls it, use
+                <code>{KEY_NAME}</code> placeholders for any credentials, and save to a plain relative filename. See example </td></tr>
+
+            <tr><td><code>website</code></td><td>  The data source's official homepage. It's shown in the source's details for reference and lets users quickly verify or
+                learn more about the provider.</td></tr>
+
+        </table>
+        
+
+        <p>Beyond these fields, a few best practices for the handbook (instructions):</p>
+        <ul>
+            <li><strong>Be explicit about endpoints and parameters.</strong> State the exact URL pattern, and for each parameter
+                say what it means and what it accepts (allowed values, min/max, defaults).</li>
+            <li><strong>Use placeholders for credentials.</strong> Write <code>{KEY_NAME}</code> wherever a key or login is needed -
+                never hard-code a real key. (The placeholder names must match the credential names you list - see
+                <a href="#dsm-credentials">Sources that need an API key</a>.)</li>
+            
+            <li><strong>Surface errors.</strong> Instruct the code to raise on failure (an invalid key, a bad response) rather than
+                silently swallowing exceptions, so problems are visible.</li>
+        </ul>
+
+        
+        <div class="tip"><strong>Tip:</strong>&nbsp; An example of a complete handbook is provided here: (<a href="data_agent/DataRetriever_Handbooks/Handbooks/OpenStreetMap.toml" download="OpenStreetMap.toml">Data source handbook example</a>). In creating a new handbook, you don't have to start from scratch - download the example provided or other existing source as a
+        <code>.toml</code> (the <span class="ui">⤓</span> icon), edit its handbook and code, and re-import it with
+        <span class="ui">Import from file…</span>.</div>
+
+
+        <h3 id="dsm-studio">Generating a handbook with Handbook Studio</h3>
+        <p>Rather than writing a handbook by hand, you can have one generated and tested. Click
+        <span class="ui">Handbook Studio</span> in the header to open it. It works through one source at a time, in three sections:</p>
+        <div class="step"><div class="num">1</div><div class="body"><strong>Setup</strong> - give the data source name, its
+            documentation URL, or both, and optionally the retrieval task to test with. You can also choose the
+            <em>service type</em> (REST API, STAC, OGC Service, ArcGIS FeatureServer, bulk or HTTP file download, SQL, or your own),
+            or leave it on <em>Auto-select</em>. Pick the provider (OpenAI, or the Claude Agent SDK if the server supports it), the
+            model used to generate the handbook, the model that writes and debugs the retrieval code, and, for OpenAI models, the
+            reasoning effort. The default is GPT-6 Luna at low effort for both.</div></div>
+        <div class="step"><div class="num">2</div><div class="body"><strong>Generate &amp; retrieve</strong> - the model researches
+            the source on the web, drafts the handbook and checks it, then pauses so you can review and edit it. Once you continue,
+            it writes retrieval code from the handbook, runs it, and reports whether the run passed, failed, or produced the wrong
+            output.</div></div>
+        <div class="step"><div class="num">3</div><div class="body"><strong>Session report</strong> - every run in the session,
+            with exports.</div></div>
+        <p>The handbook review card has two buttons. One <strong>downloads</strong> the handbook as a <code>.toml</code> you can
+        re-import later. The other <strong>adds it to My Sources</strong> as a private data source, and asks first if a source with
+        the same name already exists. Sessions can be saved, shared by link, and duplicated from the Studio's header.</p>
+        <div class="note"><strong>NOTE:</strong>&nbsp; Handbook Studio works with either a <strong>GIBD key</strong> or an
+        <strong>OpenAI API key</strong>. Its web research uses OpenAI web search, which a GIBD key reaches through the GIBD
+        service. The Claude Agent SDK provider also needs an Anthropic API key, entered in Settings or in the Studio's
+        provider picker.</div>
+
+
+        <h3 id="dsm-credentials">Sources that need an API key or credentials</h3>
+        <p>Turn on <span class="ui">This source needs an API key or credentials</span> and list the credential name(s),
+        comma-separated (e.g. <code>EPA_AQS_email, EPA_AQS_key</code>).</p>
+        <ul>
+            <li>ensures each name appears as a <code>{name}</code> placeholder in the handbook, so its value can be substituted at
+                retrieval time</li>
+            
+        </ul>
+        <p>The actual value will be provided at runtime when the system ask for it. You can also provide it under <strong>Settings → Data Source Keys</strong>.</p>
+        
+
+        <h3 id="dsm-status">Status, sharing, and approval</h3>
+        <p>When adding a source, the <span class="ui">Allow to be shared with other users</span> allows you to add it to the shared data sources which makes it reusable by other users. 
+        An admin will review it before it's been added to the shared data source. Each data source card added shows a status badge:</p>
+        <table>
+            <tr><th>Badge</th><th>Meaning</th></tr>
+            <tr><td><strong>Private</strong></td><td>Saved to your account only. A <span class="ui">Share</span> button submits it for review.</td></tr>
+            <tr><td><strong>Pending</strong></td><td>Submitted and awaiting an admin's decision.</td></tr>
+            <tr><td><strong>Shared</strong></td><td>Approved and published to the shared data source for everyone.</td></tr>
+            <tr><td><strong>Rejected</strong></td><td>An admin declined it (with an optional reason shown in the popup). A
+                <span class="ui">Resubmit</span> button lets you send it back after edits.</td></tr>
+        </table>
+        <p>Once you add a data source handbook, it's immediately  available to the system for use. Your private copy always stays in your account.</p>
+
+        <h3 id="dsm-manage">Editing, downloading, and deleting</h3>
+        <ul>
+            <li><strong>Edit</strong> - open a card's popup and click <span class="ui">Edit</span> to reopen the form pre-filled; renaming
+                is handled cleanly.</li>
+            <li><strong>Download</strong> - the <span class="ui">⤓</span> icon on any card (or in the popup header) exports the source as
+                <code>.toml</code>.</li>
+            <li><strong>Delete</strong> - the <span class="ui">×</span> on your own cards removes the source (and withdraws any pending
+                submission). Built-in/shared sources are read-only.</li>
+        </ul>
+
+    </section>
+
+    <!-- ═══════════════════ 9. DATA RETRIEVER ═══════════════════ -->
+    <section id="data-mode">
+        <h2>Data Retrieval Mode</h2>
+        <p class="lead"><em>Data retrieval mode: </em>Find and download geospatial datasets from public data
+        sources, without running any analysis.</p>
+
+        <h3 id="dr-use">How to use the Data Retrieval mode</h3>
+        <div class="step"><div class="num">1</div><div class="body">Switch the mode to <strong>Data Retrieval</strong>.</div></div>
+        <div class="step"><div class="num">2</div><div class="body">Describe what you need in natural language. Be as specific as you can about the variables, geography, and time frame (See examples).
+        </div></div>
+        <div class="step"><div class="num">3</div><div class="body">The system identifies the best matching <strong>data
+            source</strong>, fetches the data, and adds it as a new <strong>data layer</strong> you can map and download.</div></div>
+
+        <h4>The "Auto Data" toggle</h4>
+        <p>The <span class="ui">Auto Data</span> switch, in the mode dropdown under <strong>Autonomous</strong>, controls whether data
+        needed for a request is downloaded automatically. It is <strong>on</strong> by default. With it on, the system pulls required
+        datasets without asking each time; with it <strong>off</strong>, it pauses for human confirmation before downloading. The
+        switch appears only for <em>Spatial Analysis</em> and <em>Research</em>, the modes that may need extra data.
+        <em>Data Retrieval</em> mode always downloads, so the switch is hidden there.</p>
+
+        <h3 id="dr-sources">Available data sources</h3>
+        <p>These public sources are built in. The system picks the right one from your request, but you can name a source explicitly.
+        You can also <strong>register your own</strong> sources - see <a href="#data-sources-manual">Adding a New Data Source</a>.</p>
+        <table>
+            <tr><th>Source</th><th>What it provides</th><th>Coverage</th><th>API key?</th></tr>
+            <tr><td><strong><a href="https://api.census.gov" target="_blank" rel="noopener">US Census -  Boundaries</a></strong></td><td>Administrative boundaries: nation, state, county, tract, block group, metro areas.</td><td>USA</td><td><span class="no">No</span></td></tr>
+            <tr><td><strong><a href="https://api.census.gov" target="_blank" rel="noopener">US Census - Demography</a></strong></td><td>Population, gender, income, education, race and other socio-economic variables.</td><td>USA</td><td><span class="yes">Yes</span> (free)</td></tr>
+            <tr><td><strong><a href="https://www.cdc.gov/places/tools/data-portal.html" target="_blank" rel="noopener">CDC PLACES</a></strong></td><td>Chronic-disease, health-outcome, risk-behavior and disability estimates (county / tract / city / ZCTA).</td><td>USA · BRFSS 2019–2023</td><td><span class="no">No</span></td></tr>
+            <tr><td><strong><a href="https://aqs.epa.gov/aqsweb/documents/data_api.html" target="_blank" rel="noopener">EPA AQS</a></strong></td><td>Air-quality monitoring (PM2.5, PM10, ozone, NO₂, SO₂, CO, lead…), daily and annual.</td><td>USA · 1980s–present</td><td><span class="yes">Yes</span> (email + key)</td></tr>
+            <tr><td><strong><a href="https://www.ers.usda.gov/data-products/food-environment-atlas/" target="_blank" rel="noopener">USDA ERS Geospatial</a></strong></td><td>Food access and environment, rural classifications, income, jobs, people, SNAP (county / tract).</td><td>USA</td><td><span class="no">No</span></td></tr>
+            <tr><td><strong><a href="https://earthquake.usgs.gov/fdsnws/event/1/" target="_blank" rel="noopener">USGS Earthquake</a></strong></td><td>Earthquake events via the FDSN Event web service (custom searches).</td><td>Global</td><td><span class="no">No</span></td></tr>
+            <tr><td><strong><a href="https://www.openstreetmap.org" target="_blank" rel="noopener">OpenStreetMap</a></strong></td><td>Administrative boundaries, street networks, points of interest.</td><td>Global</td><td><span class="no">No</span></td></tr>
+            <tr><td><strong><a href="https://portal.opentopography.org/" target="_blank" rel="noopener">OpenTopography</a></strong></td><td>Global DEMs (15 m–1000 m): SRTM, AW3D30, NASADEM, COP30, GEBCO, and more.</td><td>Global</td><td><span class="yes">Yes</span> (free)</td></tr>
+            <tr><td><strong><a href="https://openweathermap.org" target="_blank" rel="noopener">OpenWeather</a></strong></td><td>Historical, current and forecast weather data.</td><td>Global</td><td><span class="yes">Yes</span> (free)</td></tr>
+            <tr><td><strong><a href="https://github.com/nytimes/covid-19-data" target="_blank" rel="noopener">COVID (NYT)</a></strong></td><td>Cumulative COVID-19 cases and deaths, state and county level.</td><td>USA · Jan 2020 – Mar 2023</td><td><span class="no">No</span></td></tr>
+            <tr><td><strong><a href="https://www.naturalearthdata.com" target="_blank" rel="noopener">Natural Earth</a></strong></td><td>Public-domain cartographic vector and raster layers (1:10m / 1:50m / 1:110m) for base maps.</td><td>Global</td><td><span class="no">No</span></td></tr>
+            <tr><td><strong><a href="https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9" target="_blank" rel="noopener">ESRI World Imagery</a></strong></td><td>Satellite image tiles (Web Mercator, EPSG:3857) for export and mosaicking.</td><td>Global</td><td><span class="no">No</span></td></tr>
+        </table>
+
+        <h4>Where to get the free keys</h4>
+        <table>
+            <tr><th>Source</th><th>Sign-up page</th></tr>
+            <tr><td>US Census (Demography)</td><td><a href="https://api.census.gov/data/key_signup.html" target="_blank" rel="noopener">api.census.gov/data/key_signup.html</a></td></tr>
+            <tr><td>EPA AQS</td><td><a href="https://aqs.epa.gov/aqsweb/documents/data_api.html" target="_blank" rel="noopener">aqs.epa.gov/aqsweb/documents/data_api.html</a> (registers an email + key)</td></tr>
+            <tr><td>OpenTopography</td><td><a href="https://portal.opentopography.org/myopentopo" target="_blank" rel="noopener">portal.opentopography.org/myopentopo</a> (500 calls / 24 h on the free tier)</td></tr>
+            <tr><td>OpenWeather</td><td><a href="https://home.openweathermap.org/users/sign_up" target="_blank" rel="noopener">home.openweathermap.org/users/sign_up</a></td></tr>
+        </table>
+        <p>Enter these once under <strong>Settings → Data Source Keys</strong> (or when prompted), and they're reused thereafter.</p>
+
+         <figure>
+            <img src="doc/Data_retriever_Data Source API key.jpg" alt="Inline data-source confirmation cards showing the LLM-suggested source, the finalized source, a confidence score, and Proceed / Always Proceed / Retry / Abort buttons" />
+            <figcaption>Data source key prompted inline when needed.</figcaption>
+        </figure>
+
+
+        <h3 id="dr-multi">Downloading multiple datasets</h3>
+        <p>You can ask for several datasets in one request (e.g. <em>"download 2019 county boundaries and county-level obesity rates
+        for California"</em>). The system retrieves each one and adds them as separate data layers. Each is independently mappable
+        and downloadable, and ready to be merged later in Spatial Analysis or Research mode.</p>
+
+        <h3 id="dr-feedback">Feedback and approval prompts</h3>
+        <p>Data retrieval is interactive. Human may be asked to provide input at two points:</p>
+        <ul>
+            <li><strong>Source confirmation</strong> - if the system isn't fully sure which source to use, it asks you to
+                <em>use</em> the proposed source, <em>retry</em> with a different one, or <em>abort</em>.</li>
+            <li><strong>Download fallback</strong> - if a download fails or a needed file is missing, you can choose to
+                <strong>proceed with available data</strong>, <strong>upload the missing file</strong> yourself, or
+                <strong>abort the workflow</strong>. Uploaded files are audited automatically and folded into the run.</li>
+        </ul>
+
+        <figure>
+            <img src="doc/data-source-confirmation.jpg" alt="Inline data-source confirmation cards showing the LLM-suggested source, the finalized source, a confidence score, and Proceed / Always Proceed / Retry / Abort buttons" />
+            <figcaption>Human-in-the-loop data retrieval. For each dataset the system proposes a source, explains its reasoning,
+                and reports a confidence score; you can <em>Proceed with Download</em>, switch to a different source, <em>Retry</em>
+                the selection, or <em>Abort</em> - keeping you in control of exactly what data enters the analysis.</figcaption>
+        </figure>
+
+        <div class="tip"><strong>Best practice:</strong>&nbsp; Be specific about year, geography level (county vs. tract), and
+        variable name. Vague requests lead to more clarification prompts.</div>
+
+        <h3 id="dr-examples">Examples</h3>
+
+        <h4>Example 1 - County boundaries and obesity data for New York</h4>
+        <p><strong>Request:</strong> <em>"Download boundaries of the counties in New York state and obesity data for New York."</em></p>
+        <figure>
+            <img src="doc/Data_retriever_Example1.jpg" alt="A Data Retriever session that downloads New York county boundaries and county-level obesity data, each added as a separate data layer" />
+            <figcaption>Example 1 - the Data Retriever identifies the right sources, fetches New York county boundaries and
+                obesity data, and adds each as a separate data layer. The full session is available
+                <a href="https://www.gis-coscientist.online/?conversation=d6b3371c-6013-4700-850b-08135830463c" target="_blank" rel="noopener">here</a>.</figcaption>
+        </figure>
+
+        <h4>Example 2 - PM2.5 and county boundaries for California</h4>
+        <p><strong>Request:</strong> <em>"Download 2019 county-level PM2.5 data for California and the corresponding county boundary."</em></p>
+        <figure>
+            <img src="doc/Data_retriever_Example2.jpg" alt="A Data Retriever session downloading 2019 county-level PM2.5 data for California" /><br>
+            
+            <figcaption>Example 2 - the Data Retriever fetches 2019 county-level PM2.5 for California together with the matching
+                county boundaries, adding each as a separate data layer ready to map and analyze. The full session is available
+                <a href="https://www.gis-coscientist.online/?conversation=1e67d323-39cf-447c-ba2d-a65ac1ea911d" target="_blank" rel="noopener">here</a>.</figcaption>
+        </figure>
+
+        <h4>Example 3 - 30 m DEM around State College, PA</h4>
+        <p><strong>Request:</strong> <em>"Fetch a 30 m DEM for the area around State College, PA."</em></p>
+        <figure>
+            <img src="doc/Data_retriever_Example3.jpg" alt="A Data Retriever session downloading a 30 m digital elevation model for the area around State College, Pennsylvania" />
+            <figcaption>Example 3 - the Data Retriever downloads a 30 m digital elevation model (DEM) for the State College, PA
+                area and adds it as a raster layer. The full session is available
+                <a href="https://www.gis-coscientist.online/?conversation=62e370d7-8b4e-46aa-b71e-517001901004" target="_blank" rel="noopener">here</a>.</figcaption>
+        </figure>
+
+
+        
+
+
+
+    </section>
+
+    <!-- ═══════════════════ 10. SPATIAL ANALYSIS ═══════════════════ -->
+    <section id="spatial-mode">
+        <h2>Spatial Analysis Mode</h2>
+        <p class="lead"><em>Spatial Analysis:</em> Run a specific spatial analysis - the system
+        plans the geoprocessing workflow, writes the code, and executes it.</p>
+
+        <h3 id="sa-use">How to use it</h3>
+        <div class="step"><div class="num">1</div><div class="body">Switch the mode to <strong>Spatial Analysis</strong>.</div></div>
+        <div class="step"><div class="num">2</div><div class="body">Upload (or retrieve) the dataset(s) you want to analyze. The <span class="ui">Auto Data</span> mode can be on to automatically retrieve relevant data needed for the any spatial analysis.</div></div>
+        <div class="step"><div class="num">3</div><div class="body">State the analysis you want (See examples).
+            
+           </div></div>
+        <div class="step"><div class="num">4</div><div class="body">Review the <strong>task breakdown</strong>. It says what data the
+            analysis needs and whether the data you already have is sufficient. If it is, nothing is downloaded, even with
+            <span class="ui">Auto Data</span> on, and the chat says which requests were skipped.</div></div>
+        <div class="step"><div class="num">5</div><div class="body">Review the proposed <strong>geoprocessing workflow</strong>
+            (the spatial input &rarr; operation &rarr; output graph described in <a href="#geoprocessing">Section 13</a>).
+            Every dataset in the conversation is treated as a <em>candidate</em>. The workflow designer checks each one's area,
+            time period, units and content against the question, and builds only the ones that fit into the graph. It lists
+            every candidate as used or not used, with a reason. For example, a Pennsylvania county layer left over from an
+            earlier request is left out of a California analysis.
+            You can <strong>approve</strong> the workflow, or send feedback to <strong>revise</strong> it before anything runs.</div></div>
+        <div class="step"><div class="num">6</div><div class="body">The system generates the <strong>code</strong>, executes it, and
+            returns maps, tables, statistics, and figures in the <em>Results</em> panel. Vector outputs are added to Data Layers
+            and the Map Viewer automatically (see <a href="#dl-results">Result layers and reloads</a>).</div></div>
+
+        <figure>
+            <img src="doc/generated-code.jpg" alt="A completed analysis step showing the execution log with output tiles, the generated Python code, and Edit Code / Re-run / Provide Feedback / Re-execute Step controls" />
+            <figcaption>Each step exposes its <strong>generated code</strong> and execution log. Output tiles (console output,
+                tables, figures) appear inline, and you can <em>Edit Code</em>, <em>Re-run</em>, <em>Provide Feedback</em>, or
+                <em>Re-execute</em> a single step - so nothing is a black box.</figcaption>
+        </figure>
+
+        <h3 id="sa-review">Reviewing and re-running</h3>
+        <ul>
+            <li><strong>Inspect</strong> - every step shows the exact geoprocessing operation and the code that implements it.</li>
+            <li><strong>Revise</strong> - give feedback in plain language and the workflow or code is regenerated.</li>
+            <li><strong>Re-run steps</strong> - individual steps can be re-executed without restarting the whole analysis.</li>
+            <li><strong>Build on the result</strong> - send a follow-up request in the same conversation. The result layers on the
+                map are sent with it, so the next analysis can start from them.</li>
+        </ul>
+
+        <h3 id="sa-examples">Examples - Spatial Analysis</h3>
+
+        <h4>Example 1 - Distribution of restaurants by county in Ohio</h4>
+        <p><strong>Request:</strong> <em>"Create a visual representation that displays the distribution of restaurants across each county in Ohio."</em></p>
+        <figure>
+            <img src="doc/Spatial_Analysis_Example1.png" alt="A choropleth map showing the number of restaurants in each county of Ohio" />
+            <figcaption>Example 1 - result map of restaurant counts by Ohio county. The full session is available
+                <a href="https://www.gis-coscientist.online/?conversation=7a180efd-ed01-4cb6-bdd0-70347fe825c4" target="_blank" rel="noopener">here</a>.</figcaption>
+        </figure>
+        <figure>
+            <img src="doc/Spatial Analysis_Workflow_1.jpg" alt="The geoprocessing workflow generated for the Ohio restaurant analysis, linking input data, operations, and outputs" />
+            <figcaption>The geoprocessing workflow GIS Co-Scientist built and ran for Example 1.</figcaption>
+        </figure>
+
+        <h4>Example 2 - Cancer prevalence in South Carolina</h4>
+        <p><strong>Request:</strong> <em>"Create a thematic map showing the distribution of the cancer prevalence in South Carolina."</em></p>
+        <figure>
+            <img src="doc/Spatial_Analysis_Example2.png" alt="A thematic map showing cancer prevalence across South Carolina counties" />
+            <figcaption>Example 2 - thematic map of cancer prevalence across South Carolina. The full session is available
+                <a href="https://www.gis-coscientist.online/?conversation=c3ed9e1b-810f-4963-baed-d6496a2a0d33" target="_blank" rel="noopener">here</a>.</figcaption>
+        </figure>
+        <figure>
+            <img src="doc/Spatial Analysis_Workflow_2.jpg" alt="The geoprocessing workflow generated for the South Carolina cancer-prevalence analysis, linking input data, operations, and outputs" />
+            <figcaption>The geoprocessing workflow GIS Co-Scientist built and ran for Example 2. </figcaption>
+        </figure>
+
+    </section>
+
+    
+
+    <!-- ═══════════════════ 11. RESEARCH ═══════════════════ -->
+    <section id="research-mode">
+        <h2>Research Mode</h2>
+        <p><em>Research:</em> The complete pipeline - from research question to a drafted
+        manuscript.</p>
+
+        <p>Research mode is the most comprehensive mode. Give it a research question and (optionally) data, and it works through the
+        entire scientific process, pausing for human approval at each major checkpoint (unless Autonomous is on).</p>
+
+        <h3 id="rs-start">Starting a research run</h3>
+        <ol>
+            <li>Select <strong>Research</strong> in the mode dropdown.</li>
+            <li>Provide data in one of two ways: add your files as <a href="#datalayers">data layers</a>, or turn on
+                <strong>Auto Data</strong> in the mode dropdown so the system downloads what is missing. If you provide no data and
+                Auto Data is off, the system asks you to do one or the other.</li>
+            <li>Decide whether to turn on <strong>Autonomous</strong>. With it off (the default), the run stops at each checkpoint below.
+                With it on, the run approves its own checkpoints and continues to the manuscript. It still stops if a data source needs
+                an API key it does not have.</li>
+            <li>Type your research question and send it.</li>
+        </ol>
+
+        <h3 id="rs-stages">The workflow stages</h3>
+        <p>A research run passes through the stages below in order. Each stage appears in the chat as its own card with live progress.</p>
+
+        <div class="step"><div class="num">1</div><div class="body"><strong>Data audit</strong> - every data layer is opened and
+            checked: its format, coordinate reference system, size, and columns. Files that open correctly are added to the run's
+            <em>data registry</em>, the list of data that every later stage works from.</div></div>
+
+        <div class="step"><div class="num">2</div><div class="body"><strong>Question understanding and breakdown</strong> - the
+            <strong>Research Question Understanding Agent</strong> reads your question with the data registry and produces a structured
+            breakdown: a working title, the research intent, the question category, the spatial and temporal scale, the data
+            required, whether the data you supplied is sufficient, and a list of <em>data requests</em> for anything missing.
+            The run then stops at <a href="#rs-cp1">Checkpoint 1</a>.</div></div>
+
+        <div class="step"><div class="num">3</div><div class="body"><strong>Data acquisition</strong> (only with Auto Data on, and only if
+            data is missing) - the <strong>Geospatial Data Retrieval Agent</strong> handles each data request in turn. It chooses a
+            source from its data-source handbooks (<a href="#rs-cp2">Checkpoint 2</a>), writes and runs the download code, and shows the
+            files it delivered. If no handbook fits the request, it can create one for a new source. Downloaded datasets are checked,
+            added to the data registry, and shown in the Data Layers panel like your own uploads.</div></div>
+
+        <div class="step"><div class="num">4</div><div class="body"><strong>Research plan generation</strong> - the
+            <strong>Planning Agent</strong> works in three passes:
+            <ul>
+                <li><em>Generate:</em> it inspects the datasets with its tools and drafts the plan as objectives, each with a hypothesis and
+                    a sequence of analysis steps.</li>
+                <li><em>Review:</em> a second pass checks the draft against the actual data (column names, join keys, and whether each
+                    step's inputs are produced by an earlier step) and corrects it.</li>
+                <li><em>Finalize:</em> every step's inputs are linked to a dataset or to an earlier step's output, and every output is
+                    given a file location.</li>
+            </ul>
+            The plan is shown with its <a href="#geoprocessing">geoprocessing workflow</a>, and the run stops at
+            <a href="#rs-cp3">Checkpoint 3</a>.</div></div>
+
+        <div class="step"><div class="num">5</div><div class="body"><strong>Code generation and execution</strong> - objectives run one
+            after another. Within each objective:
+            <ul>
+                <li>Each step is assigned to the agent best suited to it (for example, the <strong>Data Agent</strong> for joins and
+                    cleaning, the <strong>Modeling Agent</strong> for statistical and spatial models).</li>
+                <li>The agent writes Python code for the step and runs it. Code, console output, and produced files appear in a tile
+                    for that step.</li>
+                <li>If the code fails, a <strong>debugger</strong> investigates the error (checking columns, file paths, coordinate
+                    systems, and earlier outputs), repairs the code, and runs it again, up to two repair attempts per step.</li>
+                <li>If a step still fails or produces empty data, any later step that depends on its output is <em>skipped</em> rather
+                    than run on missing input. You can fix and re-run these steps at <a href="#rs-cp4">Checkpoint 4</a>.</li>
+            </ul>
+            Progress is saved after every step, so a reload does not lose completed work.</div></div>
+
+        <div class="step"><div class="num">6</div><div class="body"><strong>Result analysis</strong> - the <strong>Result Analysis
+            Agent</strong> collects the outputs of every step, by objective, and builds a <strong>figures and tables catalog</strong>:
+            the maps, charts, and result tables that will go into the paper, each with a caption. The catalog is shown as thumbnails
+            in the chat.</div></div>
+
+        <div class="step"><div class="num">7</div><div class="body"><strong>Manuscript drafting</strong> - the <strong>Reporting
+            Agent</strong> searches the literature (Semantic Scholar) for papers related to your question and objectives, then writes
+            the paper one section at a time, in order: Title &amp; Abstract, Introduction, Methodology, Results, Discussion, Conclusion,
+            and References. Each section appears in the chat as soon as it is written. See
+            <a href="#rs-manuscript">The manuscript deliverable</a>.</div></div>
+
+        <div class="step"><div class="num">8</div><div class="body"><strong>Execution flowchart</strong> - finally, a flowchart of the
+            steps that actually ran is generated. Click any step in it to see that step's code and outputs.</div></div>
+
+
+        <h3 id="human-ai-collaboration">Human-AI collaboration in the research mode</h3>
+
+        <p>GIS Co-Scientist incorporates <strong>human-in-the-loop checkpoints</strong> at the stages where expert judgment most
+        strongly conditions the validity of downstream inference. At each checkpoint you can either approve and let the system
+        proceed, or provide feedback that re-prompts the responsible agent with targeted revisions - all before any external
+        code is generated or executed.</p>
+
+        <table>
+            <tr><th>Checkpoint</th><th>When it appears</th><th>With Autonomous on</th></tr>
+            <tr><td><a href="#rs-cp1">1 - Task breakdown</a></td><td>After question understanding</td><td>Proceeds automatically</td></tr>
+            <tr><td><a href="#rs-cp2">2 - Data source selection</a></td><td>For each data request, with Auto Data on</td><td>Proceeds automatically, but still stops for a missing or rejected API key</td></tr>
+            <tr><td><a href="#rs-cp3">3 - Research plan review</a></td><td>After plan generation</td><td>Plan is approved automatically</td></tr>
+            <tr><td><a href="#rs-cp4">4 - Execution review</a></td><td>After all objectives have run</td><td>Skipped</td></tr>
+        </table>
+
+        <h3 id="rs-cp1">Checkpoint 1 - Task breakdown and data requirements</h3>
+        <p>The first checkpoint follows the <strong>research question understanding</strong> stage, where the breakdown and the
+        <strong>data requirements</strong> are shown, along with whether the data you supplied is sufficient. Two options are given:</p>
+            <ul>
+                <li><strong>Proceed</strong> - instructs the system to move on to retrieval and planning.</li>
+                <li><strong>Provide feedback</strong> - you can give feedback in natural language describing what's missing or wrong.
+                    Only the parts your feedback asks about are revised, and you can review again.</li>
+            </ul>
+        <p>If data is missing and Auto Data is off, the card offers to turn Auto Data on for this run, or to continue with only the data you have.
+        If the breakdown judges your data sufficient, nothing is downloaded, even with Auto Data on, and the chat notes which
+        requests were skipped.</p>
+
+        <!-- [insert DataRequirements image] -->
+
+        <h3 id="rs-cp2">Checkpoint 2 - Data source selection (optional)</h3>
+        <p>A second checkpoint is triggered by the <strong>Geospatial Data Retrieval Agent</strong> once it has
+        selected an appropriate data source for each unmet data requirement. The chosen source is shown with the rationale for
+        its selection and a confidence score. Before any download code is generated, you can:</p>
+            <ul>
+                <li><strong>Proceed</strong> with the suggested source, or <strong>Always Proceed</strong> to accept the agent's choice
+                    for the remaining requests in this run.</li>
+                <li><strong>Change the source</strong> to another one from the list, or <strong>generate a new skill</strong> (handbook)
+                    for a source the system does not know yet.</li>
+                <li>Enter an <strong>API key</strong> if the source needs one. Keys you enter are reused for later requests to the same
+                    source. See also <a href="#dsm-credentials">Sources that need an API key</a>.</li>
+                <li><strong>Retry</strong> or <strong>abort</strong> the request.</li>
+            </ul>
+        <p>After the download, you can review the files that were delivered before the run continues. If a request fails, you can
+        retry it, skip it and continue with the data you have, or stop the run.</p>
+
+        <!-- [insert DataSourceConfirmation image] -->
+
+        <h3 id="rs-cp3">Checkpoint 3 - Research plan review</h3>
+        <p>The third checkpoint occurs during <strong>research plan generation</strong>. Through a dedicated revision interface
+        you can operate on the finalized plan before approving it for execution.</p>
+        <p>The planner treats every dataset in the conversation as a candidate. It checks each one's area, time period, units and
+        content against the question, and plans only with the datasets that fit. Where nothing fits, it flags a data gap rather
+        than stretching an unfit dataset. It records every candidate as used or not used, with a reason, and the plan reviewer
+        checks this data fitness first. In the plan review you can:</p>
+        <ul>
+            <li><strong>Edit the plan directly</strong> - change an objective's title or hypothesis, edit step descriptions, and add or
+                delete steps. When you delete a step, the system re-links the remaining steps so that none of them depends on the
+                deleted step's output. The geoprocessing workflow is redrawn to match.</li>
+            <li><strong>Provide feedback</strong> - give natural-language feedback describing the desired changes to the plan, and the system regenerates a revised plan based on your input.</li>
+            <li><strong>Approve Plan</strong> - starts code generation and execution.</li>
+        </ul>
+
+        <!-- [insert ResearchPlanReview image] -->
+
+        <h3 id="rs-cp4">Checkpoint 4 - Execution review</h3>
+        <p>The fourth checkpoint occurs immediately after objective execution. An <strong>execution checkpoint</strong> surfaces
+        a per-step summary of statuses (completed, error, or skipped), errors, and produced artifacts. In each step, you can do
+        any of the following:</p>
+        <ul>
+            <li><strong>Edit code</strong> - you can edit the code by editing the text directly.</li>
+            <li><strong>Re-run the step</strong> - if a step failed or produced unsatisfactory output, you can re-run it without affecting other steps.</li>
+            <li><strong>Provide feedback</strong> - you can give natural-language feedback describing any desired change to the code; the system regenerates
+                the code for that step based on your input, and you can re-run it - without affecting other steps in the workflow.</li>
+            <li><strong>Re-execute Step</strong> - you can re-execute a step to refresh its output or apply changes.</li>
+        </ul>
+        <p>After re-running steps, click <strong>Update Status</strong> to refresh the summary. Click <strong>Proceed</strong> to
+        continue to result analysis and manuscript drafting.</p>
+
+        <!-- [insert ExecutionCheckpoint image] -->
+
+        <!-- <h4>Checkpoint 5 - Figures and tables catalog</h4>
+        <p>The fifth checkpoint lets you verify the <strong>figures and tables catalog</strong> created by the
+        <strong>Result Analysis Agent</strong> before it is passed to the <strong>Reporting Agent</strong>.</p>
+        [insert FiguresTablesCatalog image] -->
+
+        <h3 id="rs-posthoc">Post-hoc step revisitation</h3>
+        <p>At any point after execution you may return to an individual step and supply natural-language feedback describing the desired
+        modification - a methodological refinement, a parameter adjustment, an alternative model specification, or a corrected
+        interpretation. You may then choose to propagate the revised outputs into the manuscript, at which point the Reporting
+        Agent selectively regenerates only the sections whose input has changed - preserving editorial continuity while keeping
+        the final document faithful to the most recent analytical state.</p>
+        <div class="note"><strong>Returning to a Task Breakdown card:</strong>&nbsp; <span class="ui">Proceed</span> and
+        <span class="ui">Provide feedback</span> on a Task Breakdown card always resume that card's own turn, in Research and
+        Spatial Analysis alike, never an earlier or later turn of the conversation. A card works only while its turn is still
+        waiting. Once a newer request in the conversation has replaced it, clicking it shows <em>"This Task Breakdown is no
+        longer waiting"</em>. Send your request again to continue.</div>
+
+        <h3 id="rs-examples">Research mode examples</h3>
+      
+
+
+        <h4>Example 1 - Spatial inequalities in air pollution exposure and income inequality in California </h4>
+        <p><strong>Request:</strong> <em>"How do spatial inequalities in PM2.5 exposure across California counties vary with income inequality (Gini) in 2019, and does the spatial relationship vary by urban–rural classification?"</em></p>
+        <figure>
+            <img src="Figures\Figure 4.jpg" alt="Research Question Understanding Agent identifying required datasets" />
+            <figcaption>Research Question Understanding Agent identifying required datasets. </figcaption>
+        </figure>
+        <figure>
+            <img src="Figures\Figure 5\Figure 5a.jpg" alt="Geospatial Data Retrieval Agent showing EPA Air Quality System (AQS) data source for human verification." />
+            <figcaption>Geospatial Data Retrieval Agent showing selected EPA Air Quality System (AQS) data source for human verification.</figcaption>
+        </figure>
+        <figure>
+            <img src="Figures\Figure 5\Figure 5b.jpg" alt="Geospatial Data Retrieval Agent showing US Census Bureau demography data source for human verification." />
+            <figcaption>Geospatial Data Retrieval Agent showing selected US Census Bureau demography data source for human verification.</figcaption>
+        </figure>
+        <figure>
+            <img src="Figures\Figure 5\Figure 5c.jpg" alt="Geospatial Data Retrieval Agent showing USDA ERS data source for human verification." />
+            <figcaption>Geospatial Data Retrieval Agent showing selected USDA ERS data source for human verification.</figcaption>
+        </figure>
+        <figure>
+            <img src="Figures\Figure 5\Figure 5d.jpg" alt="Geospatial Data Retrieval Agent showing US Census Bureau boundary data source for human verification." />
+            <figcaption>Geospatial Data Retrieval Agent showing selected US Census Bureau boundary data source for human verification.</figcaption>
+        </figure>
+        <figure>
+            <img src="Figures\Figure 6.jpg" alt="Research plan generated by Planning Agent." />
+            <figcaption>Research plan generated by Planning Agent.</figcaption>
+        </figure>
+        <figure>
+            <img src="Figures\Figure 7.jpg" alt="Geoprocessing workflow corresponding to the research plan." />
+            <figcaption>Geoprocessing workflow corresponding to the research plan.</figcaption>
+        </figure>
+        <figure>
+            <img src="Figures\Figure 8.jpg" alt="Step-level code generation and execution." />
+            <figcaption>Step-level code generation and execution.</figcaption>
+        </figure>
+        <figure>
+            <img src="Figures\Figure 9.jpg" alt="Execution flowchart of the completed pipeline and a sample step-detail popup." />
+            <figcaption>Execution flowchart of the completed pipeline and a sample step-detail popup.</figcaption>
+        </figure>
+
+        
+
+
+        <div class="tip">The full session of the above example is available at
+                <a href="https://www.gis-coscientist.online/?conversation=a4c5a1b9-449e-440c-a2cf-003513b58787" target="_blank" rel="noopener">here</a>.</div>
+
+
+
+        <h4>Example 2 - Mobility-mediated socioeconomic and mental health analysis</h4>
+        <p><strong>Request:</strong> <em>"How do spatial patterns of mobility (place visitation) mediate the relationship between neighborhood social economic status and
+             depression prevalence across the counties of South Carolina"</em></p>
+        <figure>
+            <img src="Figures\Figure 10.jpg" alt="Research plan for mobility-mediated mediation analysis" />
+            <figcaption>Research plan for mobility-mediated mediation analysis.</figcaption>
+        </figure>
+                
+        
+        <figure>
+            <img src="Figures\Figure 11.jpg" alt="Geoprocessing workflow for mobility-mediated mediation analysis" />
+            <figcaption>Geoprocessing workflow for mobility-mediated mediation analysis. </figcaption>
+        </figure>
+
+        <div class="tip">The full session of the above example is available at
+                <a href="https://www.gis-coscientist.online/?conversation=124e6b8e-ad5a-49f9-802e-87cc5101dda4" target="_blank" rel="noopener">here</a>.</div>
+    
+
+
+        <h4>Example 3 - Proximity to hazardous waste facilities and asthma prevalence in North Carolina</h4>
+            <p><strong>Request:</strong> <em>"How does proximity to hazardous waste facilities influence spatial patterns of asthma prevalence across census tracts of North Carolina,
+                and how do these relationships vary spatially by socioeconomic and demographic context?"</em></p>
+            <figure>
+                <img src="Figures\Figure 12.jpg" alt="Research plan for proximity-based asthma analysis" />
+                <figcaption>Research plan for proximity-based asthma analysis.</figcaption>
+            </figure>
+                    
+            
+            <figure>
+                <img src="Figures\Figure 13.jpg" alt="Geoprocessing workflow for proximity-based asthma analysis" />
+                <figcaption>Geoprocessing workflow for proximity-based asthma analysis. </figcaption>
+            </figure>
+
+            <div class="tip">The full session of the above example is available at
+                    <a href="https://www.gis-coscientist.online/?conversation=c52bc37f-8e66-4df1-b20b-57c92bbd2311" target="_blank" rel="noopener">here</a>.</div>
+        
+
+
+
+
+        <h3 id="rs-manuscript">The manuscript deliverable</h3>
+        <p>The reporting pipeline produces a structured research paper with standard academic sections:</p>
+        <ul>
+            <li><strong>Title and Abstract</strong> - including structured Background / Methods / Results / Conclusions and keywords.</li>
+            <li><strong>Introduction</strong> - framed with literature and study objectives, including the gap in prior work that the study addresses.</li>
+            <li><strong>Methods</strong> - data sources, study area, and analytical methods, following the approved research plan.</li>
+            <li><strong>Results</strong> - quantitative findings, written from the actual step outputs, with the figures and tables from the catalog.</li>
+            <li><strong>Discussion</strong> and <strong>Conclusion</strong> - interpretation, comparison with prior studies, significance, and implications.</li>
+            <li><strong>References</strong> - compiled from the papers cited in the text.</li>
+        </ul>
+        <p>Before drafting, the Reporting Agent searches Semantic Scholar using your question and the objective titles, and sorts the papers it
+        finds into foundational, methodological, regional, and gap-evidence studies. The Introduction and Discussion cite from this set.
+        Figures and tables are renumbered in the order they appear in the text.</p>
+        <p>If one section fails to generate, a placeholder is inserted and the remaining sections are still written. You can regenerate the
+        failed section later.</p>
+        <p>The finished manuscript can be downloaded as <strong>Markdown</strong>, <strong>Word (.docx)</strong>, or <strong>PDF</strong>.
+        Individual stages - analysis, manuscript, specific steps - can be re-run or refined without starting over. When you re-run the
+        manuscript after changing steps, only the sections whose inputs changed are rewritten: changes to the plan update the Title &amp;
+        Abstract, Introduction, and Methodology, and changes to execution results update the Title &amp; Abstract, Results, Discussion, and Conclusion.</p>
+
+        <h3 id="rs-demo">Video Demonstration</h3>
+        <p>Video demonstrations of selected cases are available <a href="https://www.youtube.com/watch?v=oyf4I1VRlLU&amp;list=PL6ON3gdLloDEY4YKHyEIgMhfpMwNRs0a7&amp;index=1" target="_blank" rel="noopener">here</a>.</p>
+    </section>
+
+    <!-- ═══════════════════ 12. CHAT ═══════════════════ -->
+    <section id="chat-mode">
+        <h2>Chat Mode</h2>
+        <p><em>Chat:</em> Plain conversational QandA - no workflow is launched.</p>
+        <p>Use Chat mode to ask questions, clarify concepts, or plan your approach before committing to an analysis. For example:</p>
+        <ul>
+            <li><em>"What's the difference between Global and Local Moran's I?"</em></li>
+            <li><em>"Which data source should I use for county-level income?"</em></li>
+            <li><em>"How should I frame a study of air quality and rurality?"</em></li>
+        </ul>
+        <p>Chat mode answers directly without generating or running code.</p>
+    </section>
+
+
+    
+
+    <!-- ═══════════════════ 14. RESULTS / MAP ═══════════════════
+    <section id="results">
+        <h2>14. Results, Map and Artifacts</h2>
+
+        <figure>
+            <img src="doc/results-map.jpg" alt="The interface during a run: generated code and step outputs in the center, an interactive Map Viewer on the upper right, and a choropleth result map in the Results and Artifacts panel below" />
+            <figcaption>Results in context. The center column streams each step's generated code and output; the
+                <em>Map Viewer</em> (upper right) renders spatial layers, and the <em>Results and Artifacts</em> panel (lower right)
+                shows result maps, tables, and figures - here, a choropleth of the analysis output.</figcaption>
+        </figure>
+
+        <h3>Map Viewer</h3>
+        <ul>
+            <li>Renders your uploaded layers and analysis outputs on an interactive map.</li>
+            <li>Use a layer's <span class="ui">Load on Map Viewer</span> menu action (or its visibility checkbox) to control what's shown.</li>
+            <li>Result layers produced by an analysis can be added back to the map and downloaded like any other layer.</li>
+        </ul>
+
+        <h3>Results and Artifacts</h3>
+        <ul>
+            <li><strong>Generated code</strong> - shown with syntax highlighting and a copy button.</li>
+            <li><strong>Tables and statistics</strong> - model summaries, attribute previews, and numeric results.</li>
+            <li><strong>Figures</strong> - charts and maps.</li>
+            <li><strong>Reports</strong> - drafted result presentations, discussions, and manuscripts, downloadable in document formats.</li>
+            <li>Clear the panel anytime with the <span class="ui">×</span> button; artifacts remain saved with the conversation.</li>
+        </ul>
+    </section> -->
+
+    <!-- ═══════════════════ 14. TIPS ═══════════════════ -->
+    <section id="tips">
+        <h2>13. Tips and Troubleshooting</h2>
+
+        <table>
+            <tr><th>Symptom</th><th>What to check</th></tr>
+            <tr><td>Nothing runs / "API key required"</td><td>Add a valid API key - a GIBD key (<code>gibd-</code>) or an
+                OpenAI key (<code>sk-</code>) - in <span class="ui">Settings</span> and click <span class="ui">Save Key</span>.</td></tr>
+            <tr><td>A data download is rejected for "missing key"</td><td>The source needs a free API key - add it under
+                <strong>Settings → Data Source Keys</strong>, or enter it when prompted. See <a href="#data-mode">§9</a>.</td></tr>
+            <tr><td>Wrong dataset retrieved</td><td>Be explicit about <em>year, geography level, and variable</em>; or name the source
+                directly. Use the source-confirmation prompt to retry.</td></tr>
+            <tr><td>Shapefile won't load</td><td>Include all components (<code>.shp .shx .dbf .prj</code>) or upload them as a single
+                <code>.zip</code>.</td></tr>
+            <tr><td>My conversations disappeared</td><td>They're tied to your API key - make sure the same key is entered.</td></tr>
+            <tr><td>Can't delete a shared conversation</td><td>Only the owner can delete/rename; collaborators have shared access only.</td></tr>
+            
+        </table>
+
+
+
+        <div class="note"><strong>More help:</strong>&nbsp; See the <a href="https://youtube.com/playlist?list=PL6ON3gdLloDE_aLyFjj4X7EYKDDdAfJi2" target="_blank" rel="noopener">video demo playlist</a>
+        and our <a href="https://dx.doi.org/10.2139/ssrn.6753098" target="_blank" rel="noopener">preprint</a>. For further questions or support, please contact Temitope Akinboyewa (tea5209@psu.edu)</div>
+    </section>
+
+    </main>
+
+</div>
+
+<!-- <footer class="footer">
+    GIS Co-Scientist · , Penn State GIScience.
+    This manual describes the web interface; features may evolve between releases.
+</footer> -->
+
+<script>
+    // Expandable left-rail navigation: each page lists its children indented
+    // beneath it. The page in view auto-expands (others collapse) and the active
+    // child is highlighted, all driven by scroll-spy on the section headings.
+    (function(){
+        // Single source of truth. Each page owns one or more `sections` (used to
+        // decide which page is in view) and a list of `items` shown as its children
+        // in the left rail. For multi-section pages the items are the sections;
+        // for a single mode page the items are that section's sub-headings.
+        const PAGES = [
+            { label:'Getting Started',
+              sections:['intro','install','quickstart','apikey'],
+              items:[
+                { id:'intro',         label:'What is GIS Co-Scientist?' },
+                { id:'install',       label:'Installing the Desktop App' },
+                { id:'quickstart',    label:'Quick Start' },
+                { id:'apikey',        label:'API Key' },
+              ]},
+            { label:'The Interface',
+              sections:['layout','settings','datalayers','conversations','modes-models'],
+              items:[
+                { id:'layout',        label:'UI Layout Overview' },
+                { id:'settings',      label:'Settings' },
+                { id:'datalayers',    label:'Data Layers' },
+                { id:'conversations', label:'Conversations & Sharing' },
+                { id:'modes-models',  label:'Modes, Models & Autonomous' },
+              ]},
+            
+            { label:'Geoprocessing Workflow',
+              sections:['geoprocessing'],
+              items:[
+                { id:'gw-what',       label:'What it is' },
+                { id:'gw-modes',      label:'One workflow, every mode' },
+              ]},
+
+            { label:'Adding a New Data Source',
+              sections:['data-sources-manual'],
+              items:[
+                { id:'dsm-open',        label:'Opening the panel' },
+                { id:'dsm-tabs',        label:'The two tabs' },
+                { id:'dsm-add',         label:'Adding a source' },
+                { id:'dsm-handbook',    label:'Creating a handbook' },
+                { id:'dsm-studio',      label:'Handbook Studio' },
+                { id:'dsm-credentials', label:'API keys & credentials' },
+                { id:'dsm-status',      label:'Status & sharing' },
+                { id:'dsm-manage',      label:'Edit, download, delete' },
+                
+              ]},
+            
+            { label:'Data Retrieval Mode',
+              sections:['data-mode'],
+              items:[
+                { id:'dr-use',        label:'How to use it' },
+                { id:'dr-sources',    label:'Available data sources' },
+                { id:'dr-multi',      label:'Downloading multiple datasets' },
+                { id:'dr-feedback',   label:'Feedback & approval' },
+                { id:'dr-examples',   label:'Examples' },
+              ]},
+            { label:'Spatial Analysis Mode',
+              sections:['spatial-mode'],
+              items:[
+                { id:'sa-use',        label:'How to use it' },
+                { id:'sa-review',     label:'Reviewing & re-running' },
+                { id:'sa-examples',   label:'Examples' },
+              ]},
+            { label:'Research Mode',
+              sections:['research-mode'],
+              items:[
+                { id:'rs-start',      label:'Starting a run' },
+                { id:'rs-stages',     label:'The workflow stages' },
+                { id:'human-ai-collaboration', label:'Checkpoints' },
+                { id:'rs-posthoc',    label:'Revisiting steps' },
+                { id:'rs-examples',   label:'Examples' },
+                { id:'rs-manuscript', label:'The manuscript deliverable' },
+                { id:'rs-demo',       label:'Demo' },
+              ]},
+            { label:'Chat Mode',
+              sections:['chat-mode'],
+              items:[
+                { id:'chat-mode',     label:'Overview' },
+              ]},
+
+            
+
+            { label:'Tips and Troubleshooting',
+              sections:['results','tips'],
+              items:[
+                { id:'results',       label:'Results, Map & Artifacts' },
+                { id:'tips',          label:'Tips & Troubleshooting' },
+              ]},
+              
+        ];
+
+        const nav = document.getElementById('toc');
+        if(!nav) return;
+
+        // Build the left rail: each page link followed by a nested subnav of its
+        // children (the items that used to live in the right "On this page" rail).
+        nav.insertAdjacentHTML('beforeend', PAGES.map((p, pi) => {
+            const top = p.sections[0];
+            const kids = p.items.map(it =>
+                '<a class="sub" data-id="' + it.id + '" href="#' + it.id + '">' + it.label + '</a>'
+            ).join('');
+            return '<a class="grp" data-group="' + pi + '" href="#' + top + '">' + p.label + '</a>'
+                 + '<div class="subnav" data-group="' + pi + '">' + kids + '</div>';
+        }).join(''));
+
+        const grpLinks = Array.from(nav.querySelectorAll('a.grp'));
+        const subnavs  = Array.from(nav.querySelectorAll('.subnav'));
+        const subLinks = Array.from(nav.querySelectorAll('a.sub'));
+
+        // Ordered list of sections (for page detection) and resolved item els.
+        const sectionOrder = [];
+        const itemEls = PAGES.map((p, pi) => {
+            p.sections.forEach(id => {
+                const el = document.getElementById(id);
+                if(el) sectionOrder.push({ pi, el });
+            });
+            return p.items.map(it => ({ ...it, el: document.getElementById(it.id) }))
+                          .filter(it => it.el);
+        });
+
+        // Height of the sticky header, used to offset scroll-spy + jumps.
+        const heroH = parseInt(getComputedStyle(document.documentElement)
+                        .getPropertyValue('--hero-h'), 10) || 50;
+
+        let lastKey = '';         // "pageIndex:itemId" of the last applied state
+
+        function apply(pi, id){
+            grpLinks.forEach(l => l.classList.toggle('active', +l.dataset.group === pi));
+            subnavs.forEach(s => s.classList.toggle('open', +s.dataset.group === pi));
+            subLinks.forEach(a => a.classList.toggle('active', a.dataset.id === id));
+        }
+
+        const atBottom = () =>
+            window.innerHeight + window.scrollY >= document.body.scrollHeight - 2;
+
+        function currentPage(){
+            if(atBottom()) return sectionOrder[sectionOrder.length - 1].pi;
+            const y = window.scrollY + heroH + 48;
+            let pi = sectionOrder[0].pi;
+            for(const s of sectionOrder){ if(s.el.offsetTop <= y) pi = s.pi; }
+            return pi;
+        }
+
+        function currentItemId(pi){
+            const items = itemEls[pi];
+            if(!items.length) return '';
+            if(atBottom() && pi === sectionOrder[sectionOrder.length - 1].pi)
+                return items[items.length - 1].id;
+            const y = window.scrollY + heroH + 48;
+            let id = items[0].id;
+            for(const it of items){ if(it.el.offsetTop <= y) id = it.id; }
+            return id;
+        }
+
+        function update(){
+            const pi = currentPage();
+            const id = currentItemId(pi);
+            const key = pi + ':' + id;
+            if(key === lastKey) return;       // nothing changed since last frame
+            lastKey = key;
+            apply(pi, id);
+        }
+
+        // rAF-throttled scroll handler.
+        let ticking = false;
+        window.addEventListener('scroll', () => {
+            if(ticking) return;
+            ticking = true;
+            requestAnimationFrame(() => { update(); ticking = false; });
+        }, { passive:true });
+        window.addEventListener('resize', update);
+        update();
+    })();
+
+    // Doc search: build an index of the manual's content blocks, then show a
+    // ranked results dropdown as you type. Click a result (or Enter) to jump to it.
+    (function(){
+        const input   = document.getElementById('docSearch');
+        const panel   = document.getElementById('searchResults');
+        const main    = document.querySelector('main');
+        if(!input || !panel || !main) return;
+
+        // ── Build the index ──────────────────────────────────────────
+        const index = [];
+        main.querySelectorAll('section').forEach(section => {
+            const h2 = section.querySelector('h2');
+            const sectionTitle = h2 ? h2.textContent.replace(/\s+/g,' ').trim() : '';
+            let heading = sectionTitle;
+            section.querySelectorAll('h2, h3, h4, p, li, td, .step .body').forEach(el => {
+                // Skip list items that are inside a step body (counted via .step .body)
+                if(el.closest('.step .body') && !el.classList.contains('body')) return;
+                // Skip table cells that hold a list — their <li> items are indexed individually
+                if(el.tagName === 'TD' && el.querySelector('ul')) return;
+                const tag = el.tagName.toLowerCase();
+                const text = el.textContent.replace(/\s+/g,' ').trim();
+                if(text.length < 2) return;
+                const isHeading = tag === 'h2' || tag === 'h3' || tag === 'h4';
+                if(isHeading) heading = text;
+                index.push({ el, text, lower: text.toLowerCase(), heading, sectionTitle, isHeading });
+            });
+        });
+
+        // ── Helpers ──────────────────────────────────────────────────
+        const escapeHtml = s => s.replace(/[&<>"]/g, c => ({'&':'and','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+        function snippet(text, q){
+            const i = text.toLowerCase().indexOf(q);
+            if(i < 0) return escapeHtml(text.slice(0, 120));
+            const start = Math.max(0, i - 40);
+            const end = Math.min(text.length, i + q.length + 80);
+            const before = text.slice(start, i);
+            const match  = text.slice(i, i + q.length);
+            const after  = text.slice(i + q.length, end);
+            return (start > 0 ? '… ' : '')
+                 + escapeHtml(before) + '<mark>' + escapeHtml(match) + '</mark>' + escapeHtml(after)
+                 + (end < text.length ? ' …' : '');
+        }
+
+        let results = [], active = -1, debounce;
+
+        function search(q){
+            q = q.toLowerCase();
+            const scored = [];
+            for(const e of index){
+                const pos = e.lower.indexOf(q);
+                if(pos < 0) continue;
+                let score = pos;                       // earlier match ranks higher
+                if(e.isHeading) score -= 1000;         // headings first
+                if(e.lower.startsWith(q)) score -= 200;
+                scored.push({ e, score });
+            }
+            scored.sort((a,b) => a.score - b.score);
+            // De-duplicate by target element, keep best
+            const seen = new Set();
+            results = [];
+            for(const s of scored){
+                if(seen.has(s.e.el)) continue;
+                seen.add(s.e.el);
+                results.push(s.e);
+                if(results.length >= 8) break;
+            }
+            render(q);
+        }
+
+        function render(q){
+            if(!q || q.length < 2){ panel.hidden = true; panel.innerHTML = ''; return; }
+            if(!results.length){
+                panel.innerHTML = '<div class="sr-empty">No matches for “' + escapeHtml(q) + '”.</div>';
+                panel.hidden = false; active = -1; return;
+            }
+            const head = '<div class="sr-head">' + results.length + ' result' + (results.length > 1 ? 's' : '')
+                       + (results.length >= 8 ? '+' : '') + '</div>';
+            panel.innerHTML = head + results.map((e, idx) => {
+                const crumb = e.isHeading ? e.sectionTitle : (e.heading || e.sectionTitle);
+                return '<button type="button" class="sr-item" data-idx="' + idx + '">'
+                     + (crumb ? '<div class="sr-crumb">' + escapeHtml(crumb) + '</div>' : '')
+                     + '<div class="sr-snippet">' + snippet(e.text, q) + '</div></button>';
+            }).join('');
+            panel.hidden = false;
+            active = 0; markActive();
+        }
+
+        function markActive(){
+            const items = panel.querySelectorAll('.sr-item');
+            items.forEach((it,i) => it.classList.toggle('active', i === active));
+            if(items[active]) items[active].scrollIntoView({ block:'nearest' });
+        }
+
+        function go(idx){
+            const e = results[idx];
+            if(!e) return;
+            panel.hidden = true;
+            e.el.scrollIntoView({ behavior:'smooth', block:'center' });
+            e.el.classList.remove('search-flash');
+            void e.el.offsetWidth;            // restart the flash animation
+            e.el.classList.add('search-flash');
+            setTimeout(() => e.el.classList.remove('search-flash'), 1900);
+        }
+
+        // ── Events ───────────────────────────────────────────────────
+        input.addEventListener('input', () => {
+            clearTimeout(debounce);
+            debounce = setTimeout(() => search(input.value.trim()), 150);
+        });
+        input.addEventListener('keydown', e => {
+            if(panel.hidden) return;
+            if(e.key === 'ArrowDown'){ e.preventDefault(); active = Math.min(active + 1, results.length - 1); markActive(); }
+            else if(e.key === 'ArrowUp'){ e.preventDefault(); active = Math.max(active - 1, 0); markActive(); }
+            else if(e.key === 'Enter'){ e.preventDefault(); if(active >= 0) go(active); }
+            else if(e.key === 'Escape'){ panel.hidden = true; }
+        });
+        panel.addEventListener('click', e => {
+            const item = e.target.closest('.sr-item');
+            if(item) go(parseInt(item.dataset.idx, 10));
+        });
+        document.addEventListener('click', e => {
+            if(!e.target.closest('.hero-search')) panel.hidden = true;
+        });
+        input.addEventListener('focus', () => { if(results.length && input.value.trim().length >= 2) panel.hidden = false; });
+
+        // Keyboard shortcuts: "/" or Ctrl/Cmd+K to jump into the search box.
+        document.addEventListener('keydown', e => {
+            const t = e.target;
+            const typing = t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable);
+            if((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')){
+                e.preventDefault(); input.focus(); input.select();
+            } else if(e.key === '/' && !typing){
+                e.preventDefault(); input.focus();
+            }
+        });
+    })();
+
+    // ─────────────────────────────────────────────────────────────────
+    // Click a figure image to open the full-resolution original in a new
+    // browser tab, where the browser's native zoom / pan can be used.
+    (function(){
+        const imgs = Array.from(document.querySelectorAll('main figure img'));
+        imgs.forEach(img => {
+            img.classList.add('zoomable');
+            img.title = 'Click to open the full-resolution image in a new tab';
+            img.addEventListener('click', () => {
+                window.open(img.currentSrc || img.src, '_blank', 'noopener');
+            });
+        });
+    })();
+</script>
+</body>
+</html>

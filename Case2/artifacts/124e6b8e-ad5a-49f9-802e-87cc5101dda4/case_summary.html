@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AGSI Case 3 — Mobility-Mediated Socioeconomic and Mental Health Analysis (South Carolina)</title>
+<style>
+  :root {
+    --fg: #1a1a1a; --muted: #5a5a5a; --bg: #ffffff; --panel: #f7f7f9;
+    --accent: #8a4a9c; --border: #e3e3e8;
+  }
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+         color: var(--fg); background: var(--bg); margin: 0; line-height: 1.6; }
+  .container { max-width: 960px; margin: 0 auto; padding: 32px 24px 64px; }
+  header { border-bottom: 2px solid var(--accent); padding-bottom: 18px; margin-bottom: 28px; }
+  .eyebrow { color: var(--accent); font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.06em; }
+  h1 { font-size: 1.8rem; margin: 6px 0 8px; }
+  .subtitle { color: var(--muted); font-size: 1.0rem; }
+  h2 { font-size: 1.25rem; margin-top: 36px; margin-bottom: 12px; border-left: 4px solid var(--accent); padding-left: 10px; }
+  h3 { font-size: 1.05rem; margin-top: 20px; margin-bottom: 6px; }
+  p, li { font-size: 0.97rem; }
+  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 14px 18px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+  .figure-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; margin-top: 12px; }
+  .figure { background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 10px; }
+  .figure img { width: 100%; height: auto; border-radius: 4px; display: block; }
+  .figure figcaption { font-size: 0.85rem; color: var(--muted); margin-top: 8px; }
+  .pill { display: inline-block; background: var(--accent); color: white; font-size: 0.78rem;
+          padding: 3px 10px; border-radius: 12px; margin-right: 6px; }
+  .links a { color: var(--accent); text-decoration: none; font-weight: 500; margin-right: 18px; }
+  .links a:hover { text-decoration: underline; }
+  ul { padding-left: 20px; }
+  footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--border);
+           font-size: 0.82rem; color: var(--muted); }
+  code { background: var(--panel); padding: 1px 6px; border-radius: 3px; font-size: 0.88rem; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="eyebrow">AGSI Case Study 3 · Methodological Reasoning Fidelity</div>
+  <h1>Mobility-Mediated Socioeconomic and Mental Health Analysis across South Carolina Counties</h1>
+  <p class="subtitle">An Autonomous Geospatial Scientific Inquiry (AGSI) framework demonstration.</p>
+</header>
+
+<section>
+  <h2>Research Question</h2>
+  <div class="panel">
+    <p><em>How do spatial patterns of mobility (place visitation) mediate the relationship between neighborhood
+    socioeconomic status and depression prevalence across the counties of South Carolina?</em></p>
+  </div>
+</section>
+
+<section>
+  <h2>What This Case Demonstrates</h2>
+  <p>This case evaluates the framework's <strong>methodological reasoning fidelity</strong> — its ability to
+  assemble a multi-stage causal-inferential pipeline when none of the constructs named in the research question
+  are directly observable in the data. The system must operationalize latent constructs (socioeconomic status;
+  mobility patterns), compose a formal mediation analysis, and reconcile heterogeneous spatial diagnostics
+  without conflating absence of residual autocorrelation with absence of spatial heterogeneity in slopes.</p>
+  <div>
+    <span class="pill">Latent construct design</span>
+    <span class="pill">Formal mediation pipeline</span>
+    <span class="pill">Spatial diagnostics</span>
+    <span class="pill">Epistemic humility</span>
+  </div>
+</section>
+
+<section>
+  <h2>Workflow Summary</h2>
+  <div class="grid">
+    <div class="panel">
+      <h3>1. RQ Understanding</h3>
+      <p>Identified socioeconomic status as exposure, mobility patterns as a mediator, and depression
+      prevalence as outcome — recognizing that all three must be operationalized from heterogeneous inputs.</p>
+    </div>
+    <div class="panel">
+      <h3>2. Planning</h3>
+      <p>Generated a 3-objective plan covering (i) baseline SES–depression association, (ii) SES–mobility
+      composition relationship, and (iii) formal mediation testing with parallel spatial diagnostics.</p>
+    </div>
+    <div class="panel">
+      <h3>3. Execution</h3>
+      <p>Constructed a composite SES index from z-scored ACS indicators; derived a 10-category POI visitation
+      share vector, computed Shannon-entropy mobility diversity, and extracted a dominant compositional axis
+      via PCA. Fitted OLS, bootstrap mediation (ACME / ADE / total), residual Moran's <em>I</em>, spatial error
+      model, and GWR with AICc-selected bandwidth.</p>
+    </div>
+    <div class="panel">
+      <h3>4. Result Analysis &amp; Reporting</h3>
+      <p>Result Analysis Agent compiled GWR choropleths, residual diagnostics, and the mediation-effects
+      table; Reporting Agent assembled a measured, hypothesis-aware manuscript that explicitly qualified
+      mixed evidence.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Data Sources (User-Supplied)</h2>
+  <ul>
+    <li><strong>SC_ACS_data</strong> — county-level American Community Survey socioeconomic indicators.</li>
+    <li><strong>SC_counties</strong> — South Carolina county boundary geometries (46 counties).</li>
+    <li><strong>SC_PLACES_depression</strong> — CDC PLACES county-level depression prevalence.</li>
+    <li><strong>SC_Visitor_POI</strong> — point-of-interest visitation counts across 10 categories.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>Selected Outputs</h2>
+  <div class="figure-grid">
+    <figure class="figure">
+      <img src="choropleth_b_mobility_PC1.png" alt="GWR coefficient: mobility PC1">
+      <figcaption>Local coefficient on the dominant mobility-composition axis (mobility_PC1).</figcaption>
+    </figure>
+    <figure class="figure">
+      <img src="choropleth_b_Med_income.png" alt="GWR coefficient: median income">
+      <figcaption>Local coefficient on county median income, showing spatial non-stationarity.</figcaption>
+    </figure>
+    <figure class="figure">
+      <img src="choropleth_gwr_localR2.png" alt="GWR local R-squared">
+      <figcaption>Local <em>R</em>² from the geographically weighted regression model.</figcaption>
+    </figure>
+    <figure class="figure">
+      <img src="ols_residuals_qqplot.png" alt="OLS residuals QQ plot">
+      <figcaption>Normal QQ plot of OLS residuals from the outcome model.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section>
+  <h2>Generated Artifacts</h2>
+  <p class="links">
+    <a href="manuscript.pdf">📄 Manuscript (PDF)</a>
+    <a href="manuscript.md">📝 Manuscript (Markdown)</a>
+    <a href="manuscript.docx">📘 Manuscript (DOCX)</a>
+    <a href="research_plan_final.md">📋 Final Research Plan</a>
+    <a href="execution_flowchart.html">🧭 Execution Flowchart</a>
+    <a href="rq_breakdown.json">🔍 RQ Breakdown (JSON)</a>
+  </p>
+</section>
+
+<footer>
+  Generated by the Autonomous Geospatial Scientific Inquiry (AGSI) framework ·
+  Task ID: <code>124e6b8e-ad5a-49f9-802e-87cc5101dda4</code>
+</footer>
+
+</div>
+</body>
+</html>

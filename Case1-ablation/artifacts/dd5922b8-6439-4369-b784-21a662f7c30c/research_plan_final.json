@@ -1,0 +1,59 @@
+{
+  "title": "Spatial Inequalities in PM2.5 Exposure and Income Inequality in California, 2019",
+  "research_question": "How do spatial inequalities in PM2.5 exposure across California counties vary with income inequality (Gini) in 2019, and does the spatial relationship vary by urban–rural classification?",
+  "research_intent": "The research aims to investigate how inequalities in PM2.5 exposure in California counties are associated with income inequalities, measured by the Gini index, and how these relationships differ across urban and rural classifications.",
+  "ablation": "no_planning",
+  "objectives": [
+    {
+      "number": 1,
+      "title": "How do spatial inequalities in PM2.5 exposure across California counties vary with income inequality (Gini) in 2019, and does the spatial relationship vary by urban–rural classification?",
+      "hypothesis": "",
+      "data_requirements": [
+        {
+          "source_id": "california_counties_2019",
+          "description": "Uploaded dataset",
+          "data_gap": false
+        },
+        {
+          "source_id": "California_UrbanRural_Classification_2019",
+          "description": "Uploaded dataset",
+          "data_gap": false
+        },
+        {
+          "source_id": "California_Counties_Gini_2019",
+          "description": "Uploaded dataset",
+          "data_gap": false
+        },
+        {
+          "source_id": "PM2.5_Annual_California_2019_1",
+          "description": "Uploaded dataset",
+          "data_gap": false
+        }
+      ],
+      "steps": [
+        {
+          "step_number": 1,
+          "operation_type": "statistical",
+          "operation": "Direct code generation for the full research question (no plan)",
+          "input_nodes": [
+            "california_counties_2019",
+            "California_UrbanRural_Classification_2019",
+            "California_Counties_Gini_2019",
+            "PM2.5_Annual_California_2019_1"
+          ],
+          "output_node": "analysis_results.csv",
+          "description": "Answer the research question end to end: How do spatial inequalities in PM2.5 exposure across California counties vary with income inequality (Gini) in 2019, and does the spatial relationship vary by urban–rural classification?\n\nResearch question breakdown:\n- Intent: The research aims to investigate how inequalities in PM2.5 exposure in California counties are associated with income inequalities, measured by the Gini index, and how these relationships differ across urban and rural classifications.\n- Brief description: This research seeks to understand the spatial variations in PM2.5 pollution relative to income inequality, examining whether these spatial patterns differ based on urban-rural classifications in California counties for the year 2019. It involves analyzing relationships between PM2.5 exposure levels, income distribution (Gini index), and urban-rural status.\n- Category: explanatory\n- Spatial scale: county\n- Temporal scale: 2019\n- Data requirement: [\"County-level PM2.5 exposure data\", \"County-level Gini index (income inequality) data\", \"County-level urban-rural classification\", \"California counties geometry data for spatial analysis\"]\n\nDo all data preparation, analysis, and visualization this requires in one script, and save the key quantitative results to analysis_results.csv.",
+          "expected_output": "The analyses, tables, and figures needed to answer the research question.",
+          "output_node_path": "C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\Outputs\\dd5922b8-6439-4369-b784-21a662f7c30c\\analysis_results.csv",
+          "input_node_paths": {
+            "california_counties_2019": "C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\WebUI\\uploads\\dd5922b8-6439-4369-b784-21a662f7c30c\\california_counties_2019.gpkg",
+            "California_UrbanRural_Classification_2019": "C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\WebUI\\uploads\\dd5922b8-6439-4369-b784-21a662f7c30c\\California_UrbanRural_Classification_2019.csv",
+            "California_Counties_Gini_2019": "C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\WebUI\\uploads\\dd5922b8-6439-4369-b784-21a662f7c30c\\California_Counties_Gini_2019.csv",
+            "PM2.5_Annual_California_2019_1": "C:\\Users\\akinb\\OneDrive - The Pennsylvania State University\\PhD Work\\RESEARCH PROJECTS\\GIS-co-scientist\\WebUI\\uploads\\dd5922b8-6439-4369-b784-21a662f7c30c\\PM2.5_Annual_California_2019_1.csv"
+          }
+        }
+      ]
+    }
+  ],
+  "timestamp": "2026-10-04 14:45:51"
+}

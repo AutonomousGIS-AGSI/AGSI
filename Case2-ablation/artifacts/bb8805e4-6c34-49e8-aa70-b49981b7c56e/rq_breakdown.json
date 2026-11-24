@@ -1,0 +1,24 @@
+{
+  "title": "Mediation of Neighborhood Socioeconomic Status on Depression by Mobility Patterns",
+  "intent": "The intent is to examine how spatial patterns of mobility, specifically place visitation, influence the connection between neighborhood socioeconomic status and depression prevalence within the counties of South Carolina.",
+  "brief_description": "This study explores the mediation role of place visitation patterns in the relationship between neighborhood socioeconomic status and depression prevalence across different counties in South Carolina. It involves assessing how the frequency and types of places visited within counties relate to socioeconomic conditions and how these factors together impact depression rates.",
+  "category": "Explanatory",
+  "scale": {
+    "temporal_scale": null,
+    "spatial_scale": "County"
+  },
+  "data_requirement": [
+    "Visitor data to places of interest within counties",
+    "Depression prevalence rates across counties",
+    "Socioeconomic data including income, education, and employment across counties",
+    "Geospatial boundary data for counties in South Carolina"
+  ],
+  "data_available_sufficiency": "The available data meet the basic requirements to address the research question, as they provide information on place visitation, depression prevalence, socioeconomic status, and county boundaries.",
+  "data_available": [
+    "SC_Visitor_POI with mobility (place visitation) data categorized by types of venues across counties",
+    "SC_PLACES_depression with county-level depression prevalence data",
+    "SC_counties with geometric data providing boundary information for counties",
+    "SC_ACS_data with socioeconomic variables at the county level"
+  ],
+  "data_requests": null
+}
