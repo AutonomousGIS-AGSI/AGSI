@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Explore GIS Co-Scientist, download the desktop app, and access research case studies, video demos, and supplemental materials.">
 <title>GIS Co-Scientist | Autonomous Geospatial Scientific Inquiry</title>
 <style>
   :root {
@@ -25,7 +26,7 @@
   }
   a { color: var(--accent); }
   a:focus-visible { outline: 3px solid #00675f; outline-offset: 4px; }
-  .wrap { width: min(1160px, calc(100% - 2.5rem)); margin-inline: auto; }
+  .wrap { width: min(1100px, calc(100% - clamp(2rem, 6vw, 5rem))); margin-inline: auto; }
   .skip-link { position: absolute; top: .75rem; left: .75rem; padding: .6rem 1rem; background: white; z-index: 1; }
   .skip-link:not(:focus) { clip-path: inset(50%); }
 
@@ -47,13 +48,13 @@
   .site-nav a:hover { color: var(--accent); text-decoration: underline; text-underline-offset: .25em; }
 
   .hero {
-    background: linear-gradient(110deg, #edf7f3 20%, transparent), repeating-linear-gradient(90deg, transparent 0 47px, #d6e7e5 47px 48px), repeating-linear-gradient(0deg, #e8f3f2 0 47px, #d6e7e5 47px 48px);
+    background: radial-gradient(ellipse at top right, #dcefe9, transparent 62%), #edf6f3;
     border-bottom: 1px solid var(--border);
-    padding-block: clamp(3rem, 8vw, 6.25rem);
+    padding-block: clamp(2.75rem, 6vw, 5rem);
   }
   .eyebrow { margin: 0 0 .8rem; color: var(--accent); font-size: .875rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
   h1, .section-title { font-family: var(--heading); font-weight: 400; line-height: 1.12; }
-  h1 { margin: 0; font-size: clamp(2.65rem, 7vw, 5.5rem); letter-spacing: -.045em; }
+  h1 { margin: 0; font-size: clamp(2.5rem, 6vw, 4.75rem); letter-spacing: -.045em; }
   .lede { max-width: 58ch; margin: 1.15rem 0 0; color: var(--muted); font-size: clamp(1.06rem, 2vw, 1.24rem); }
   .hero-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.65rem; }
   .button { padding: .7rem 1.1rem; border: 1px solid var(--accent); border-radius: .4rem; font-weight: 650; text-decoration: none; background: var(--panel); }
@@ -101,28 +102,33 @@
   .video-frame:hover .play { background: rgb(0 0 0 / 12%); }
   .play svg { width: 3.25rem; height: auto; filter: drop-shadow(0 2px 6px rgb(0 0 0 / 40%)); }
 
-  .resources { grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); }
+  .resources { grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); }
   .resource { display: grid; gap: .3rem; align-content: start; }
   .resource .label { font-weight: 700; }
   .resource .meta { color: var(--muted); font-size: .9rem; }
   .figure { margin: 1.5rem 0 0; padding: 1rem; background: white; border: 1px solid var(--border); border-radius: .65rem; }
   .figure img { display: block; width: 100%; height: auto; }
-  .layout { display: grid; grid-template-columns: 13rem minmax(0, 1fr); gap: 3.5rem; align-items: start; }
-  .content > section:first-child { margin-top: 2.75rem; }
-  .toc { position: sticky; top: 0; max-height: 100vh; overflow-y: auto; padding-block: 2.75rem 1.5rem; font-size: .92rem; line-height: 1.4; }
-  .toc-title { margin: 0 0 .5rem; padding-left: .8rem; color: var(--muted); font-size: .78rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
-  .toc ul { list-style: none; margin: 0; padding: 0; }
-  .toc a { display: block; padding: .35rem .8rem; border-left: 2px solid var(--border); color: var(--muted); text-decoration: none; }
-  .toc ul ul a { padding-left: 1.6rem; font-size: .87rem; }
-  .toc a:hover { color: var(--accent); }
-  .toc a.active { border-left-color: var(--accent); color: var(--accent); font-weight: 650; }
-  main section section { margin-block: 2.25rem 0; }
-  .sub-title { margin: 0 0 .6rem; font-size: 1.3rem; line-height: 1.3; }
-  .video-cat { scroll-margin-top: 1.5rem; }
-  @media (max-width: 900px) {
-    .layout { display: block; }
-    .toc { display: none; }
+  .content > section { margin-block: 0; padding-block: clamp(2.25rem, 5vw, 3.5rem); }
+  .content > section + section { border-top: 1px solid var(--border); }
+  #desktop { margin: 1.25rem 0 0; padding: clamp(1.15rem, 3.5vw, 1.8rem); background: var(--panel); border: 1px solid var(--border); border-radius: .65rem; }
+  .sub-title { margin: 0 0 .55rem; font-size: 1.2rem; line-height: 1.3; }
+  .download-platform, .download-platform select { max-width: 100%; }
+  .install-help { margin: .8rem 0 0; }
+  .setup-note { margin: .85rem 0 0; }
+  .figure { max-width: 48rem; }
+  .study-details { margin-top: .7rem; border: 1px solid var(--border); border-radius: .5rem; background: var(--panel); padding: .65rem 1rem; }
+  .study-details summary { cursor: pointer; font-weight: 650; }
+  .study-details summary:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .study-details[open] summary { margin-bottom: .75rem; }
+  .demo-nav { display: flex; flex-wrap: wrap; gap: .45rem .65rem; margin-top: 1rem; }
+  .demo-nav a { padding: .25rem .65rem; border: 1px solid var(--border); border-radius: .35rem; background: var(--panel); font-size: .9rem; }
+  .video-cat, .study-details summary { scroll-margin-top: 1.25rem; }
+  @media (max-width: 44rem) {
+    .header-inner { gap: .6rem; }
+    .site-nav { flex-basis: 100%; gap: .1rem .9rem; }
+    .site-nav a { font-size: .88rem; }
   }
+
   .source-list { margin: 0; padding-left: 1.25rem; }
   .source-list li { margin-block: .45rem; }
   footer { border-top: 1px solid var(--border); background: var(--panel); }
@@ -144,8 +150,8 @@
     <nav class="site-nav" aria-label="Main navigation">
       <a href="#about">About</a>
       <a href="#case-studies">Case studies</a>
-      <a href="#demos">Video demos</a>
-      <a href="#materials">Supplemental materials</a>
+      <a href="#demos">Demos</a>
+      <a href="#materials">Materials</a>
       <a href="https://doi.org/10.1080/10095020.2026.2764024" target="_blank" rel="noopener noreferrer">Paper</a>
       <a href="https://autonomousgis-agsi.github.io/AGSI/user_manual" target="_blank" rel="noopener noreferrer">User Manual</a>
       <a class="gibd-logo-link" href="https://giscience.psu.edu" target="_blank" rel="noopener noreferrer">
@@ -166,63 +172,9 @@
       </div>
     </div>
   </div>
-  <div class="wrap layout">
-  <nav class="toc" aria-label="Table of contents">
-    <p class="toc-title">Contents</p>
-    <ul>
-      <li><a href="#about">About</a></li>
-      <li><a href="#get-started">Get started</a>
-        <ul>
-          <li><a href="#desktop">Download the desktop app</a></li>
-        </ul>
-      </li>
-      <li><a href="#case-studies">Case studies</a>
-        <ul>
-          <li><a href="#partial-run">Partially failed run</a></li>
-          <li><a href="#ablation">Ablation runs</a></li>
-        </ul>
-      </li>
-      <li><a href="#demos">Video demos</a>
-        <ul>
-          <li><a href="#demos-intro">Introduction</a></li>
-          <li><a href="#demos-data">Data Retrieval</a></li>
-          <li><a href="#demos-spatial">Spatial Analysis</a></li>
-          <li><a href="#demos-research">Research</a></li>
-        </ul>
-      </li>
-      <li><a href="#materials">Paper and supplemental materials</a></li>
-      <li><a href="#source-code">Source code</a></li>
-    </ul>
-  </nav>
-  <div class="content">
-  <section id="about">
-    <h2 class="section-title">About the project</h2>
-    <p class="section-intro">GIS Co-Scientist takes a research question, <strong>plans</strong> the analytical steps, <strong>executes</strong> them, and <strong>generates a first draft manuscript</strong>. With a <strong>human in the loop</strong>, it pauses at key stages so you can review, edit, and approve its work before it continues. The same interface also supports standalone <strong>data retrieval</strong> and <strong>spatial analysis</strong>.</p>
-    <figure class="figure">
-      <img src="assets/framework.jpg" alt="GIS Co-Scientist framework: a human in the loop guides a layer of specialized agents, backed by a reproducibility layer">
-    </figure>
-  </section>
-
+  <div class="wrap content">
   <section id="get-started">
     <h2 class="section-title">Get started</h2>
-    <div class="resources">
-      <a class="resource" href="#desktop">
-        <span class="label">Desktop app (recommended)</span>
-        <span class="meta">Runs on your own computer, on Windows or macOS.</span>
-      </a>
-      <a class="resource" href="https://www.gis-coscientist.online/" target="_blank" rel="noopener">
-        <span class="label">WebUI</span>
-        <span class="meta">Runs in your browser, with nothing to install.</span>
-      </a>
-      <a class="resource" href="desktop-install.html">
-        <span class="label">Installation guide</span>
-        <span class="meta">Steps to install the desktop app on each operating system.</span>
-      </a>
-      <a class="resource" href="https://autonomousgis-agsi.github.io/AGSI/user_manual" target="_blank" rel="noopener">
-        <span class="label">User Manual</span>
-        <span class="meta">How to set up and use each mode.</span>
-      </a>
-    </div>
     <section id="desktop">
     <h3 class="sub-title">Download the desktop app</h3>
     <p class="section-intro">Choose your operating system to open its installation guide and download the installer. On a Mac, check About This Mac to see whether you have an Apple chip or an Intel processor.</p>
@@ -236,13 +188,19 @@
           <option value="mac-intel">macOS Intel (.dmg)</option>
         </select>
       </label>
-      <button class="button launch" type="submit">Download installer</button>
+      <button class="button launch" type="submit">Continue to installation</button>
     </form>
-    <noscript>
-      <p><a href="desktop-install.html">Open the desktop installation guide</a></p>
-    </noscript>
-    <p class="section-intro" style="margin: 1.5rem 0 0">Use your own <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">OpenAI API key</a> to run GIS Co-Scientist. A <a href="https://www.gibd.online" target="_blank" rel="noopener">GIBD key</a> is only a backup for testing or trying out the system.</p>
+    <p class="install-help"><a href="desktop-install.html">View installation guides for all platforms</a></p>
+    <p class="section-intro setup-note">Use your own <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">OpenAI API key</a> to run GIS Co-Scientist. A <a href="https://www.gibd.online" target="_blank" rel="noopener">GIBD key</a> is only a backup for testing or trying out the system.</p>
     </section>
+  </section>
+
+  <section id="about">
+    <h2 class="section-title">About the project</h2>
+    <p class="section-intro">GIS Co-Scientist takes a research question, <strong>plans</strong> the analytical steps, <strong>executes</strong> them, and <strong>generates a first draft manuscript</strong>. With a <strong>human in the loop</strong>, it pauses at key stages so you can review, edit, and approve its work before it continues. The same interface also supports standalone <strong>data retrieval</strong> and <strong>spatial analysis</strong>.</p>
+    <figure class="figure">
+      <img src="assets/framework.jpg" alt="GIS Co-Scientist framework: a human in the loop guides a layer of specialized agents, backed by a reproducibility layer">
+    </figure>
   </section>
 
   <section id="case-studies">
@@ -251,25 +209,24 @@
     <div class="cases">
       <a class="case" href="Case1/index.html">
         <div class="num">Case 01</div>
-        <h3>Spatial Inequalities in Air Pollution Exposure and Income Inequality in California</h3>
-        <p>Research question: How do spatial inequalities in PM2.5 exposure across California counties vary with income inequality (Gini) in 2019, and does the spatial relationship vary by urban–rural classification?</p>
+        <h3>Air pollution and income inequality in California</h3>
+        <p>How do spatial inequalities in PM2.5 exposure across California counties vary with income inequality (Gini) in 2019, and does the spatial relationship vary by urban–rural classification?</p>
         <span class="open">View case study</span>
       </a>
       <a class="case" href="Case2/index.html">
         <div class="num">Case 02</div>
         <h3>Mobility-Mediated Health</h3>
-        <p>Research question: How do spatial patterns of mobility (place visitation) mediate the relationship between neighborhood social economic status and depression prevalence across the counties of South Carolina?</p>
+        <p>How do spatial patterns of mobility (place visitation) mediate the relationship between neighborhood social economic status and depression prevalence across the counties of South Carolina?</p>
         <span class="open">View case study</span>
       </a>
       <a class="case" href="Case3/index.html">
         <div class="num">Case 03</div>
-        <h3>Proximity-Based Spatial Modeling of Hazardous Waste Exposure and Asthma Prevalence in North Carolina</h3>
-        <p>Research question: How does proximity to hazardous waste facilities influence spatial patterns of asthma prevalence across census tracts of North Carolina, and how do these relationships vary spatially by socioeconomic and demographic context?</p>
+        <h3>Hazardous waste exposure and asthma in North Carolina</h3>
+        <p>How does proximity to hazardous waste facilities influence spatial patterns of asthma prevalence across census tracts of North Carolina, and how do these relationships vary spatially by socioeconomic and demographic context?</p>
         <span class="open">View case study</span>
       </a>
     </div>
-    <section id="partial-run">
-    <h3 class="sub-title">Partially failed run</h3>
+    <details class="study-details"><summary id="partial-run">Partially failed run</summary>
     <div class="cases single">
       <a class="case" href="Case4/index.html">
         <div class="num">Case 04</div>
@@ -278,9 +235,8 @@
         <span class="open">View partial run</span>
       </a>
     </div>
-    </section>
-    <section id="ablation">
-    <h3 class="sub-title">Ablation runs</h3>
+    </details>
+    <details class="study-details"><summary id="ablation">Ablation runs</summary>
     <p class="section-intro">The same three research questions, run without the Planning Agent.</p>
     <div class="cases">
       <a class="case" href="Case1-ablation/index.html">
@@ -299,15 +255,17 @@
         <span class="open">View ablation run</span>
       </a>
     </div>
-    </section>
+    </details>
   </section>
 
   <section id="demos">
     <h2 class="section-title">Video demonstrations</h2>
-    <!--
-      Each tile opens the video on YouTube in a new tab.
-      Thumbnail comes from img.youtube.com/vi/<ID>/maxresdefault.jpg.
-    -->
+    <nav class="demo-nav" aria-label="Video categories">
+      <a href="#demos-intro">Introduction</a>
+      <a href="#demos-data">Data Retrieval</a>
+      <a href="#demos-spatial">Spatial Analysis</a>
+      <a href="#demos-research">Research</a>
+    </nav>
 
     <h3 class="video-cat" id="demos-intro">Introduction</h3>
     <div class="videos solo">
@@ -478,29 +436,13 @@
     </ul>
   </section>
 
-  </div></div></main>
+  </div>
+</main>
 <footer><div class="wrap site-footer">
     <span>GIS Co-Scientist &middot; Autonomous Geospatial Scientific Inquiry (AGSI)</span>
     <span><a href="https://github.com/AutonomousGIS-AGSI/AGSI">View on GitHub</a></span>
 </div></footer>
 <script>
-  const tocLinks = [...document.querySelectorAll('.toc a')];
-  const tocTargets = tocLinks.map((a) => document.getElementById(a.hash.slice(1)));
-  const markToc = () => {
-    let current = 0;
-    tocTargets.forEach((el, i) => { if (el.getBoundingClientRect().top <= 60) current = i; });
-    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) {
-      // The last sections can't reach the top, so a clicked one keeps its highlight.
-      const clicked = tocLinks.findIndex((a) => a.hash === location.hash);
-      current = clicked > current ? clicked : tocLinks.length - 1;
-    }
-    tocLinks.forEach((a, i) => a.classList.toggle('active', i === current));
-  };
-  addEventListener('scroll', markToc, { passive: true });
-  addEventListener('resize', markToc);
-  addEventListener('hashchange', markToc);
-  markToc();
-
   const desktopDownload = document.getElementById('desktop-download');
   desktopDownload.addEventListener('submit', (event) => {
     event.preventDefault();
