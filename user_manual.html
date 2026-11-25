@@ -510,7 +510,8 @@
     <section id="data-sources-manual">
         <h2>Adding a New Data Source</h2>
         <p class="lead">Users are allowed to <strong>register your own data sources</strong> so the
-        assistant can retrieve from them. As a way of allowing contributions, the data sources added by user can be added to the shared data sources which every user has access to.</p>
+        assistant can retrieve from them. You can also propose a source for the shared data sources that every user has access to (see
+        <a href="#dsm-status">Sharing a data source</a>).</p>
 
         
 
@@ -542,7 +543,7 @@
         <table>
             <tr><th>Field</th><th>Purpose</th></tr>
             <tr><td><strong>Source Name</strong> (required)</td><td>A clear, human-readable name (e.g. <em>NOAA Tides</em>).</td></tr>
-            <tr><td><strong>Brief Description</strong></td><td>One or two sentences - the assistant uses this to decide when to pick the source.</td></tr>
+            <tr><td><strong>Brief Description</strong> (required in the desktop app)</td><td>One or two sentences - the assistant uses this to decide when to pick the source.</td></tr>
             <tr><td><strong>Website</strong></td><td>The data source's official site (shown as a link in the detail popup).</td></tr>
             <tr><td><strong>Handbook / Instructions</strong></td><td>Technical notes: base URL, endpoints, auth, parameters, gotchas - one
                 per line. Use <code>{YOUR_KEY_NAME}</code> where an API key is needed.</td></tr>
@@ -645,18 +646,47 @@
         <p>The actual value will be provided at runtime when the system ask for it. You can also provide it under <strong>Settings → Data Source Keys</strong>.</p>
         
 
-        <h3 id="dsm-status">Status, sharing, and approval</h3>
-        <p>When adding a source, the <span class="ui">Allow to be shared with other users</span> allows you to add it to the shared data sources which makes it reusable by other users. 
-        An admin will review it before it's been added to the shared data source. Each data source card added shows a status badge:</p>
+        <h3 id="dsm-status">Sharing a data source</h3>
+        <p>A source you add is private and available to the system immediately. Sharing it is optional, and you keep your own copy
+        either way.</p>
+
+        <h4 id="dsm-share-desktop">Sharing a data source on the Desktop app</h4>
+        <p>The desktop app proposes your source to the
+        <a href="https://github.com/Teakinboyewa/GIS-co-scientist-catalog" target="_blank" rel="noopener">shared catalog on GitHub</a>
+        as a pull request. You need a free GitHub account.</p>
+        <div class="step"><div class="num">1</div><div class="body"><strong>Submit:</strong> click <span class="ui">Submit</span> on the
+            source's card, or turn on <span class="ui">Submit to the shared catalog</span> when adding the source.</div></div>
+        <div class="step"><div class="num">2</div><div class="body"><strong>Sign in to GitHub</strong> (first time only): click
+            <span class="ui">Get a sign-in code</span>, then <span class="ui">Copy code and open GitHub</span>. Paste the code on GitHub
+            and approve <em>GIS Co-Scientist</em>. You never type your GitHub password into the app.</div></div>
+        <div class="step"><div class="num">3</div><div class="body"><strong>Wait for review:</strong> the app opens the pull request for
+            you, and GIBD reviews it on GitHub. Once it is merged, every desktop app that is online gets the source under
+            <span class="ui">Shared Sources</span> the next time it opens.</div></div>
+        <p>The card shows where the source stands:</p>
+        <table>
+            <tr><th>On the card</th><th>Meaning</th></tr>
+            <tr><td><strong>Private</strong></td><td>Your own copy, saved on your computer. It stays <em>Private</em> after you submit it.</td></tr>
+            <tr><td><span class="ui">Submit</span></td><td>Proposes the source to the shared catalog.</td></tr>
+            <tr><td><span class="ui">In review ↗</span></td><td>You have submitted the source. Opens the pull request on GitHub, where you
+                can see whether it was merged and any comments. The link stays after the review ends.</td></tr>
+            <tr><td><span class="ui">Resubmit</span></td><td>Sends your latest edits as a new pull request.</td></tr>
+        </table>
+        <div class="note"><strong>NOTE:</strong>&nbsp; A pull request is public and shows your GitHub username. Only credential
+        <em>names</em> are included from the credentials field, never their values. The app checks the source first and does not
+        submit one that contains something that looks like an API key or token.</div>
+
+        <h4 id="dsm-share-webui">Sharing a data source on the WebUI</h4>
+        <p>Turn on <span class="ui">Allow to be shared with other users</span> when adding the source, or click
+        <span class="ui">Share</span> on its card later. An admin reviews it before it is added to the shared data sources. The card
+        shows a status badge:</p>
         <table>
             <tr><th>Badge</th><th>Meaning</th></tr>
-            <tr><td><strong>Private</strong></td><td>Saved to your account only. A <span class="ui">Share</span> button submits it for review.</td></tr>
+            <tr><td><strong>Private</strong></td><td>Saved to your account only.</td></tr>
             <tr><td><strong>Pending</strong></td><td>Submitted and awaiting an admin's decision.</td></tr>
             <tr><td><strong>Shared</strong></td><td>Approved and published to the shared data source for everyone.</td></tr>
             <tr><td><strong>Rejected</strong></td><td>An admin declined it (with an optional reason shown in the popup). A
                 <span class="ui">Resubmit</span> button lets you send it back after edits.</td></tr>
         </table>
-        <p>Once you add a data source handbook, it's immediately  available to the system for use. Your private copy always stays in your account.</p>
 
         <h3 id="dsm-manage">Editing, downloading, and deleting</h3>
         <ul>
@@ -664,8 +694,9 @@
                 is handled cleanly.</li>
             <li><strong>Download</strong> - the <span class="ui">⤓</span> icon on any card (or in the popup header) exports the source as
                 <code>.toml</code>.</li>
-            <li><strong>Delete</strong> - the <span class="ui">×</span> on your own cards removes the source (and withdraws any pending
-                submission). Built-in/shared sources are read-only.</li>
+            <li><strong>Delete</strong> - the <span class="ui">×</span> on your own cards removes the source. In the desktop app, a pull
+                request you already opened stays open; close it on GitHub to withdraw it. In the WebUI, any pending submission is
+                withdrawn. Built-in/shared sources are read-only.</li>
         </ul>
 
     </section>
@@ -1278,7 +1309,7 @@
                 { id:'dsm-handbook',    label:'Creating a handbook' },
                 { id:'dsm-studio',      label:'Handbook Studio' },
                 { id:'dsm-credentials', label:'API keys & credentials' },
-                { id:'dsm-status',      label:'Status & sharing' },
+                { id:'dsm-status',      label:'Sharing a data source' },
                 { id:'dsm-manage',      label:'Edit, download, delete' },
                 
               ]},
