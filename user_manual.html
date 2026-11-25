@@ -404,6 +404,8 @@
             <tr><td><strong>Data Retrieval</strong></td><td>Download data only - no analysis.</td><td><a href="#data-mode">Data Retrieval Mode</a></td></tr>
             <tr><td><strong>Spatial Analysis</strong></td><td>Run a direct spatial analysis on your data.</td><td><a href="#spatial-mode">Spatial Analysis Mode</a></td></tr>
             <tr><td><strong>Research</strong></td><td>Run the full workflow and draft a manuscript.</td><td><a href="#research-mode">Research Mode</a></td></tr>
+            <tr><td><strong>Research (no planning)</strong></td><td>Run the research workflow without a research plan.</td><td><a href="#rs-noplan">Research (no planning)</a></td></tr>
+            <tr><td><strong>Single Agent</strong></td><td>Let one agent run the whole research workflow.</td><td><a href="#rs-single">Single Agent</a></td></tr>
             <tr><td><strong>Chat</strong></td><td>Ask conversational questions, no workflow.</td><td><a href="#chat-mode">Chat Mode</a></td></tr>
         </table>
 
@@ -1081,6 +1083,30 @@
         waiting. Once a newer request in the conversation has replaced it, clicking it shows <em>"This Task Breakdown is no
         longer waiting"</em>. Send your request again to continue.</div>
 
+        <h4 id="rs-variants">Other research modes</h4>
+        <p>The mode dropdown has two simpler versions of Research mode. They are meant for <strong>comparison</strong>: they show what
+        planning and multiple agents add to the results. For regular work, use <strong>Research</strong>.</p>
+        <table>
+            <tr><th></th><th>Research</th><th>Research (no planning)</th><th>Single Agent</th></tr>
+            <tr><td><strong>Who does the work</strong></td><td>Specialized agents</td><td>Specialized agents, without the Planning Agent</td><td>One agent</td></tr>
+            <tr><td><strong>Research plan</strong></td><td>Generated, reviewed, and shown for approval</td><td>None</td><td>Written by the agent, with no separate review or approval</td></tr>
+            <tr><td><strong>Data</strong></td><td>Uploaded, or downloaded with Auto Data</td><td>Uploaded, or downloaded with Auto Data</td><td>Uploaded only</td></tr>
+            <tr><td><strong>Checkpoints</strong></td><td>1 to 4</td><td>1, 2 and 4</td><td>None</td></tr>
+            <tr><td><strong>Autonomous</strong></td><td>Available</td><td>Available</td><td>Not used, as the run never pauses</td></tr>
+            <tr><td><strong>Manuscript</strong></td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
+        </table>
+
+        <h5 id="rs-noplan">Research (no planning)</h5>
+        <p>The same workflow as Research mode with the <strong>Planning Agent</strong> switched off. After the question breakdown, the
+        <strong>Modeling Agent</strong> writes code for the whole question in one step. Data retrieval, debugging, result analysis and
+        manuscript drafting work as in Research mode.</p>
+
+        <h5 id="rs-single">Single Agent</h5>
+        <p>One agent does everything, from understanding the data and planning to analysis and the manuscript. Upload your data before
+        you send the question. The run goes straight through without review pauses, and each script it runs appears in the chat as its
+        own card. Use the Stop button to end it early. A run can also end without a manuscript if the agent reaches its limit of 200
+        turns or stops before saving one.</p>
+
         <h4 id="rs-examples">Examples</h4>
       
 
@@ -1342,6 +1368,7 @@
                   { id:'rs-stages', label:'The workflow stages', parent:'research-mode' },
                   { id:'human-ai-collaboration', label:'Checkpoints', parent:'research-mode' },
                   { id:'rs-posthoc', label:'Revisiting steps', parent:'research-mode' },
+                  { id:'rs-variants', label:'Other research modes', parent:'research-mode' },
                   { id:'rs-examples', label:'Examples', parent:'research-mode' },
                   { id:'rs-manuscript', label:'The manuscript deliverable', parent:'research-mode' },
                   { id:'rs-demo', label:'Demo', parent:'research-mode' },
