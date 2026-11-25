@@ -102,10 +102,11 @@
 
     main{flex:1 1 auto;min-width:0;max-width:1500px;padding:30px 0 90px}
     section{margin-bottom:46px;scroll-margin-top:calc(var(--hero-h) + 12px)}
-    section>h2{font-size:25px;color:var(--brand-dark);margin:0 0 4px;padding-bottom:10px;border-bottom:2px solid var(--line)}
+    section>h2{font-size:28px;color:var(--brand-dark);margin:0 0 4px;padding-bottom:10px;border-bottom:2px solid var(--line)}
     section>lead{color:var(--muted);margin:6px 0 18px;font-size:16px}
-    h3{font-size:19px;color:var(--brand-dark);margin:30px 0 8px}
-    h4{font-size:16px;color:var(--brand);margin:22px 0 6px}
+    h3{font-size:24px;color:var(--brand-dark);margin:30px 0 8px}
+    h4{font-size:21px;color:var(--brand);margin:24px 0 6px}
+    h5{font-size:19px;color:var(--brand-dark);margin:20px 0 6px}
     p{margin:10px 0; font-size: 18px; font-family: "Segoe UI", sans-serif, -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial;}
     ul,ol{margin:10px 0;padding-left:24px}
     li{margin:5px 0;font-size:16px}
@@ -167,7 +168,7 @@
 
     .mode-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin:12px 0}
     .mode-grid .card{margin:0}
-    .mode-grid h4{margin-top:0}
+    .mode-grid h4{margin-top:0;font-size:18px}
     .mode-grid .pill{background:none;color:inherit;padding:0;border-radius:0;font-size:inherit;font-weight:700;font-family:"Bahnschrift Bold","Bahnschrift","DIN Alternate",sans-serif}
 
     .menu-demo{font-family:"SF Mono",Consolas,monospace;font-size:13px;background:#fff;border:1px solid var(--line);

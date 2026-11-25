@@ -88,7 +88,7 @@
             <p>Unlike general-purpose AI assistants, GIS Co-Scientist plans an explicit <strong>geoprocessing workflow</strong> -
             a directed graph of spatial input data, geoprocessing operations/tools, and output data - before any code is written.
             This workflow is the geospatial backbone shared across the three working modes (Data Retriever, Spatial Analysis, and
-            Research), and it is shown to you for review. See <a href="#modes">Modes</a>.</p>
+            Research), and it is shown to you for review. See <a href="#modes">Choosing a Mode</a>.</p>
         </div> -->
     </section>
 
@@ -189,7 +189,7 @@
             Outputs appear in the <em>Map Viewer</em> and <em>Results and Artifacts</em> panels on the right.</div></div>
 
         <div class="tip"><strong>NOTE:</strong>&nbsp; Turn on <em><strong>Autonomous</strong></em> mode (in the mode dropdown) if you want the
-        system to auto-approve its own plans and run end-to-end with minimal interruption (see <a href="#modes">Modes</a>).</div>
+        system to auto-approve its own plans and run end-to-end with minimal interruption (see <a href="#modes">Choosing a Mode</a>).</div>
     </section>
 
     <!-- ═══════════════════ 3. API KEY ═══════════════════ -->
@@ -248,7 +248,7 @@
         <ul>
             <li><span class="ui">＋ Add data</span> - upload a dataset (same as the <img src="doc/folder-plus.svg" alt="folder plus" class="ui-icon" /> button in Data Layers).</li>
             <li><span class="ui">Mode selector</span> - choose the working mode, and switch <strong>Autonomous</strong> and
-                <strong>Auto Data</strong> on or off (see <a href="#modes">Modes</a>).</li>
+                <strong>Auto Data</strong> on or off (see <a href="#modes">Choosing a Mode</a>).</li>
             <li><span class="ui">Model selector</span> - shows the model. Changing it does not change the model that runs (see <a href="#models">LLM Models used</a>).</li>
             <li><span class="ui">Send</span> - submit your request (also doubles as a Stop button while running).</li>
         </ul>
@@ -395,9 +395,9 @@
 
     <!-- ═══════════════════ 8. MODES ═══════════════════ -->
     <section id="modes">
-        <h2>Modes</h2>
+        <h2>Choosing a Mode</h2>
 
-        <h3>Choosing a mode</h3>
+        <!-- <h3>Choosing a mode</h3> -->
         <p>Open the <em><strong>mode dropdown</strong></em> (bottom-right of the input box, labeled with the current mode) and select one:</p>
         <table>
             <tr><th>Mode</th><th>Usage</th><th>Section</th></tr>
@@ -714,25 +714,26 @@
 
     <!-- ═══════════════════ 9. DATA RETRIEVER ═══════════════════ -->
     <section id="data-mode">
-        <h2>Data Retrieval Mode</h2>
+        <h2>Modes</h2>
+        <h3 class="mode-title">Data Retrieval Mode</h3>
         <p class="lead"><em>Data retrieval mode: </em>Find and download geospatial datasets from public data
         sources, without running any analysis.</p>
 
-        <h3 id="dr-use">How to use the Data Retrieval mode</h3>
+        <h4 id="dr-use">How to use the Data Retrieval mode</h4>
         <div class="step"><div class="num">1</div><div class="body">Switch the mode to <strong>Data Retrieval</strong>.</div></div>
         <div class="step"><div class="num">2</div><div class="body">Describe what you need in natural language. Be as specific as you can about the variables, geography, and time frame (See examples).
         </div></div>
         <div class="step"><div class="num">3</div><div class="body">The system identifies the best matching <strong>data
             source</strong>, fetches the data, and adds it as a new <strong>data layer</strong> you can map and download.</div></div>
 
-        <h4>The "Auto Data" toggle</h4>
+        <h5>The "Auto Data" toggle</h5>
         <p>The <span class="ui">Auto Data</span> switch, in the mode dropdown under <strong>Autonomous</strong>, controls whether data
         needed for a request is downloaded automatically. It is <strong>on</strong> by default. With it on, the system pulls required
         datasets without asking each time; with it <strong>off</strong>, it pauses for human confirmation before downloading. The
         switch appears only for <em>Spatial Analysis</em> and <em>Research</em>, the modes that may need extra data.
         <em>Data Retrieval</em> mode always downloads, so the switch is hidden there.</p>
 
-        <h3 id="dr-sources">Available data sources</h3>
+        <h4 id="dr-sources">Available data sources</h4>
         <p>These public sources are built in. The system picks the right one from your request, but you can name a source explicitly.
         You can also <strong>register your own</strong> sources - see <a href="#data-sources-manual">Adding a New Data Source</a>.</p>
         <table>
@@ -751,7 +752,7 @@
             <tr><td><strong><a href="https://www.arcgis.com/home/item.html?id=10df2279f9684e4a9f6a7f08febac2a9" target="_blank" rel="noopener">ESRI World Imagery</a></strong></td><td>Satellite image tiles (Web Mercator, EPSG:3857) for export and mosaicking.</td><td>Global</td><td><span class="no">No</span></td></tr>
         </table>
 
-        <h4>Where to get the free keys</h4>
+        <h5>Where to get the free keys</h5>
         <table>
             <tr><th>Source</th><th>Sign-up page</th></tr>
             <tr><td>US Census (Demography)</td><td><a href="https://api.census.gov/data/key_signup.html" target="_blank" rel="noopener">api.census.gov/data/key_signup.html</a></td></tr>
@@ -767,12 +768,12 @@
         </figure>
 
 
-        <h3 id="dr-multi">Downloading multiple datasets</h3>
+        <h4 id="dr-multi">Downloading multiple datasets</h4>
         <p>You can ask for several datasets in one request (e.g. <em>"download 2019 county boundaries and county-level obesity rates
         for California"</em>). The system retrieves each one and adds them as separate data layers. Each is independently mappable
         and downloadable, and ready to be merged later in Spatial Analysis or Research mode.</p>
 
-        <h3 id="dr-feedback">Feedback and approval prompts</h3>
+        <h4 id="dr-feedback">Feedback and approval prompts</h4>
         <p>Data retrieval is interactive. Human may be asked to provide input at two points:</p>
         <ul>
             <li><strong>Source confirmation</strong> - if the system isn't fully sure which source to use, it asks you to
@@ -792,9 +793,9 @@
         <div class="tip"><strong>Best practice:</strong>&nbsp; Be specific about year, geography level (county vs. tract), and
         variable name. Vague requests lead to more clarification prompts.</div>
 
-        <h3 id="dr-examples">Examples</h3>
+        <h4 id="dr-examples">Examples</h4>
 
-        <h4>Example 1 - County boundaries and obesity data for New York</h4>
+        <h5>Example 1 - County boundaries and obesity data for New York</h5>
         <p><strong>Request:</strong> <em>"Download boundaries of the counties in New York state and obesity data for New York."</em></p>
         <figure>
             <img src="doc/Data_retriever_Example1.jpg" alt="A Data Retriever session that downloads New York county boundaries and county-level obesity data, each added as a separate data layer" />
@@ -803,7 +804,7 @@
                 <a href="https://www.gis-coscientist.online/?conversation=d6b3371c-6013-4700-850b-08135830463c" target="_blank" rel="noopener">here</a>.</figcaption>
         </figure>
 
-        <h4>Example 2 - PM2.5 and county boundaries for California</h4>
+        <h5>Example 2 - PM2.5 and county boundaries for California</h5>
         <p><strong>Request:</strong> <em>"Download 2019 county-level PM2.5 data for California and the corresponding county boundary."</em></p>
         <figure>
             <img src="doc/Data_retriever_Example2.jpg" alt="A Data Retriever session downloading 2019 county-level PM2.5 data for California" /><br>
@@ -813,7 +814,7 @@
                 <a href="https://www.gis-coscientist.online/?conversation=1e67d323-39cf-447c-ba2d-a65ac1ea911d" target="_blank" rel="noopener">here</a>.</figcaption>
         </figure>
 
-        <h4>Example 3 - 30 m DEM around State College, PA</h4>
+        <h5>Example 3 - 30 m DEM around State College, PA</h5>
         <p><strong>Request:</strong> <em>"Fetch a 30 m DEM for the area around State College, PA."</em></p>
         <figure>
             <img src="doc/Data_retriever_Example3.jpg" alt="A Data Retriever session downloading a 30 m digital elevation model for the area around State College, Pennsylvania" />
@@ -831,11 +832,11 @@
 
     <!-- ═══════════════════ 10. SPATIAL ANALYSIS ═══════════════════ -->
     <section id="spatial-mode">
-        <h2>Spatial Analysis Mode</h2>
+        <h3 class="mode-title">Spatial Analysis Mode</h3>
         <p class="lead"><em>Spatial Analysis:</em> Run a specific spatial analysis - the system
         plans the geoprocessing workflow, writes the code, and executes it.</p>
 
-        <h3 id="sa-use">How to use it</h3>
+        <h4 id="sa-use">How to use it</h4>
         <div class="step"><div class="num">1</div><div class="body">Switch the mode to <strong>Spatial Analysis</strong>.</div></div>
         <div class="step"><div class="num">2</div><div class="body">Upload (or retrieve) the dataset(s) you want to analyze. The <span class="ui">Auto Data</span> mode can be on to automatically retrieve relevant data needed for the any spatial analysis.</div></div>
         <div class="step"><div class="num">3</div><div class="body">State the analysis you want (See examples).
@@ -862,7 +863,7 @@
                 <em>Re-execute</em> a single step - so nothing is a black box.</figcaption>
         </figure>
 
-        <h3 id="sa-review">Reviewing and re-running</h3>
+        <h4 id="sa-review">Reviewing and re-running</h4>
         <ul>
             <li><strong>Inspect</strong> - every step shows the exact geoprocessing operation and the code that implements it.</li>
             <li><strong>Revise</strong> - give feedback in plain language and the workflow or code is regenerated.</li>
@@ -871,9 +872,9 @@
                 map are sent with it, so the next analysis can start from them.</li>
         </ul>
 
-        <h3 id="sa-examples">Examples - Spatial Analysis</h3>
+        <h4 id="sa-examples">Examples - Spatial Analysis</h4>
 
-        <h4>Example 1 - Distribution of restaurants by county in Ohio</h4>
+        <h5>Example 1 - Distribution of restaurants by county in Ohio</h5>
         <p><strong>Request:</strong> <em>"Create a visual representation that displays the distribution of restaurants across each county in Ohio."</em></p>
         <figure>
             <img src="doc/Spatial_Analysis_Example1.png" alt="A choropleth map showing the number of restaurants in each county of Ohio" />
@@ -885,7 +886,7 @@
             <figcaption>The geoprocessing workflow GIS Co-Scientist built and ran for Example 1.</figcaption>
         </figure>
 
-        <h4>Example 2 - Cancer prevalence in South Carolina</h4>
+        <h5>Example 2 - Cancer prevalence in South Carolina</h5>
         <p><strong>Request:</strong> <em>"Create a thematic map showing the distribution of the cancer prevalence in South Carolina."</em></p>
         <figure>
             <img src="doc/Spatial_Analysis_Example2.png" alt="A thematic map showing cancer prevalence across South Carolina counties" />
@@ -903,14 +904,14 @@
 
     <!-- ═══════════════════ 11. RESEARCH ═══════════════════ -->
     <section id="research-mode">
-        <h2>Research Mode</h2>
+        <h3 class="mode-title">Research Mode</h3>
         <p><em>Research:</em> The complete pipeline - from research question to a drafted
         manuscript.</p>
 
         <p>Research mode is the most comprehensive mode. Give it a research question and (optionally) data, and it works through the
         entire scientific process, pausing for human approval at each major checkpoint (unless Autonomous is on).</p>
 
-        <h3 id="rs-start">Starting a research run</h3>
+        <h4 id="rs-start">Starting a research run</h4>
         <ol>
             <li>Select <strong>Research</strong> in the mode dropdown.</li>
             <li>Provide data in one of two ways: add your files as <a href="#datalayers">data layers</a>, or turn on
@@ -922,7 +923,7 @@
             <li>Type your research question and send it.</li>
         </ol>
 
-        <h3 id="rs-stages">The workflow stages</h3>
+        <h4 id="rs-stages">The workflow stages</h4>
         <p>A research run passes through the stages below in order. Each stage appears in the chat as its own card with live progress.</p>
 
         <div class="step"><div class="num">1</div><div class="body"><strong>Data audit</strong> - every data layer is opened and
@@ -983,7 +984,7 @@
             steps that actually ran is generated. Click any step in it to see that step's code and outputs.</div></div>
 
 
-        <h3 id="human-ai-collaboration">Human-AI collaboration in the research mode</h3>
+        <h4 id="human-ai-collaboration">Human-AI collaboration in the research mode</h4>
 
         <p>GIS Co-Scientist incorporates <strong>human-in-the-loop checkpoints</strong> at the stages where expert judgment most
         strongly conditions the validity of downstream inference. At each checkpoint you can either approve and let the system
@@ -998,7 +999,7 @@
             <tr><td><a href="#rs-cp4">4 - Execution review</a></td><td>After all objectives have run</td><td>Skipped</td></tr>
         </table>
 
-        <h3 id="rs-cp1">Checkpoint 1 - Task breakdown and data requirements</h3>
+        <h5 id="rs-cp1">Checkpoint 1 - Task breakdown and data requirements</h5>
         <p>The first checkpoint follows the <strong>research question understanding</strong> stage, where the breakdown and the
         <strong>data requirements</strong> are shown, along with whether the data you supplied is sufficient. Two options are given:</p>
             <ul>
@@ -1012,7 +1013,7 @@
 
         <!-- [insert DataRequirements image] -->
 
-        <h3 id="rs-cp2">Checkpoint 2 - Data source selection (optional)</h3>
+        <h5 id="rs-cp2">Checkpoint 2 - Data source selection (optional)</h5>
         <p>A second checkpoint is triggered by the <strong>Geospatial Data Retrieval Agent</strong> once it has
         selected an appropriate data source for each unmet data requirement. The chosen source is shown with the rationale for
         its selection and a confidence score. Before any download code is generated, you can:</p>
@@ -1030,7 +1031,7 @@
 
         <!-- [insert DataSourceConfirmation image] -->
 
-        <h3 id="rs-cp3">Checkpoint 3 - Research plan review</h3>
+        <h5 id="rs-cp3">Checkpoint 3 - Research plan review</h5>
         <p>The third checkpoint occurs during <strong>research plan generation</strong>. Through a dedicated revision interface
         you can operate on the finalized plan before approving it for execution.</p>
         <p>The planner treats every dataset in the conversation as a candidate. It checks each one's area, time period, units and
@@ -1047,7 +1048,7 @@
 
         <!-- [insert ResearchPlanReview image] -->
 
-        <h3 id="rs-cp4">Checkpoint 4 - Execution review</h3>
+        <h5 id="rs-cp4">Checkpoint 4 - Execution review</h5>
         <p>The fourth checkpoint occurs immediately after objective execution. An <strong>execution checkpoint</strong> surfaces
         a per-step summary of statuses (completed, error, or skipped), errors, and produced artifacts. In each step, you can do
         any of the following:</p>
@@ -1068,7 +1069,7 @@
         <strong>Result Analysis Agent</strong> before it is passed to the <strong>Reporting Agent</strong>.</p>
         [insert FiguresTablesCatalog image] -->
 
-        <h3 id="rs-posthoc">Post-hoc step revisitation</h3>
+        <h4 id="rs-posthoc">Post-hoc step revisitation</h4>
         <p>At any point after execution you may return to an individual step and supply natural-language feedback describing the desired
         modification - a methodological refinement, a parameter adjustment, an alternative model specification, or a corrected
         interpretation. You may then choose to propagate the revised outputs into the manuscript, at which point the Reporting
@@ -1080,11 +1081,11 @@
         waiting. Once a newer request in the conversation has replaced it, clicking it shows <em>"This Task Breakdown is no
         longer waiting"</em>. Send your request again to continue.</div>
 
-        <h3 id="rs-examples">Research mode examples</h3>
+        <h4 id="rs-examples">Research mode examples</h4>
       
 
 
-        <h4>Example 1 - Spatial inequalities in air pollution exposure and income inequality in California </h4>
+        <h5>Example 1 - Spatial inequalities in air pollution exposure and income inequality in California </h5>
         <p><strong>Request:</strong> <em>"How do spatial inequalities in PM2.5 exposure across California counties vary with income inequality (Gini) in 2019, and does the spatial relationship vary by urban–rural classification?"</em></p>
         <figure>
             <img src="Figures\Figure 4.jpg" alt="Research Question Understanding Agent identifying required datasets" />
@@ -1131,7 +1132,7 @@
 
 
 
-        <h4>Example 2 - Mobility-mediated socioeconomic and mental health analysis</h4>
+        <h5>Example 2 - Mobility-mediated socioeconomic and mental health analysis</h5>
         <p><strong>Request:</strong> <em>"How do spatial patterns of mobility (place visitation) mediate the relationship between neighborhood social economic status and
              depression prevalence across the counties of South Carolina"</em></p>
         <figure>
@@ -1150,7 +1151,7 @@
     
 
 
-        <h4>Example 3 - Proximity to hazardous waste facilities and asthma prevalence in North Carolina</h4>
+        <h5>Example 3 - Proximity to hazardous waste facilities and asthma prevalence in North Carolina</h5>
             <p><strong>Request:</strong> <em>"How does proximity to hazardous waste facilities influence spatial patterns of asthma prevalence across census tracts of North Carolina,
                 and how do these relationships vary spatially by socioeconomic and demographic context?"</em></p>
             <figure>
@@ -1171,7 +1172,7 @@
 
 
 
-        <h3 id="rs-manuscript">The manuscript deliverable</h3>
+        <h4 id="rs-manuscript">The manuscript deliverable</h4>
         <p>The reporting pipeline produces a structured research paper with standard academic sections:</p>
         <ul>
             <li><strong>Title and Abstract</strong> - including structured Background / Methods / Results / Conclusions and keywords.</li>
@@ -1191,13 +1192,13 @@
         manuscript after changing steps, only the sections whose inputs changed are rewritten: changes to the plan update the Title &amp;
         Abstract, Introduction, and Methodology, and changes to execution results update the Title &amp; Abstract, Results, Discussion, and Conclusion.</p>
 
-        <h3 id="rs-demo">Video Demonstration</h3>
+        <h4 id="rs-demo">Video Demonstration</h4>
         <p>Video demonstrations of selected cases are available <a href="https://www.youtube.com/watch?v=oyf4I1VRlLU&amp;list=PL6ON3gdLloDEY4YKHyEIgMhfpMwNRs0a7&amp;index=1" target="_blank" rel="noopener">here</a>.</p>
     </section>
 
     <!-- ═══════════════════ 12. CHAT ═══════════════════ -->
     <section id="chat-mode">
-        <h2>Chat Mode</h2>
+        <h3 class="mode-title">Chat Mode</h3>
         <p><em>Chat:</em> Plain conversational QandA - no workflow is launched.</p>
         <p>Use Chat mode to ask questions, clarify concepts, or plan your approach before committing to an analysis. For example:</p>
         <ul>
@@ -1300,7 +1301,7 @@
                 { id:'settings',      label:'Settings' },
                 { id:'datalayers',    label:'Data Layers' },
                 { id:'conversations', label:'Conversations & Sharing' },
-                { id:'modes',         label:'Modes' },
+                { id:'modes',         label:'Choosing a Mode' },
                 { id:'models',        label:'LLM Models used' },
               ]},
             
@@ -1463,10 +1464,10 @@
         // ── Build the index ──────────────────────────────────────────
         const index = [];
         main.querySelectorAll('section').forEach(section => {
-            const h2 = section.querySelector('h2');
+            const h2 = section.querySelector('#' + section.id + ' > h3.mode-title') || section.querySelector('h2');
             const sectionTitle = h2 ? h2.textContent.replace(/\s+/g,' ').trim() : '';
             let heading = sectionTitle;
-            section.querySelectorAll('h2, h3, h4, p, li, td, .step .body').forEach(el => {
+            section.querySelectorAll('h2, h3, h4, h5, p, li, td, .step .body').forEach(el => {
                 // Skip list items that are inside a step body (counted via .step .body)
                 if(el.closest('.step .body') && !el.classList.contains('body')) return;
                 // Skip table cells that hold a list — their <li> items are indexed individually
@@ -1474,7 +1475,7 @@
                 const tag = el.tagName.toLowerCase();
                 const text = el.textContent.replace(/\s+/g,' ').trim();
                 if(text.length < 2) return;
-                const isHeading = tag === 'h2' || tag === 'h3' || tag === 'h4';
+                const isHeading = /^h[2-5]$/.test(tag);
                 if(isHeading) heading = text;
                 index.push({ el, text, lower: text.toLowerCase(), heading, sectionTitle, isHeading });
             });
