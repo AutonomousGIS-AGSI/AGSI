@@ -107,6 +107,8 @@
   .figure { margin: 1.5rem 0 0; padding: 1rem; background: white; border: 1px solid var(--border); border-radius: .65rem; }
   .figure img { display: block; width: 100%; height: auto; }
   .subhead { margin: 1.8rem 0 .75rem; font-size: 1.15rem; }
+  .source-list { margin: 0; padding-left: 1.25rem; }
+  .source-list li { margin-block: .45rem; }
   .citation { margin: 0; padding: 1rem 1.25rem; overflow-x: auto; background: var(--panel); border: 1px solid var(--border); border-radius: .65rem; font-size: .88rem; }
   footer { border-top: 1px solid var(--border); background: var(--panel); }
   .site-footer { padding-block: 1.5rem; color: var(--muted); font-size: .9rem; }
@@ -127,10 +129,10 @@
     <nav class="site-nav" aria-label="Main navigation">
       <a href="#about">About</a>
       <a href="#get-started">Get started</a>
-      <a href="#source-code">Source code</a>
       <a href="#case-studies">Case studies</a>
       <a href="#demos">Video demos</a>
       <a href="#materials">Supplemental materials</a>
+      <a href="#source-code">Source code</a>
       <a href="https://doi.org/10.1080/10095020.2026.2764024" target="_blank" rel="noopener noreferrer">Paper</a>
       <a href="https://autonomousgis-agsi.github.io/AGSI/user_manual" target="_blank" rel="noopener noreferrer">User Manual</a>
       <a class="gibd-logo-link" href="https://giscience.psu.edu" target="_blank" rel="noopener noreferrer">
@@ -202,28 +204,6 @@
       <p><a href="desktop-install.html">Open the desktop installation guide</a></p>
     </noscript>
     <p class="section-intro" style="margin: 1.5rem 0 0">Use your own <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">OpenAI API key</a> to run GIS Co-Scientist. A <a href="https://www.gibd.online" target="_blank" rel="noopener">GIBD key</a> is only a backup for testing or trying out the system.</p>
-  </section>
-
-  <section id="source-code">
-    <h2 class="section-title">Source code</h2>
-    <div class="resources">
-      <a class="resource" href="https://github.com/Teakinboyewa/GIS-co-scientist" target="_blank" rel="noopener">
-        <span class="label">GIS Co-Scientist</span>
-        <span class="meta">The main framework and WebUI.</span>
-      </a>
-      <a class="resource" href="https://github.com/Teakinboyewa/GIS-co-scientist-desktop" target="_blank" rel="noopener">
-        <span class="label">GIS Co-Scientist Desktop</span>
-        <span class="meta">The desktop app for Windows and macOS.</span>
-      </a>
-      <a class="resource" href="https://github.com/Teakinboyewa/GIS-co-scientist-catalog" target="_blank" rel="noopener">
-        <span class="label">Data source catalog</span>
-        <span class="meta">Shared data source handbooks for the Data Retrieval mode.</span>
-      </a>
-      <a class="resource" href="https://github.com/AutonomousGIS-AGSI/AGSI" target="_blank" rel="noopener">
-        <span class="label">Project page</span>
-        <span class="meta">This website, the user manual, and the paper's supplemental materials.</span>
-      </a>
-    </div>
   </section>
 
   <section id="case-studies">
@@ -463,6 +443,15 @@
   pages   = {1--22},
   doi     = {10.1080/10095020.2026.2764024}
 }</pre>
+  </section>
+
+  <section id="source-code">
+    <h2 class="section-title">Source code</h2>
+    <ul class="source-list">
+      <li><a href="https://github.com/Teakinboyewa/GIS-co-scientist-desktop" target="_blank" rel="noopener">GIS Co-Scientist Desktop</a>: the desktop app for Windows and macOS.</li>
+      <li><a href="https://github.com/Teakinboyewa/GIS-co-scientist" target="_blank" rel="noopener">GIS Co-Scientist WebUI</a>: the main framework and browser app.</li>
+      <li><a href="https://github.com/Teakinboyewa/GIS-co-scientist-catalog" target="_blank" rel="noopener">Data source catalog</a>: shared data source handbooks for the Data Retrieval mode.</li>
+    </ul>
   </section>
 
   </div></main>
