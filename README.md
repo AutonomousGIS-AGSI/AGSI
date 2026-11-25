@@ -7,6 +7,15 @@ flowchart, geoprocessing diagram, all generated figures and tables,
 the manuscript, and the original uploaded data — no server, network,
 or API key required. 
 
+## Using GIS Co-Scientist
+
+1. **Desktop app (recommended):** [download and install it](https://autonomousgis-agsi.github.io/AGSI/desktop-install.html) on Windows or macOS.
+2. **WebUI:** use it in your browser at [www.gis-coscientist.online](https://www.gis-coscientist.online/).
+
+Use your own [OpenAI API key](https://platform.openai.com/api-keys). A [GIBD key](https://www.gibd.online) is only a
+backup for testing or trying out the system. See the
+[User Manual](https://autonomousgis-agsi.github.io/AGSI/user_manual) for details.
+
 ## Snapshots
 
 | Folder | Session | Description |

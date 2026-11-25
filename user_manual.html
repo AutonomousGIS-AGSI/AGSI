@@ -43,6 +43,13 @@
             retrieving geospatial data, running spatial analyses, and producing full research manuscripts through
             a single conversational interface.</p>
 
+        <p>There are two ways to use it:</p>
+        <ul>
+            <li><strong>Desktop app (recommended)</strong> - for Windows and macOS. See
+                <a href="#install">Installing the Desktop App</a>.</li>
+            <li><strong>WebUI</strong> - runs in your browser, with nothing to install. See <a href="#webui">Using the WebUI</a>.</li>
+        </ul>
+
         
 
 
@@ -88,26 +95,27 @@
     <!-- ═══════════════════ INSTALLING THE DESKTOP APP ═══════════════════ -->
     <section id="install">
         <h2>Installing the Desktop App</h2>
-        <p>GIS Co-Scientist is also available as a desktop app for Windows and macOS. It runs the same interface in its
+        <p>The desktop app is the recommended way to use GIS Co-Scientist. It runs on Windows and macOS in its
         own window, and your conversations, uploads and outputs stay on your computer.</p>
 
         <h3 id="install-windows">Windows</h3>
         <p>Requires 64-bit Windows 10 or 11 and about 900 MB of free disk space. No administrator rights are needed.</p>
         <div class="step"><div class="num">1</div><div class="body">Download <code>GIS-CoScientist-Setup-&lt;version&gt;.exe</code>
-            from the <a href="https://github.com/Teakinboyewa/GIS-co-scientist-desktop/releases" target="_blank" rel="noopener">releases page</a>.</div></div>
+            from the <a href="desktop-install.html#windows">Windows download page</a>.</div></div>
         <div class="step"><div class="num">2</div><div class="body">Double-click the file. If Windows shows <em>"Windows protected your PC"</em>,
             click <span class="ui">More info</span>, then <span class="ui">Run anyway</span>.</div></div>
         <div class="step"><div class="num">3</div><div class="body">Follow the installer. Tick <em>Create a desktop shortcut</em> if you want one.
             The app installs to <code>%LOCALAPPDATA%\Programs\GIS Co-Scientist</code> and is added to the Start menu.
             The installer also checks for the Microsoft Edge WebView2 runtime, which the app needs (it is already part of most Windows 10 and 11 computers).</div></div>
         <div class="step"><div class="num">4</div><div class="body">Open <strong>GIS Co-Scientist</strong> from the Start menu or the desktop
-            shortcut, then add your API key in <span class="ui">Settings</span> (see <a href="#apikey">API Key</a>).</div></div>
+            shortcut, then add your OpenAI API key in <span class="ui">Settings</span> (see <a href="#apikey">API Key</a>).</div></div>
 
         <h3 id="install-mac">macOS</h3>
         <p>There are two builds: <code>arm64</code> for Apple Silicon (M1 and later) and <code>x86_64</code> for Intel Macs.
         To check which Mac you have, open the Apple menu &rarr; <em>About This Mac</em>.</p>
         <div class="step"><div class="num">1</div><div class="body">Download <code>GIS-CoScientist-&lt;version&gt;-&lt;arch&gt;.dmg</code> for your Mac
-            from the <a href="https://github.com/Teakinboyewa/GIS-co-scientist-desktop/releases" target="_blank" rel="noopener">releases page</a>.</div></div>
+            from the <a href="desktop-install.html#mac-apple">Apple Silicon</a> or
+            <a href="desktop-install.html#mac-intel">Intel</a> download page.</div></div>
         <div class="step"><div class="num">2</div><div class="body">Open the <code>.dmg</code> and drag <strong>GIS Co-Scientist</strong> into
             <strong>Applications</strong>.</div></div>
         <div class="step"><div class="num">3</div><div class="body">The first time you open it, macOS may say <em>"GIS Co-Scientist" Not Opened</em>
@@ -121,7 +129,7 @@
                     <span class="ui">Open</span>, then click <span class="ui">Open</span> again.</li>
             </ul>
             After that it opens normally.</div></div>
-        <div class="step"><div class="num">4</div><div class="body">Add your API key in <span class="ui">Settings</span>
+        <div class="step"><div class="num">4</div><div class="body">Open the app, then add your OpenAI API key in <span class="ui">Settings</span>
             (see <a href="#apikey">API Key</a>).</div></div>
 
         <h3 id="install-update">Updating and uninstalling</h3>
@@ -136,16 +144,27 @@
         </ul>
     </section>
 
+    <!-- ═══════════════════ USING THE WEBUI ═══════════════════ -->
+    <section id="webui">
+        <h2>Using the WebUI</h2>
+        <p>If you cannot install the desktop app, use the WebUI in your browser.</p>
+        <div class="step"><div class="num">1</div><div class="body">Open
+            <a href="https://www.gis-coscientist.online/" target="_blank" rel="noopener">www.gis-coscientist.online</a>.</div></div>
+        <div class="step"><div class="num">2</div><div class="body">Add your OpenAI API key in <span class="ui">Settings</span>
+            (see <a href="#apikey">API Key</a>).</div></div>
+    </section>
+
     <!-- ═══════════════════ 2. QUICK START ═══════════════════ -->
     <section id="quickstart">
         <h2>Quick Start</h2>
+        <p>Open the <a href="#install">desktop app</a> (recommended) or the <a href="#webui">WebUI</a>, then follow these steps.</p>
         
 
         <div class="step"><div class="num">1</div><div class="body">
             <strong>Add your API key:</strong> Click <span class="ui">Settings</span> (top-right), paste your
-            <strong>GIBD</strong> key (<code>gibd-</code>) or <strong>OpenAI</strong> key (<code>sk-</code>) into the
+            own <strong>OpenAI API key</strong> (<code>sk-</code>) into the
             <em>API Key</em> field, and click <span class="ui">Save Key</span>.
-            See <a href="#apikey">Section 3</a> for how to get one.</div></div>
+            See <a href="#apikey">Section 3</a> for how to get one, or for the backup option if you only want to try the system.</div></div>
 
         <div class="step"><div class="num">2</div><div class="body">
             <strong>Pick a mode:</strong> In the chat input toolbar, open the mode dropdown (bottom-right of the input box) and
@@ -177,26 +196,29 @@
     <section id="apikey">
         <h2>3. API Key</h2>
 
-        <p>GIS Co-Scientist needs an API key to run its language-model calls. You can use <strong>either</strong> a
-        <strong>GIBD key</strong> or an <strong>OpenAI API key</strong> - there is a single <em>API Key</em> field in Settings,
-        and the app automatically detects which type you entered.</p>
+        <p>GIS Co-Scientist needs an API key to run its language-model calls. Use your
+        <strong>own OpenAI API key</strong>. A <strong>GIBD key</strong> is only a backup for users who want to test or try out
+        the system. There is a single <em>API Key</em> field in Settings, and the app automatically detects which type you
+        entered.</p>
 
         <h3>Getting a key</h3>
         <table>
-            <tr><th>Key type</th><th>Where to get it</th></tr>
-            <tr><td><strong>GIBD key</strong></td>
-                <td>At <a href="https://www.gibd.online" target="_blank" rel="noopener">gibd.online</a> - create an account or sign in, then request a key.</td></tr>
-            <tr><td><strong>OpenAI key</strong></td>
+            <tr><th>Key type</th><th>When to use it</th><th>Where to get it</th></tr>
+            <tr><td><strong>OpenAI API key</strong> (recommended)</td>
+                <td>For all regular use</td>
                 <td>At <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">platform.openai.com/api-keys</a> - sign in, then create a secret key.</td></tr>
+            <tr><td><strong>GIBD key</strong> (backup)</td>
+                <td>Only to test or try out the system</td>
+                <td>At <a href="https://www.gibd.online" target="_blank" rel="noopener">gibd.online</a> - create an account or sign in, then request a key.</td></tr>
         </table>
 
         <h3>Entering your key</h3>
         <div class="step"><div class="num">1</div><div class="body">Click <span class="ui">Settings</span> in the top-right header.</div></div>
-        <div class="step"><div class="num">2</div><div class="body">Paste your GIBD or OpenAI key into the <strong>API Key</strong> field.</div></div>
+        <div class="step"><div class="num">2</div><div class="body">Paste your OpenAI API key (or your backup GIBD key) into the <strong>API Key</strong> field.</div></div>
         <div class="step"><div class="num">3</div><div class="body">Click <span class="ui">Save Key</span>. A status message confirms it was stored.
             Use <span class="ui">Clear Key</span> to remove it.</div></div>
 
-        <div class="note">API key is <strong>stored locally on your browser</strong> and is never stored on our server. Keep it private, and use
+        <div class="note">Your API key is <strong>stored locally</strong> - on your computer in the desktop app, or in your browser in the WebUI - and is never stored on our server. Keep it private, and use
         <span class="ui">Clear Key</span> to remove it whenever you like.</div>
 
     </section>
@@ -255,7 +277,7 @@
         <p class="lead">Opened from the <span class="ui">Settings</span> button.</p>
 
         <h3>API Key</h3>
-        <p>Enter, show/hide, save, or clear your API key (a GIBD or OpenAI key) - covered in <a href="#apikey">Section 3</a>.</p>
+        <p>Enter, show/hide, save, or clear your API key (your OpenAI key, or a GIBD key as a backup) - covered in <a href="#apikey">Section 3</a>.</p>
 
         <h3>Data Source Keys</h3>
         <p>Some data sources (e.g. the U.S. Census, EPA AQS) require their own API keys. This section lets you store those keys
@@ -592,8 +614,8 @@
         <p>The handbook review card has two buttons. One <strong>downloads</strong> the handbook as a <code>.toml</code> you can
         re-import later. The other <strong>adds it to My Sources</strong> as a private data source, and asks first if a source with
         the same name already exists. Sessions can be saved, shared by link, and duplicated from the Studio's header.</p>
-        <div class="note"><strong>NOTE:</strong>&nbsp; Handbook Studio works with either a <strong>GIBD key</strong> or an
-        <strong>OpenAI API key</strong>. Its web research uses OpenAI web search, which a GIBD key reaches through the GIBD
+        <div class="note"><strong>NOTE:</strong>&nbsp; Handbook Studio works with your <strong>OpenAI API key</strong>, or with a <strong>GIBD
+        key</strong> as a backup for trying it out. Its web research uses OpenAI web search, which a GIBD key reaches through the GIBD
         service. The Claude Agent SDK provider also needs an Anthropic API key, entered in Settings or in the Studio's
         provider picker.</div>
 
@@ -1167,8 +1189,8 @@
 
         <table>
             <tr><th>Symptom</th><th>What to check</th></tr>
-            <tr><td>Nothing runs / "API key required"</td><td>Add a valid API key - a GIBD key (<code>gibd-</code>) or an
-                OpenAI key (<code>sk-</code>) - in <span class="ui">Settings</span> and click <span class="ui">Save Key</span>.</td></tr>
+            <tr><td>Nothing runs / "API key required"</td><td>Add a valid OpenAI API key (<code>sk-</code>), or a backup
+                GIBD key (<code>gibd-</code>) if you are only trying the system, in <span class="ui">Settings</span> and click <span class="ui">Save Key</span>.</td></tr>
             <tr><td>A data download is rejected for "missing key"</td><td>The source needs a free API key - add it under
                 <strong>Settings → Data Source Keys</strong>, or enter it when prompted. See <a href="#data-mode">§9</a>.</td></tr>
             <tr><td>Wrong dataset retrieved</td><td>Be explicit about <em>year, geography level, and variable</em>; or name the source
@@ -1206,10 +1228,11 @@
         // for a single mode page the items are that section's sub-headings.
         const PAGES = [
             { label:'Getting Started',
-              sections:['intro','install','quickstart','apikey'],
+              sections:['intro','install','webui','quickstart','apikey'],
               items:[
                 { id:'intro',         label:'What is GIS Co-Scientist?' },
                 { id:'install',       label:'Installing the Desktop App' },
+                { id:'webui',         label:'Using the WebUI' },
                 { id:'quickstart',    label:'Quick Start' },
                 { id:'apikey',        label:'API Key' },
               ]},
