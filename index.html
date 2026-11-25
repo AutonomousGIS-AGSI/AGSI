@@ -102,7 +102,7 @@
   .video-frame:hover .play { background: rgb(0 0 0 / 12%); }
   .play svg { width: 3.25rem; height: auto; filter: drop-shadow(0 2px 6px rgb(0 0 0 / 40%)); }
 
-  .resources { grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); }
+  .resources { grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); }
   .resource { display: grid; gap: .3rem; align-content: start; }
   .resource .label { font-weight: 700; }
   .resource .meta { color: var(--muted); font-size: .9rem; }
@@ -127,6 +127,17 @@
     .header-inner { gap: .6rem; }
     .site-nav { flex-basis: 100%; gap: .1rem .9rem; }
     .site-nav a { font-size: .88rem; }
+  }
+
+  .layout { display: grid; grid-template-columns: 10.5rem minmax(0, 1fr); gap: 3rem; align-items: start; }
+  .toc { position: sticky; top: 0; max-height: 100vh; overflow-y: auto; padding-block: clamp(2.25rem, 5vw, 3.5rem) 1.5rem; }
+  .toc p { margin: 0 0 .6rem; font-size: .9rem; font-weight: 700; }
+  .toc a { display: block; padding: .32rem 0; color: var(--muted); font-size: .9rem; line-height: 1.4; text-decoration: none; }
+  .toc a:hover { color: var(--accent); }
+  .toc a.active { color: var(--accent); font-weight: 650; }
+  @media (max-width: 60rem) {
+    .layout { display: block; }
+    .toc { display: none; }
   }
 
   .source-list { margin: 0; padding-left: 1.25rem; }
@@ -172,7 +183,17 @@
       </div>
     </div>
   </div>
-  <div class="wrap content">
+  <div class="wrap layout">
+  <nav class="toc" aria-label="Table of contents">
+    <p>On this page</p>
+    <a href="#get-started">Get started</a>
+    <a href="#about">About the project</a>
+    <a href="#case-studies">Case studies</a>
+    <a href="#demos">Video demonstrations</a>
+    <a href="#materials">Paper and materials</a>
+    <a href="#source-code">Source code</a>
+  </nav>
+  <div class="content">
   <section id="get-started">
     <h2 class="section-title">Get started</h2>
     <section id="desktop">
@@ -436,13 +457,30 @@
     </ul>
   </section>
 
-  </div>
+  </div></div>
 </main>
 <footer><div class="wrap site-footer">
     <span>GIS Co-Scientist &middot; Autonomous Geospatial Scientific Inquiry (AGSI)</span>
     <span><a href="https://github.com/AutonomousGIS-AGSI/AGSI">View on GitHub</a></span>
 </div></footer>
 <script>
+  const tocLinks = [...document.querySelectorAll('.toc a')];
+  const tocTargets = tocLinks.map((a) => document.getElementById(a.hash.slice(1)));
+  const markToc = () => {
+    let current = 0;
+    tocTargets.forEach((el, i) => { if (el.getBoundingClientRect().top <= 60) current = i; });
+    if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4) {
+      // The last sections can't reach the top, so a clicked one keeps its highlight.
+      const clicked = tocLinks.findIndex((a) => a.hash === location.hash);
+      current = clicked >= current ? clicked : tocLinks.length - 1;
+    }
+    tocLinks.forEach((a, i) => a.classList.toggle('active', i === current));
+  };
+  addEventListener('scroll', markToc, { passive: true });
+  addEventListener('resize', markToc);
+  addEventListener('hashchange', markToc);
+  markToc();
+
   const desktopDownload = document.getElementById('desktop-download');
   desktopDownload.addEventListener('submit', (event) => {
     event.preventDefault();
