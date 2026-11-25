@@ -353,32 +353,45 @@
     <!-- ═══════════════════ 7. CONVERSATIONS ═══════════════════ -->
     <section id="conversations">
         <h2>Conversation History and Sharing</h2>
-        <p class="lead">Each conversation is saved automatically and scoped to your API key.</p>
+        <p class="lead">Each conversation is saved automatically. In the desktop app, conversations belong to your computer and are
+        not tied to an API key.</p>
 
         <h3>History</h3>
         <ul>
             <li><span class="ui">New chat</span> starts a fresh conversation with its own data layers and workspace.</li>
-            <li>Conversations are listed in the left sidebar and saved against your API key - sign in with the same key on any
-                machine to get them back.</li>
+            <li>Conversations are listed in the left sidebar, where you can filter, sort, and pin them. Open the
+                <span class="ui">⋯</span> menu on a conversation to rename, export, or delete it.</li>
+            <li><strong>Saved on your computer:</strong> conversations stay available if you replace your API key or switch between
+                an OpenAI and a GIBD key. A key must be saved in <span class="ui">Settings</span> for the list to appear.</li>
+            <li><strong>Not synced:</strong> entering the same key on another computer does not bring your conversations there. Use
+                export and import instead.</li>
             <li>Uploaded files and generated artifacts are stored with the conversation, so reopening it restores its state.</li>
+            <li><strong>Deleting is permanent:</strong> the messages, uploaded data and outputs are removed from your computer. Export
+                the conversation first if you may need it again.</li>
         </ul>
 
         <h3>Sharing a conversation</h3>
-        <p>Every conversation has a shareable URL - the browser address updates to include
-        <code>?conversation=&lt;id&gt;</code> as soon as the chat is created. To share, simply copy that link and send it.</p>
+        <p>The desktop app runs only on your computer, so a link to a conversation does not work for anyone else. Send a file instead:</p>
+        <div class="step"><div class="num">1</div><div class="body"><strong>Export:</strong> in the sidebar, open the
+            <span class="ui">⋯</span> menu on the conversation and choose <span class="ui">Export to file</span>. A <code>.zip</code>
+            with the messages, uploaded data and outputs is saved in your Downloads folder.</div></div>
+        <div class="step"><div class="num">2</div><div class="body"><strong>Send</strong> the <code>.zip</code> to the other person, or
+            copy it to your other computer.</div></div>
+        <div class="step"><div class="num">3</div><div class="body"><strong>Import:</strong> in the desktop app on that computer, save
+            an API key in <span class="ui">Settings</span>, click <span class="ui">Import</span> at the top of the conversation list,
+            and choose the <code>.zip</code>.</div></div>
+        <p>The imported conversation is a separate copy: the recipient can continue, rename, or delete it, and neither person sees the
+        other's later changes. Importing a conversation that is already in the list opens the existing one. Importing one you deleted
+        restores it as it was in the file.</p>
+        <div class="note"><strong>Before sharing:</strong>&nbsp; The file contains everything in the conversation, including folder paths
+        from your computer. It may also contain data source keys (for example, Census or EPA AQS) used in the run. Share it only with
+        people you trust.</div>
 
-        <h4>What happens when someone opens your link</h4>
-        <table>
-            <tr><th>Situation</th><th>Behavior</th></tr>
-            <tr><td>You (the owner) open it</td><td>Full edit access, as normal.</td></tr>
-            <tr><td>Another user opens it (with their own key)</td>
-                <td>They join as a <strong>collaborator</strong>. A banner notes it's a shared conversation; both of you see updates
-                    in the same workspace and artifacts.</td></tr>
-            <tr><td>A collaborator wants a private copy</td>
-                <td><strong>Fork-on-write:</strong> their first change can create an independent copy they own, leaving your original
-                    untouched. (Forking is blocked while a run is still in progress.)</td></tr>
-        </table>
-        
+        <h3>In the WebUI</h3>
+        <p>The WebUI works differently: conversations are saved on the server against your API key, so entering the same key in another
+        browser brings them back. To share one, copy the browser address (it includes <code>?conversation=&lt;id&gt;</code>) and send it.
+        Someone who opens it with their own key joins as a <strong>collaborator</strong> in the same workspace. Only the owner can
+        rename or delete it.</p>
     </section>
 
     <!-- ═══════════════════ 8. MODES / MODELS ═══════════════════ -->
@@ -1197,8 +1210,9 @@
                 directly. Use the source-confirmation prompt to retry.</td></tr>
             <tr><td>Shapefile won't load</td><td>Include all components (<code>.shp .shx .dbf .prj</code>) or upload them as a single
                 <code>.zip</code>.</td></tr>
-            <tr><td>My conversations disappeared</td><td>They're tied to your API key - make sure the same key is entered.</td></tr>
-            <tr><td>Can't delete a shared conversation</td><td>Only the owner can delete/rename; collaborators have shared access only.</td></tr>
+            <tr><td>My conversations disappeared</td><td><strong>Desktop app:</strong> make sure an API key is saved in <span class="ui">Settings</span> and the sidebar filter is
+                set to <em>All conversations</em>. <strong>WebUI:</strong> enter the same key you used when you created them.</td></tr>
+            <tr><td>Can't delete a shared conversation (WebUI)</td><td>Only the owner can delete/rename; collaborators have shared access only.</td></tr>
             
         </table>
 
