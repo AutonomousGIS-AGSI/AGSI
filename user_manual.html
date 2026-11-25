@@ -368,9 +368,13 @@
             <li>Uploaded files and generated artifacts are stored with the conversation, so reopening it restores its state.</li>
             <li><strong>Deleting is permanent:</strong> the messages, uploaded data and outputs are removed from your computer. Export
                 the conversation first if you may need it again.</li>
+            <li><strong>In the WebUI:</strong> conversations are saved on the server against your API key, so entering the same key in
+                another browser brings them back.</li>
         </ul>
 
-        <h3>Sharing a conversation</h3>
+        <h3 id="sharing">Sharing a conversation</h3>
+
+        <h4 id="sharing-desktop">Sharing a conversation on the Desktop app</h4>
         <p>The desktop app runs only on your computer, so a link to a conversation does not work for anyone else. Send a file instead:</p>
         <div class="step"><div class="num">1</div><div class="body"><strong>Export:</strong> in the sidebar, open the
             <span class="ui">⋯</span> menu on the conversation and choose <span class="ui">Export to file</span>. A <code>.zip</code>
@@ -387,11 +391,12 @@
         from your computer. It may also contain data source keys (for example, Census or EPA AQS) used in the run. Share it only with
         people you trust.</div>
 
-        <h3>In the WebUI</h3>
-        <p>The WebUI works differently: conversations are saved on the server against your API key, so entering the same key in another
-        browser brings them back. To share one, copy the browser address (it includes <code>?conversation=&lt;id&gt;</code>) and send it.
-        Someone who opens it with their own key joins as a <strong>collaborator</strong> in the same workspace. Only the owner can
-        rename or delete it.</p>
+        <h4 id="sharing-webui">Sharing a conversation on the WebUI</h4>
+        <div class="step"><div class="num">1</div><div class="body"><strong>Copy the link:</strong> open the conversation and copy the
+            browser address (it includes <code>?conversation=&lt;id&gt;</code>).</div></div>
+        <div class="step"><div class="num">2</div><div class="body"><strong>Send</strong> the link to the other person.</div></div>
+        <p>Someone who opens it with their own key joins as a <strong>collaborator</strong> in the same workspace, so both of you see
+        updates. Only the owner can rename or delete the conversation.</p>
     </section>
 
     <!-- ═══════════════════ 8. MODES / MODELS ═══════════════════ -->
