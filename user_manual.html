@@ -541,7 +541,29 @@
 
         <h3 id="dsm-add">Adding a data source</h3>
        
-        <p>On <strong>My Sources</strong>, click <span class="ui">＋ Add data source</span> and fill in the form:</p>
+        <p>On <strong>My Sources</strong>, click <span class="ui">＋ Add data source</span>. There are three ways to add one:</p>
+        <table>
+            <tr><th>Option</th><th>Use it when</th></tr>
+            <tr><td><a href="#dsm-add-import">Import a handbook</a></td><td>You already have a handbook file.</td></tr>
+            <tr><td><a href="#dsm-add-create">Create a handbook</a></td><td>You want to fill in the form yourself.</td></tr>
+            <tr><td><a href="#dsm-add-ai">Generate with AI</a></td><td>You want the AI to read the source's documentation and draft it for you.</td></tr>
+        </table>
+        <p>The <strong>desktop app</strong> asks which one you want first. The <strong>WebUI</strong> opens the form directly, with
+        <span class="ui">Import</span> and <span class="ui">Generate with AI</span> at the top. All three lead to the same form, where
+        you review the fields before clicking <span class="ui">Add Source</span>.</p>
+
+        <h4 id="dsm-add-import">Import a handbook</h4>
+        <p>In the desktop app, drag a file onto <em>Import a handbook</em>, or click it to browse. In the WebUI, click
+        <span class="ui">Import</span>. What gets filled in depends on the file:</p>
+        <table>
+            <tr><th>File</th><th>What it fills</th></tr>
+            <tr><td><code>.toml</code>, <code>.json</code></td><td>Every field the file contains.</td></tr>
+            <tr><td><code>.py</code></td><td>Code Example only.</td></tr>
+            <tr><td><code>.txt</code>, <code>.md</code></td><td>Handbook / Instructions only.</td></tr>
+        </table>
+
+        <h4 id="dsm-add-create">Create a handbook</h4>
+        <p>Fill in the form by hand:</p>
         <table>
             <tr><th>Field</th><th>Purpose</th></tr>
             <tr><td><strong>Source Name</strong> (required)</td><td>A clear, human-readable name (e.g. <em>NOAA Tides</em>).</td></tr>
@@ -551,8 +573,22 @@
                 per line. Use <code>{YOUR_KEY_NAME}</code> where an API key is needed.</td></tr>
             <tr><td><strong>Code Example</strong></td><td>A working Python snippet that downloads from the source and saves a file.</td></tr>
         </table>
-        <p>Instead of typing, you can click <span class="ui">Import from file…</span> to load a <code>.toml</code>
-        handbook which fills every field - see <a href="#dsm-handbook">Creating a data source handbook</a> below for how to write one.</p>
+        <p>If the source needs a key, see <a href="#dsm-credentials">Sources that need an API key</a>. For what to write in each
+        field, see <a href="#dsm-handbook">Creating a data source handbook</a>.</p>
+
+        <h4 id="dsm-add-ai">Generate with AI</h4>
+        <div class="step"><div class="num">1</div><div class="body"><strong>Describe the source:</strong> enter its name and, ideally,
+            its website or API documentation URL, then click <span class="ui">Generate draft</span>.</div></div>
+        <div class="step"><div class="num">2</div><div class="body"><strong>Wait for the draft:</strong> the AI reads the documentation,
+            fills in the form, and tests the draft with a small sample download. The log shows its progress, and the result of the
+            test appears in the chat. If the source needs a key, the full test can't run without it.</div></div>
+        <div class="step"><div class="num">3</div><div class="body"><strong>Review and refine:</strong> edit any field, or paste an error
+            or ask for a change (e.g. <em>save as CSV</em>) and click <span class="ui">Send</span>. Changes you ask for are not tested
+            again automatically.</div></div>
+        <div class="step"><div class="num">4</div><div class="body"><strong>Save:</strong> click <span class="ui">Add Source</span>. Nothing
+            is saved before this.</div></div>
+        <p>This uses your <strong>OpenAI API key</strong>, or a <strong>GIBD key</strong> as a backup. To choose the model or test with your
+        own retrieval task, use <a href="#dsm-studio">Handbook Studio</a> instead.</p>
         <!-- <div class="tip"><strong>Tip:</strong>&nbsp; You can customize the downloaded <code>.toml</code> before re-importing it, which makes it easy to copy, back up, or tweak a source without rebuilding it from scratch.</div> -->
 
 
@@ -608,9 +644,8 @@
         </ul>
 
         
-        <div class="tip"><strong>Tip:</strong>&nbsp; An example of a complete handbook is provided here: (<a href="data_agent/DataRetriever_Handbooks/Handbooks/OpenStreetMap.toml" download="OpenStreetMap.toml">Data source handbook example</a>). In creating a new handbook, you don't have to start from scratch - download the example provided or other existing source as a
-        <code>.toml</code> (the <span class="ui">⤓</span> icon), edit its handbook and code, and re-import it with
-        <span class="ui">Import from file…</span>.</div>
+        <div class="tip"><strong>Tip:</strong>&nbsp; An example of a complete handbook is provided here: (<a href="https://github.com/Teakinboyewa/GIS-co-scientist-catalog/blob/main/handbooks/OpenStreetMap.toml" target="_blank" rel="noopener">Data source handbook example</a>). In creating a new handbook, you don't have to start from scratch - download the example provided or other existing source as a
+        <code>.toml</code> (the <span class="ui">⤓</span> icon), edit its handbook and code, and <a href="#dsm-add-import">import it again</a>.</div>
 
 
         <h3 id="dsm-studio">Generating a handbook with Handbook Studio</h3>

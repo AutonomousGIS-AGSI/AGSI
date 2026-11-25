@@ -104,6 +104,10 @@
   .resource { display: grid; gap: .3rem; }
   .resource .label { font-weight: 700; }
   .resource .meta { color: var(--muted); font-size: .9rem; }
+  .figure { margin: 1.5rem 0 0; padding: 1rem; background: white; border: 1px solid var(--border); border-radius: .65rem; }
+  .figure img { display: block; width: 100%; height: auto; }
+  .subhead { margin: 1.8rem 0 .75rem; font-size: 1.15rem; }
+  .citation { margin: 0; padding: 1rem 1.25rem; overflow-x: auto; background: var(--panel); border: 1px solid var(--border); border-radius: .65rem; font-size: .88rem; }
   footer { border-top: 1px solid var(--border); background: var(--panel); }
   .site-footer { padding-block: 1.5rem; color: var(--muted); font-size: .9rem; }
 
@@ -121,9 +125,12 @@
       GIS Co-Scientist
     </a>
     <nav class="site-nav" aria-label="Main navigation">
+      <a href="#about">About</a>
+      <a href="#get-started">Get started</a>
+      <a href="#source-code">Source code</a>
       <a href="#case-studies">Case studies</a>
       <a href="#demos">Video demos</a>
-      <a href="#materials">Research materials</a>
+      <a href="#materials">Supplemental materials</a>
       <a href="https://doi.org/10.1080/10095020.2026.2764024" target="_blank" rel="noopener noreferrer">Paper</a>
       <a href="https://autonomousgis-agsi.github.io/AGSI/user_manual" target="_blank" rel="noopener noreferrer">User Manual</a>
       <a class="gibd-logo-link" href="https://giscience.psu.edu" target="_blank" rel="noopener noreferrer">
@@ -137,7 +144,7 @@
     <div class="wrap">
       <p class="eyebrow">Autonomous Geospatial Scientific Inquiry</p>
       <h1>GIS Co-Scientist</h1>
-      <p class="lede">Explore how the GIS Co-Scientist retrieves data, performs spatial analysis, and carries out geospatial research. Browse case studies, watch workflow demonstrations, or download the desktop app. You can also use the WebUI in your browser.</p>
+      <p class="lede">A human-AI collaborative framework that supports geospatial scientific inquiry, from a research question to a first draft manuscript.</p>
       <div class="hero-actions">
         <a class="button launch" href="#desktop">Download desktop app</a>
         <a class="button" href="https://www.gis-coscientist.online/" target="_blank" rel="noopener">Launch GIS Co-Scientist WebUI</a>
@@ -146,6 +153,35 @@
   </div>
   <div class="wrap">
 
+  <section id="about">
+    <h2 class="section-title">About the project</h2>
+    <p class="section-intro">GIS Co-Scientist takes a research question, <strong>plans</strong> the analytical steps, <strong>executes</strong> them, and <strong>generates a first draft manuscript</strong>. With a <strong>human in the loop</strong>, it pauses at key stages so you can review, edit, and approve its work before it continues. The same interface also supports standalone <strong>data retrieval</strong> and <strong>spatial analysis</strong>.</p>
+    <figure class="figure">
+      <img src="assets/framework.jpg" alt="GIS Co-Scientist framework: a human in the loop guides a layer of specialized agents, backed by a reproducibility layer">
+    </figure>
+  </section>
+
+  <section id="get-started">
+    <h2 class="section-title">Get started</h2>
+    <div class="resources">
+      <a class="resource" href="#desktop">
+        <span class="label">Desktop app (recommended)</span>
+        <span class="meta">Runs on your own computer, on Windows or macOS.</span>
+      </a>
+      <a class="resource" href="https://www.gis-coscientist.online/" target="_blank" rel="noopener">
+        <span class="label">WebUI</span>
+        <span class="meta">Runs in your browser, with nothing to install.</span>
+      </a>
+      <a class="resource" href="desktop-install.html">
+        <span class="label">Installation guide</span>
+        <span class="meta">Steps to install the desktop app on each operating system.</span>
+      </a>
+      <a class="resource" href="https://autonomousgis-agsi.github.io/AGSI/user_manual" target="_blank" rel="noopener">
+        <span class="label">User Manual</span>
+        <span class="meta">How to set up and use each mode.</span>
+      </a>
+    </div>
+  </section>
 
   <section id="desktop">
     <h2 class="section-title">Download GIS Co-Scientist Desktop</h2>
@@ -166,6 +202,28 @@
       <p><a href="desktop-install.html">Open the desktop installation guide</a></p>
     </noscript>
     <p class="section-intro" style="margin: 1.5rem 0 0">Use your own <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">OpenAI API key</a> to run GIS Co-Scientist. A <a href="https://www.gibd.online" target="_blank" rel="noopener">GIBD key</a> is only a backup for testing or trying out the system.</p>
+  </section>
+
+  <section id="source-code">
+    <h2 class="section-title">Source code</h2>
+    <div class="resources">
+      <a class="resource" href="https://github.com/Teakinboyewa/GIS-co-scientist" target="_blank" rel="noopener">
+        <span class="label">GIS Co-Scientist</span>
+        <span class="meta">The main framework and WebUI.</span>
+      </a>
+      <a class="resource" href="https://github.com/Teakinboyewa/GIS-co-scientist-desktop" target="_blank" rel="noopener">
+        <span class="label">GIS Co-Scientist Desktop</span>
+        <span class="meta">The desktop app for Windows and macOS.</span>
+      </a>
+      <a class="resource" href="https://github.com/Teakinboyewa/GIS-co-scientist-catalog" target="_blank" rel="noopener">
+        <span class="label">Data source catalog</span>
+        <span class="meta">Shared data source handbooks for the Data Retrieval mode.</span>
+      </a>
+      <a class="resource" href="https://github.com/AutonomousGIS-AGSI/AGSI" target="_blank" rel="noopener">
+        <span class="label">Project page</span>
+        <span class="meta">This website, the user manual, and the paper's supplemental materials.</span>
+      </a>
+    </div>
   </section>
 
   <section id="case-studies">
@@ -201,6 +259,28 @@
         <h3>Hazardous Waste Proximity and Asthma, partially failed run</h3>
         <p>An earlier run of the Case 3 research question that only partially completed.</p>
         <span class="open">View partial run</span>
+      </a>
+    </div>
+  </section>
+
+  <section id="ablation">
+    <h2 class="section-title">Ablation runs</h2>
+    <p class="section-intro">The same three research questions, run without the Planning Agent.</p>
+    <div class="cases">
+      <a class="case" href="Case1-ablation/index.html">
+        <div class="num">Case 01 ablation</div>
+        <h3>PM2.5 exposure and income inequality, California</h3>
+        <span class="open">View ablation run</span>
+      </a>
+      <a class="case" href="Case2-ablation/index.html">
+        <div class="num">Case 02 ablation</div>
+        <h3>Mobility-mediated health, South Carolina</h3>
+        <span class="open">View ablation run</span>
+      </a>
+      <a class="case" href="Case3-ablation/index.html">
+        <div class="num">Case 03 ablation</div>
+        <h3>Hazardous waste proximity and asthma, North Carolina</h3>
+        <span class="open">View ablation run</span>
       </a>
     </div>
   </section>
@@ -350,8 +430,13 @@
   </section>
 
   <section id="materials">
-    <h2 class="section-title">Research materials</h2>
+    <h2 class="section-title">Paper and supplemental materials</h2>
+    <p class="section-intro">The case studies, partially failed run, and ablation runs above also support the paper.</p>
     <div class="resources">
+      <a class="resource" href="https://doi.org/10.1080/10095020.2026.2764024" target="_blank" rel="noopener">
+        <span class="label">Paper</span>
+        <span class="meta">Geo-spatial Information Science, 2026</span>
+      </a>
       <a class="resource" href="Generated Manuscripts/index.html">
         <span class="label">Generated Manuscripts</span>
         <span class="meta">PDFs</span>
@@ -369,6 +454,15 @@
         <span class="meta">Project notes</span>
       </a>
     </div>
+    <h3 class="subhead">Citation</h3>
+    <pre class="citation">@article{akinboyewa2026giscoscientist,
+  title   = {{GIS Co-Scientist}: a human-{AI} collaborative framework for autonomous geospatial scientific inquiry},
+  author  = {Akinboyewa, Temitope and Li, Zhenlong},
+  journal = {Geo-spatial Information Science},
+  year    = {2026},
+  pages   = {1--22},
+  doi     = {10.1080/10095020.2026.2764024}
+}</pre>
   </section>
 
   </div></main>
