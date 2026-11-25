@@ -88,7 +88,7 @@
             <p>Unlike general-purpose AI assistants, GIS Co-Scientist plans an explicit <strong>geoprocessing workflow</strong> -
             a directed graph of spatial input data, geoprocessing operations/tools, and output data - before any code is written.
             This workflow is the geospatial backbone shared across the three working modes (Data Retriever, Spatial Analysis, and
-            Research), and it is shown to you for review. See <a href="#modes-models">Section 8</a>.</p>
+            Research), and it is shown to you for review. See <a href="#modes">Modes</a>.</p>
         </div> -->
     </section>
 
@@ -189,7 +189,7 @@
             Outputs appear in the <em>Map Viewer</em> and <em>Results and Artifacts</em> panels on the right.</div></div>
 
         <div class="tip"><strong>NOTE:</strong>&nbsp; Turn on <em><strong>Autonomous</strong></em> mode (in the mode dropdown) if you want the
-        system to auto-approve its own plans and run end-to-end with minimal interruption (see <a href="#modes-models">Section 8</a>).</div>
+        system to auto-approve its own plans and run end-to-end with minimal interruption (see <a href="#modes">Modes</a>).</div>
     </section>
 
     <!-- ═══════════════════ 3. API KEY ═══════════════════ -->
@@ -248,8 +248,8 @@
         <ul>
             <li><span class="ui">＋ Add data</span> - upload a dataset (same as the <img src="doc/folder-plus.svg" alt="folder plus" class="ui-icon" /> button in Data Layers).</li>
             <li><span class="ui">Mode selector</span> - choose the working mode, and switch <strong>Autonomous</strong> and
-                <strong>Auto Data</strong> on or off (see <a href="#modes-models">Section 8</a>).</li>
-            <li><span class="ui">Model selector</span> - see the note under <a href="#modes-models">Models used</a>.</li>
+                <strong>Auto Data</strong> on or off (see <a href="#modes">Modes</a>).</li>
+            <li><span class="ui">Model selector</span> - shows the model. Changing it does not change the model that runs (see <a href="#models">LLM Models used</a>).</li>
             <li><span class="ui">Send</span> - submit your request (also doubles as a Stop button while running).</li>
         </ul>
         <p>Each stage of a run appears in the chat as a card. Its <span class="ui">Tokens</span> chip shows how many tokens the
@@ -396,9 +396,9 @@
         updates. Only the owner can rename or delete the conversation.</p>
     </section>
 
-    <!-- ═══════════════════ 8. MODES / MODELS ═══════════════════ -->
-    <section id="modes-models">
-        <h2>Models</h2>
+    <!-- ═══════════════════ 8. MODES ═══════════════════ -->
+    <section id="modes">
+        <h2>Modes</h2>
 
         <h3>Choosing a mode</h3>
         <p>Open the <em><strong>mode dropdown</strong></em> (bottom-right of the input box, labeled with the current mode) and select one:</p>
@@ -417,7 +417,13 @@
         <div class="tip"><strong>When to use it:</strong>&nbsp; Turn Autonomous on once you trust the request and want a complete
         result in one go; keep it off when you want to steer the analysis step by step.</div>
 
-        <h3>Models used</h3>
+    </section>
+
+
+<!-- ═══════════════════ LLM MODELS ═══════════════════ -->
+    <section id="models">
+
+        <h2>LLM Models used</h2>
         <p>GIS Co-Scientist is a multi-agent system, so a single run is handled by more than one language model -
         each step makes its own model call. In the current release every one of those calls uses <strong>GPT-6 Luna</strong>.
         Each call's model and reasoning effort are set individually in the application's configuration, so
@@ -466,14 +472,10 @@
                 <td><strong>GPT-6 Luna</strong></td>
             </tr>
         </table>
-        <p>Most calls run at <em>low</em> reasoning effort; the rest use the model's default. Calls that use tools are sent
+        <p>The reasoning effort is the model's default. Calls that use tools are sent
         with reasoning turned off, because GPT-6 Luna does not accept tools and reasoning together. Click a stage card's
         <span class="ui">Tokens</span> chip to see which model each of its calls used.</p>
 
-        <div class="note"><strong>NOTE:</strong>&nbsp; The <span class="ui">Model</span> and <span class="ui">Reasoning Effort</span>
-        selectors in the input toolbar are reserved for a future update. For now the models are fixed in the
-        application, so changing those selectors does not change the model that runs. <span class="ui">Handbook Studio</span>
-        is the exception: it has its own model picker (see <a href="#dsm-studio">Handbook Studio</a>).</div>
     </section>
 
     
@@ -507,7 +509,7 @@
     </section>
 
 
-    <!-- ═══════════════════ dding a New Data Source ═══════════════════ -->
+    <!-- ═══════════════════ Adding a New Data Source ═══════════════════ -->
     <section id="data-sources-manual">
         <h2>Adding a New Data Source</h2>
         <p class="lead">Users are allowed to <strong>register your own data sources</strong> so the
@@ -1253,13 +1255,14 @@
                 { id:'apikey',        label:'API Key' },
               ]},
             { label:'The Interface',
-              sections:['layout','settings','datalayers','conversations','modes-models'],
+              sections:['layout','settings','datalayers','conversations','modes','models'],
               items:[
                 { id:'layout',        label:'UI Layout Overview' },
                 { id:'settings',      label:'Settings' },
                 { id:'datalayers',    label:'Data Layers' },
                 { id:'conversations', label:'Conversations & Sharing' },
-                { id:'modes-models',  label:'Modes, Models & Autonomous' },
+                { id:'modes',         label:'Modes' },
+                { id:'models',        label:'LLM Models used' },
               ]},
             
             { label:'Geoprocessing Workflow',
