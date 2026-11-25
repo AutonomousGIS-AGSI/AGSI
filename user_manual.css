@@ -97,6 +97,8 @@
     .subnav.open{display:block}
     nav.toc a.sub{padding:4px 12px 4px 26px;font-size:13.3px;line-height:1.4;color:var(--muted);
         border-left:2px solid var(--line)}
+    nav.toc a.subsub{display:none;padding-left:42px}
+    nav.toc a.subsub.shown{display:block}
     nav.toc a.sub:hover{border-left-color:var(--brand)}
     nav.toc a.sub.active{color:var(--brand);border-left-color:var(--brand);background:#eef3f6;font-weight:600}
 

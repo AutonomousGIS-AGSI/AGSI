@@ -164,7 +164,7 @@
             <strong>Add your API key:</strong> Click <span class="ui">Settings</span> (top-right), paste your
             own <strong>OpenAI API key</strong> (<code>sk-</code>) into the
             <em>API Key</em> field, and click <span class="ui">Save Key</span>.
-            See <a href="#apikey">Section 3</a> for how to get one, or for the backup option if you only want to try the system.</div></div>
+            See <a href="#apikey">API Key</a> for how to get one, or for the backup option if you only want to try the system.</div></div>
 
         <div class="step"><div class="num">2</div><div class="body">
             <strong>Pick a mode:</strong> In the chat input toolbar, open the mode dropdown (bottom-right of the input box) and
@@ -178,7 +178,7 @@
             <strong>Set Auto Data (Optional):</strong> Use the <span class="ui">Auto Data</span> switch in the mode dropdown (on by default) to control how
             datasets are fetched. When <em>on</em>, the system automatically downloads any data your request needs; when <em>off</em>, it
             works with the data already uploaded instead of fetching new datasets. (In <em>Data Retrieval</em> mode, data is always fetched.)
-            See <a href="#data-mode">Section 9</a> for details.</div></div>
+            See <a href="#data-mode">Data Retrieval Mode</a> for details.</div></div>
 
         <div class="step"><div class="num">5</div><div class="body">
             <strong>Type your request</strong> in the input box and press <span class="kbd">Enter</span> (use
@@ -194,7 +194,7 @@
 
     <!-- ═══════════════════ 3. API KEY ═══════════════════ -->
     <section id="apikey">
-        <h2>3. API Key</h2>
+        <h2>API Key</h2>
 
         <p>GIS Co-Scientist needs an API key to run its language-model calls. Use your
         <strong>own OpenAI API key</strong>. A <strong>GIBD key</strong> is only a backup for users who want to test or try out
@@ -236,7 +236,7 @@
 
         <ul>
             <li><strong>Top row:</strong> <span class="ui">New chat</span> starts a fresh conversation (see
-                <a href="#conversations">Section 7</a>), and the <span class="kbd">◧</span> button collapses the sidebar.</li>
+                <a href="#conversations">Conversation History and Sharing</a>), and the <span class="kbd">◧</span> button collapses the sidebar.</li>
             <li><strong>Conversations:</strong> your saved conversations under <em>Recent</em>, with filter and sort controls.</li>
             <li><strong>Data Sources:</strong> a second tab listing the data sources the assistant can retrieve from (see
                 <a href="#data-sources-manual">Adding a New Data Source</a>).</li>
@@ -263,7 +263,7 @@
         <ul>
             <li><span class="ui">Data Layers</span> (top) - every dataset uploaded, downloaded, or produced in this conversation.
                 The <img src="doc/folder-plus.svg" alt="folder plus" class="ui-icon" /> button adds a layer, and clicking the
-                <em>Data Layers</em> title collapses or expands the list (see <a href="#datalayers">Section 6</a>).</li>
+                <em>Data Layers</em> title collapses or expands the list (see <a href="#datalayers">Data Layers</a>).</li>
             <li><span class="ui">Map Viewer</span> (middle) - an interactive map that renders data layers.</li>
             <li><span class="ui">Results and Artifacts</span> (bottom) - analysis outputs, tables, figures, statistics, and report
                 downloads. Clear it with the <span class="ui">×</span> button. Drag the divider between the map and this panel
@@ -277,7 +277,7 @@
         <p class="lead">Opened from the <span class="ui">Settings</span> button.</p>
 
         <h3>API Key</h3>
-        <p>Enter, show/hide, save, or clear your API key (your OpenAI key, or a GIBD key as a backup) - covered in <a href="#apikey">Section 3</a>.</p>
+        <p>Enter, show/hide, save, or clear your API key (your OpenAI key, or a GIBD key as a backup) - covered in <a href="#apikey">API Key</a>.</p>
 
         <h3>Data Source Keys</h3>
         <p>Some data sources (e.g. the U.S. Census, EPA AQS) require their own API keys. This section lets you store those keys
@@ -289,7 +289,7 @@
                 <code>US_Census_demography_key</code>) and its <strong>value</strong>, then click <span class="ui">Add</span>.</li>
             <li>Saved keys are listed and can be removed individually.</li>
         </ul>
-        <p>See <a href="#data-mode">Section 9</a> for exactly which sources need a key and where to get one.</p>
+        <p>See <a href="#data-mode">Data Retrieval Mode</a> for exactly which sources need a key and where to get one.</p>
     </section>
 
     <!-- ═══════════════════ 6. DATA LAYERS ═══════════════════ -->
@@ -401,10 +401,10 @@
         <p>Open the <em><strong>mode dropdown</strong></em> (bottom-right of the input box, labeled with the current mode) and select one:</p>
         <table>
             <tr><th>Mode</th><th>Usage</th><th>Section</th></tr>
-            <tr><td><strong>Data Retrieval</strong></td><td>Download data only - no analysis.</td><td><a href="#data-mode">§9</a></td></tr>
-            <tr><td><strong>Spatial Analysis</strong></td><td>Run a direct spatial analysis on your data.</td><td><a href="#spatial-mode">§10</a></td></tr>
-            <tr><td><strong>Research</strong></td><td>Run the full workflow and draft a manuscript.</td><td><a href="#research-mode">§11</a></td></tr>
-            <tr><td><strong>Chat</strong></td><td>Ask conversational questions, no workflow.</td><td><a href="#chat-mode">§12</a></td></tr>
+            <tr><td><strong>Data Retrieval</strong></td><td>Download data only - no analysis.</td><td><a href="#data-mode">Data Retrieval Mode</a></td></tr>
+            <tr><td><strong>Spatial Analysis</strong></td><td>Run a direct spatial analysis on your data.</td><td><a href="#spatial-mode">Spatial Analysis Mode</a></td></tr>
+            <tr><td><strong>Research</strong></td><td>Run the full workflow and draft a manuscript.</td><td><a href="#research-mode">Research Mode</a></td></tr>
+            <tr><td><strong>Chat</strong></td><td>Ask conversational questions, no workflow.</td><td><a href="#chat-mode">Chat Mode</a></td></tr>
         </table>
 
         <h3>Autonomous mode</h3>
@@ -719,7 +719,7 @@
         <p class="lead"><em>Data retrieval mode: </em>Find and download geospatial datasets from public data
         sources, without running any analysis.</p>
 
-        <h4 id="dr-use">How to use the Data Retrieval mode</h4>
+        <h4 id="dr-use">How to use it</h4>
         <div class="step"><div class="num">1</div><div class="body">Switch the mode to <strong>Data Retrieval</strong>.</div></div>
         <div class="step"><div class="num">2</div><div class="body">Describe what you need in natural language. Be as specific as you can about the variables, geography, and time frame (See examples).
         </div></div>
@@ -846,7 +846,7 @@
             analysis needs and whether the data you already have is sufficient. If it is, nothing is downloaded, even with
             <span class="ui">Auto Data</span> on, and the chat says which requests were skipped.</div></div>
         <div class="step"><div class="num">5</div><div class="body">Review the proposed <strong>geoprocessing workflow</strong>
-            (the spatial input &rarr; operation &rarr; output graph described in <a href="#geoprocessing">Section 13</a>).
+            (the spatial input &rarr; operation &rarr; output graph described in <a href="#geoprocessing">Geoprocessing Workflow</a>).
             Every dataset in the conversation is treated as a <em>candidate</em>. The workflow designer checks each one's area,
             time period, units and content against the question, and builds only the ones that fit into the graph. It lists
             every candidate as used or not used, with a reason. For example, a Pennsylvania county layer left over from an
@@ -872,7 +872,7 @@
                 map are sent with it, so the next analysis can start from them.</li>
         </ul>
 
-        <h4 id="sa-examples">Examples - Spatial Analysis</h4>
+        <h4 id="sa-examples">Examples</h4>
 
         <h5>Example 1 - Distribution of restaurants by county in Ohio</h5>
         <p><strong>Request:</strong> <em>"Create a visual representation that displays the distribution of restaurants across each county in Ohio."</em></p>
@@ -1081,7 +1081,7 @@
         waiting. Once a newer request in the conversation has replaced it, clicking it shows <em>"This Task Breakdown is no
         longer waiting"</em>. Send your request again to continue.</div>
 
-        <h4 id="rs-examples">Research mode examples</h4>
+        <h4 id="rs-examples">Examples</h4>
       
 
 
@@ -1242,14 +1242,14 @@
 
     <!-- ═══════════════════ 14. TIPS ═══════════════════ -->
     <section id="tips">
-        <h2>13. Tips and Troubleshooting</h2>
+        <h2>Tips and Troubleshooting</h2>
 
         <table>
             <tr><th>Symptom</th><th>What to check</th></tr>
             <tr><td>Nothing runs / "API key required"</td><td>Add a valid OpenAI API key (<code>sk-</code>), or a backup
                 GIBD key (<code>gibd-</code>) if you are only trying the system, in <span class="ui">Settings</span> and click <span class="ui">Save Key</span>.</td></tr>
             <tr><td>A data download is rejected for "missing key"</td><td>The source needs a free API key - add it under
-                <strong>Settings → Data Source Keys</strong>, or enter it when prompted. See <a href="#data-mode">§9</a>.</td></tr>
+                <strong>Settings → Data Source Keys</strong>, or enter it when prompted. See <a href="#data-mode">Data Retrieval Mode</a>.</td></tr>
             <tr><td>Wrong dataset retrieved</td><td>Be explicit about <em>year, geography level, and variable</em>; or name the source
                 directly. Use the source-confirmation prompt to retry.</td></tr>
             <tr><td>Shapefile won't load</td><td>Include all components (<code>.shp .shx .dbf .prj</code>) or upload them as a single
@@ -1308,8 +1308,6 @@
             { label:'Geoprocessing Workflow',
               sections:['geoprocessing'],
               items:[
-                { id:'gw-what',       label:'What it is' },
-                { id:'gw-modes',      label:'One workflow, every mode' },
               ]},
 
             { label:'Adding a New Data Source',
@@ -1326,45 +1324,33 @@
                 
               ]},
             
-            { label:'Data Retrieval Mode',
-              sections:['data-mode'],
+            { label:'Modes',
+              sections:['data-mode','spatial-mode','research-mode','chat-mode'],
               items:[
-                { id:'dr-use',        label:'How to use it' },
-                { id:'dr-sources',    label:'Available data sources' },
-                { id:'dr-multi',      label:'Downloading multiple datasets' },
-                { id:'dr-feedback',   label:'Feedback & approval' },
-                { id:'dr-examples',   label:'Examples' },
+                { id:'data-mode', label:'Data Retrieval Mode' },
+                  { id:'dr-use', label:'How to use it', parent:'data-mode' },
+                  { id:'dr-sources', label:'Available data sources', parent:'data-mode' },
+                  { id:'dr-multi', label:'Downloading multiple datasets', parent:'data-mode' },
+                  { id:'dr-feedback', label:'Feedback & approval', parent:'data-mode' },
+                  { id:'dr-examples', label:'Examples', parent:'data-mode' },
+                { id:'spatial-mode', label:'Spatial Analysis Mode' },
+                  { id:'sa-use', label:'How to use it', parent:'spatial-mode' },
+                  { id:'sa-review', label:'Reviewing & re-running', parent:'spatial-mode' },
+                  { id:'sa-examples', label:'Examples', parent:'spatial-mode' },
+                { id:'research-mode', label:'Research Mode' },
+                  { id:'rs-start', label:'Starting a run', parent:'research-mode' },
+                  { id:'rs-stages', label:'The workflow stages', parent:'research-mode' },
+                  { id:'human-ai-collaboration', label:'Checkpoints', parent:'research-mode' },
+                  { id:'rs-posthoc', label:'Revisiting steps', parent:'research-mode' },
+                  { id:'rs-examples', label:'Examples', parent:'research-mode' },
+                  { id:'rs-manuscript', label:'The manuscript deliverable', parent:'research-mode' },
+                  { id:'rs-demo', label:'Demo', parent:'research-mode' },
+                { id:'chat-mode', label:'Chat Mode' },
               ]},
-            { label:'Spatial Analysis Mode',
-              sections:['spatial-mode'],
-              items:[
-                { id:'sa-use',        label:'How to use it' },
-                { id:'sa-review',     label:'Reviewing & re-running' },
-                { id:'sa-examples',   label:'Examples' },
-              ]},
-            { label:'Research Mode',
-              sections:['research-mode'],
-              items:[
-                { id:'rs-start',      label:'Starting a run' },
-                { id:'rs-stages',     label:'The workflow stages' },
-                { id:'human-ai-collaboration', label:'Checkpoints' },
-                { id:'rs-posthoc',    label:'Revisiting steps' },
-                { id:'rs-examples',   label:'Examples' },
-                { id:'rs-manuscript', label:'The manuscript deliverable' },
-                { id:'rs-demo',       label:'Demo' },
-              ]},
-            { label:'Chat Mode',
-              sections:['chat-mode'],
-              items:[
-                { id:'chat-mode',     label:'Overview' },
-              ]},
-
-            
 
             { label:'Tips and Troubleshooting',
-              sections:['results','tips'],
+              sections:['tips'],
               items:[
-                { id:'results',       label:'Results, Map & Artifacts' },
                 { id:'tips',          label:'Tips & Troubleshooting' },
               ]},
               
@@ -1378,7 +1364,8 @@
         nav.insertAdjacentHTML('beforeend', PAGES.map((p, pi) => {
             const top = p.sections[0];
             const kids = p.items.map(it =>
-                '<a class="sub" data-id="' + it.id + '" href="#' + it.id + '">' + it.label + '</a>'
+                '<a class="sub' + (it.parent ? ' subsub' : '') + '" data-id="' + it.id +
+                '" data-parent="' + (it.parent || '') + '" href="#' + it.id + '">' + it.label + '</a>'
             ).join('');
             return '<a class="grp" data-group="' + pi + '" href="#' + top + '">' + p.label + '</a>'
                  + '<div class="subnav" data-group="' + pi + '">' + kids + '</div>';
@@ -1408,7 +1395,12 @@
         function apply(pi, id){
             grpLinks.forEach(l => l.classList.toggle('active', +l.dataset.group === pi));
             subnavs.forEach(s => s.classList.toggle('open', +s.dataset.group === pi));
-            subLinks.forEach(a => a.classList.toggle('active', a.dataset.id === id));
+            const cur = subLinks.find(a => a.dataset.id === id);
+            const mode = cur ? (cur.dataset.parent || id) : '';
+            subLinks.forEach(a => {
+                a.classList.toggle('active', a.dataset.id === id);
+                if(a.dataset.parent) a.classList.toggle('shown', a.dataset.parent === mode);
+            });
         }
 
         const atBottom = () =>
