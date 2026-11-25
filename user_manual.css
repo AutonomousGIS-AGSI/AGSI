@@ -104,8 +104,11 @@
 
     main{flex:1 1 auto;min-width:0;max-width:1500px;padding:30px 0 90px}
     section{margin-bottom:46px;scroll-margin-top:calc(var(--hero-h) + 12px)}
-    section>h2{font-size:28px;color:var(--brand-dark);margin:0 0 4px;padding-bottom:10px;border-bottom:2px solid var(--line)}
+    section>h2{font-size:28px;color:var(--brand-dark);margin:0 0 12px;padding:10px 14px;background:#dce9f1;border-radius:6px}
     section>lead{color:var(--muted);margin:6px 0 18px;font-size:16px}
+    main :is(h3,h4,h5){padding:6px 12px;border-radius:4px}
+    main h3{background:#e8f0f5}
+    main :is(h4,h5){background:#f0f5f8}
     h3{font-size:24px;color:var(--brand-dark);margin:30px 0 8px}
     h4{font-size:21px;color:var(--brand);margin:24px 0 6px}
     h5{font-size:19px;color:var(--brand-dark);margin:20px 0 6px}
