@@ -164,7 +164,7 @@
             <strong>Add your API key:</strong> Click <span class="ui">Settings</span> (top-right), paste your
             own <strong>OpenAI API key</strong> (<code>sk-</code>) into the
             <em>API Key</em> field, and click <span class="ui">Save Key</span>.
-            See <a href="#apikey">API Key</a> for how to get one, or for the backup option if you only want to try the system.</div></div>
+            See <a href="#apikey">API Key</a> for how to get one, or for the GIBD key if you don't have one.</div></div>
 
         <div class="step"><div class="num">2</div><div class="body">
             <strong>Pick a mode:</strong> In the chat input toolbar, open the mode dropdown (bottom-right of the input box) and
@@ -207,14 +207,14 @@
             <tr><td><strong>OpenAI API key</strong> (recommended)</td>
                 <td>For all regular use</td>
                 <td>At <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">platform.openai.com/api-keys</a> - sign in, then create a secret key.</td></tr>
-            <tr><td><strong>GIBD key</strong> (backup)</td>
-                <td>Only to test or try out the system</td>
+            <tr><td><strong>GIBD key</strong></td>
+                <td>If you don't have an OpenAI API key, to explore and test the system</td>
                 <td>At <a href="https://www.gibd.online" target="_blank" rel="noopener">gibd.online</a> - create an account or sign in, then request a key.</td></tr>
         </table>
 
         <h3>Entering your key</h3>
         <div class="step"><div class="num">1</div><div class="body">Click <span class="ui">Settings</span> in the top-right header.</div></div>
-        <div class="step"><div class="num">2</div><div class="body">Paste your OpenAI API key (or your backup GIBD key) into the <strong>API Key</strong> field.</div></div>
+        <div class="step"><div class="num">2</div><div class="body">Paste your OpenAI API key (or your GIBD key) into the <strong>API Key</strong> field.</div></div>
         <div class="step"><div class="num">3</div><div class="body">Click <span class="ui">Save Key</span>. A status message confirms it was stored.
             Use <span class="ui">Clear Key</span> to remove it.</div></div>
 
@@ -277,7 +277,7 @@
         <p class="lead">Opened from the <span class="ui">Settings</span> button.</p>
 
         <h3>API Key</h3>
-        <p>Enter, show/hide, save, or clear your API key (your OpenAI key, or a GIBD key as a backup) - covered in <a href="#apikey">API Key</a>.</p>
+        <p>Enter, show/hide, save, or clear your API key (your OpenAI key, or a GIBD key) - covered in <a href="#apikey">API Key</a>.</p>
 
         <h3>Data Source Keys</h3>
         <p>Some data sources (e.g. the U.S. Census, EPA AQS) require their own API keys. This section lets you store those keys
@@ -587,7 +587,7 @@
             again automatically.</div></div>
         <div class="step"><div class="num">4</div><div class="body"><strong>Save:</strong> click <span class="ui">Add Source</span>. Nothing
             is saved before this.</div></div>
-        <p>This uses your <strong>OpenAI API key</strong>, or a <strong>GIBD key</strong> as a backup. To choose the model or test with your
+        <p>This uses your <strong>OpenAI API key</strong>, or a <strong>GIBD key</strong> if you don't have one. To choose the model or test with your
         own retrieval task, use <a href="#dsm-studio">Handbook Studio</a> instead.</p>
         <!-- <div class="tip"><strong>Tip:</strong>&nbsp; You can customize the downloaded <code>.toml</code> before re-importing it, which makes it easy to copy, back up, or tweak a source without rebuilding it from scratch.</div> -->
 
@@ -667,7 +667,7 @@
         re-import later. The other <strong>adds it to My Sources</strong> as a private data source, and asks first if a source with
         the same name already exists. Sessions can be saved, shared by link, and duplicated from the Studio's header.</p>
         <div class="note"><strong>NOTE:</strong>&nbsp; Handbook Studio works with your <strong>OpenAI API key</strong>, or with a <strong>GIBD
-        key</strong> as a backup for trying it out. Its web research uses OpenAI web search, which a GIBD key reaches through the GIBD
+        key</strong> if you don't have one. Its web research uses OpenAI web search, which a GIBD key reaches through the GIBD
         service.</div>
 
 
@@ -1310,8 +1310,8 @@
 
         <table>
             <tr><th>Symptom</th><th>What to check</th></tr>
-            <tr><td>Nothing runs / "API key required"</td><td>Add a valid OpenAI API key (<code>sk-</code>), or a backup
-                GIBD key (<code>gibd-</code>) if you are only trying the system, in <span class="ui">Settings</span> and click <span class="ui">Save Key</span>.</td></tr>
+            <tr><td>Nothing runs / "API key required"</td><td>Add a valid OpenAI API key (<code>sk-</code>), or a
+                GIBD key (<code>gibd-</code>) if you don't have one, in <span class="ui">Settings</span> and click <span class="ui">Save Key</span>.</td></tr>
             <tr><td>A data download is rejected for "missing key"</td><td>The source needs a free API key - add it under
                 <strong>Settings → Data Source Keys</strong>, or enter it when prompted. See <a href="#data-mode">Data Retrieval Mode</a>.</td></tr>
             <tr><td>Wrong dataset retrieved</td><td>Be explicit about <em>year, geography level, and variable</em>; or name the source
